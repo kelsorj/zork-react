@@ -103,9 +103,9 @@ function GameInterface() {
       return;
     }
 
-    const words = command.split(" ");
-    const action = words[0].toLowerCase();
-    const target = words.slice(1).join(" ").toLowerCase();
+    const words = command.toLowerCase().split(" ");
+    const action = words[0];
+    const target = words.slice(1).join(" ");
 
     // Handle directional shortcuts
     const directionMap = {
@@ -130,7 +130,7 @@ function GameInterface() {
     }
 
     // Handle special commands
-    switch (action.toLowerCase()) {
+    switch (action) {
       case "go":
         handleGo(target);
         break;
@@ -178,14 +178,14 @@ function GameInterface() {
         break;
       case "enter":
       case "in":
-        if ((target === "window" || target === "") && gameState.currentRoom === "east of house") {
+        if (gameState.currentRoom === "east of house") {
           setGameState((prevState) => ({
             ...prevState,
             currentRoom: "kitchen"
           }));
           setGameLog((prevLog) => [
             ...prevLog,
-            `> enter window`,
+            `> ${command}`,
             getBasicRoomDescription("kitchen")
           ]);
         } else {
@@ -300,8 +300,8 @@ function GameInterface() {
         }
         break;
       case "tie":
-        const [item, _, target] = rest.join(" ").split(" to ");
-        handleTie(item, target);
+        const tieWords = target.split(" to ");
+        handleTie(tieWords[0], tieWords[1]);
         break;
       case "wave":
         handleWave(target);
