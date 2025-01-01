@@ -1883,6 +1883,50 @@ function GameInterface() {
     }
   };
 
+  const handlePray = () => {
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    const prayAction = currentRoom.actions["pray"];
+    
+    if (currentRoom === "temple") {
+      setGameState(prevState => ({
+        ...prevState,
+        roomStates: {
+          ...prevState.roomStates,
+          temple: { doorsUnlocked: true }
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        "> pray",
+        "A voice whispers: 'The doors are now unlocked.'"
+      ]);
+    } else if (gameState.currentRoom === "altar" && gameState.inventory.includes("coffin")) {
+      setGameState(prevState => ({
+        ...prevState,
+        currentRoom: "forest2"
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        "> pray",
+        "You feel a strange sensation, and suddenly find yourself transported...",
+        "",
+        getBasicRoomDescription("forest2")
+      ]);
+    } else if (prayAction) {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        "> pray",
+        prayAction
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        "> pray",
+        "Nothing happens."
+      ]);
+    }
+  };
+
   const handleGive = (item, target) => {
     if (!gameState.inventory.includes(item)) {
       setGameLog((prevLog) => [
