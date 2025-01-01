@@ -163,14 +163,48 @@ function GameInterface() {
         handleRead(target);
         break;
       case "open":
-        if (target === "window" && gameState.currentRoom === "east of house") {
+        if (target === "trapdoor" && gameState.currentRoom === "living room") {
+          if (!gameState.rugMoved) {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> open ${target}`,
+              "The rug is covering the trapdoor. You'll need to move it first."
+            ]);
+            return;
+          }
+          setGameState((prevState) => ({
+            ...prevState,
+            trapdoorOpen: true
+          }));
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> open ${target}`,
+            "The trapdoor opens, revealing a passage down into darkness."
+          ]);
+          return;
+        } else if (target === "window" && gameState.currentRoom === "east of house") {
           setGameLog((prevLog) => [
             ...prevLog,
             `> open window`,
             "The window is already slightly open."
           ]);
+          return;
+        }
+
+        const roomForOpen = gameData.rooms[gameState.currentRoom];
+        const openAction = roomForOpen.actions["open"];
+        if (openAction) {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> open ${target}`,
+            openAction
+          ]);
         } else {
-          handleOpen(target);
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> open ${target}`,
+            `You can't open that.`
+          ]);
         }
         break;
       case "close":
@@ -467,6 +501,18 @@ function GameInterface() {
       }
     }
 
+    // Special handling for trapdoor descent
+    if (gameState.currentRoom === "living room" && direction === "down") {
+      if (!gameState.trapdoorOpen) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> go ${direction}`,
+          "The trapdoor is closed."
+        ]);
+        return;
+      }
+    }
+
     // Check if troll is blocking the way
     if (gameState.currentRoom === "troll room" && 
         !gameState.roomStates?.["troll room"]?.trollDefeated) {
@@ -666,82 +712,6 @@ function GameInterface() {
     }
   };
 
-  const handleOpen = (target) => {
-    if (target === "lid" && gameState.currentRoom === "machine room") {
-      setGameState(prevState => ({
-        ...prevState,
-        roomStates: {
-          ...prevState.roomStates,
-          "machine room": {
-            ...prevState.roomStates?.["machine room"],
-            lidOpen: true
-          }
-        }
-      }));
-      setGameLog((prevLog) => [
-        ...prevLog,
-        `> open ${target}`,
-        "You open the machine's lid, revealing a coal chamber."
-      ]);
-      return;
-    }
-    const currentRoom = gameData.rooms[gameState.currentRoom];
-    
-    // Special case for coffin in east of chasm
-    if (target === "coffin" && gameState.currentRoom === "east of chasm") {
-      const openAction = currentRoom.actions["open coffin"];
-      if (openAction && gameState.inventory.includes("coffin")) {
-        setGameState(prevState => ({
-          ...prevState,
-          inventory: prevState.inventory.filter(i => i !== "coffin"),
-          itemsInWorld: { 
-            ...prevState.itemsInWorld, 
-            coffin: null,
-            sceptre: gameState.currentRoom 
-          },
-          roomStates: {
-            ...prevState.roomStates,
-            "east of chasm": { ...prevState.roomStates?.["east of chasm"], coffinOpened: true }
-          }
-        }));
-        setGameLog((prevLog) => [
-          ...prevLog,
-          `> open ${target}`,
-          openAction.message
-        ]);
-        return;
-      }
-    }
-    
-    // Rest of the original handleOpen function...
-    if (gameData.state.containerContents[target]) {
-      if (gameState.inventory.includes(target) || gameState.itemsInWorld[target] === gameState.currentRoom) {
-        const description = gameData.state.itemDescriptions[target];
-        setGameLog((prevLog) => [
-          ...prevLog,
-          `> open ${target}`,
-          description
-        ]);
-        return;
-      }
-    }
-    
-    const openAction = currentRoom.actions["open"];
-    if (openAction) {
-      setGameLog((prevLog) => [
-        ...prevLog,
-        `> open ${target}`,
-        openAction
-      ]);
-    } else {
-      setGameLog((prevLog) => [
-        ...prevLog,
-        `> open ${target}`,
-        `You can't open that.`
-      ]);
-    }
-  };
-
   const handleEnter = (target) => {
     const currentRoom = gameData.rooms[gameState.currentRoom];
     const enterAction = currentRoom.actions["enter"];
@@ -860,11 +830,6 @@ function GameInterface() {
     const moveAction = currentRoom.actions[`move ${item}`];
     
     if (moveAction) {
-      setGameLog((prevLog) => [
-        ...prevLog,
-        `> move ${item}`,
-        moveAction
-      ]);
       // If it's the rug, update the room description to show the trapdoor
       if (item === "rug" && gameState.currentRoom === "living room") {
         setGameState(prevState => ({
@@ -872,6 +837,11 @@ function GameInterface() {
           rugMoved: true
         }));
       }
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> move ${item}`,
+        moveAction
+      ]);
     } else {
       setGameLog((prevLog) => [
         ...prevLog,
