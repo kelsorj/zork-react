@@ -1,21 +1,42 @@
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import gameData from "../data/game_data.json";
+import "./GameInterface.css";
 
 function GameInterface() {
   const [gameLog, setGameLog] = useState([]);
   const [input, setInput] = useState("");
-  const [gameState, setGameState] = useState({
-    currentRoom: gameData.state.currentRoom,
-    inventory: [],
-    itemsInWorld: gameData.state.itemsInWorld,
-    lockedDoors: gameData.state.lockedDoors
+  const [gameState, setGameState] = useState(() => {
+    // Try to load saved game on initial load
+    const savedGame = localStorage.getItem('zorkSaveGame');
+    if (savedGame) {
+      return JSON.parse(savedGame);
+    }
+    return {
+      currentRoom: gameData.state.currentRoom,
+      inventory: [],
+      itemsInWorld: gameData.state.itemsInWorld,
+      lockedDoors: gameData.state.lockedDoors
+    };
   });
+  const logRef = useRef(null);
 
   useEffect(() => {
     const initialRoom = gameData.rooms[gameState.currentRoom];
-    setGameLog([initialRoom.description]);
+    setGameLog([
+      "ZORK I: The Great Underground Empire",
+      "Copyright (c) 1981, 1982, 1983 Infocom, Inc.",
+      "All rights reserved.",
+      "",
+      initialRoom.description
+    ]);
   }, [gameState.currentRoom]);
+
+  useEffect(() => {
+    // Scroll to bottom when log updates
+    if (logRef.current) {
+      logRef.current.scrollTop = logRef.current.scrollHeight;
+    }
+  }, [gameLog]);
 
   const handleInput = (e) => {
     setInput(e.target.value);
@@ -62,6 +83,25 @@ function GameInterface() {
         break;
       case "read":
         handleRead(target);
+        break;
+      case "open":
+        handleOpen(target);
+        break;
+      case "enter":
+        handleEnter(target);
+        break;
+      case "save":
+        handleSave();
+        break;
+      case "load":
+      case "restore":
+        handleLoad();
+        break;
+      case "help":
+        handleHelp();
+        break;
+      case "restart":
+        handleRestart();
         break;
       default:
         setGameLog((prevLog) => [
@@ -233,9 +273,137 @@ function GameInterface() {
     ]);
   };
 
+  const handleOpen = (target) => {
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    const openAction = currentRoom.actions["open"];
+    
+    if (openAction) {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> open ${target}`,
+        openAction
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> open ${target}`,
+        `You can't open that.`
+      ]);
+    }
+  };
+
+  const handleEnter = (target) => {
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    const enterAction = currentRoom.actions["enter"];
+    
+    if (enterAction && gameData.rooms[enterAction]) {
+      setGameState((prevState) => ({
+        ...prevState,
+        currentRoom: enterAction
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> enter ${target}`,
+        gameData.rooms[enterAction].description
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> enter ${target}`,
+        `You can't enter that.`
+      ]);
+    }
+  };
+
+  const handleSave = () => {
+    try {
+      localStorage.setItem('zorkSaveGame', JSON.stringify(gameState));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        "> save",
+        "Game saved."
+      ]);
+    } catch (error) {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        "> save",
+        "Failed to save game."
+      ]);
+    }
+  };
+
+  const handleLoad = () => {
+    try {
+      const savedGame = localStorage.getItem('zorkSaveGame');
+      if (savedGame) {
+        const loadedState = JSON.parse(savedGame);
+        setGameState(loadedState);
+        setGameLog((prevLog) => [
+          ...prevLog,
+          "> load",
+          "Game loaded.",
+          "",
+          gameData.rooms[loadedState.currentRoom].description
+        ]);
+      } else {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          "> load",
+          "No saved game found."
+        ]);
+      }
+    } catch (error) {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        "> load",
+        "Failed to load game."
+      ]);
+    }
+  };
+
+  const handleRestart = () => {
+    setGameState({
+      currentRoom: gameData.state.currentRoom,
+      inventory: [],
+      itemsInWorld: gameData.state.itemsInWorld,
+      lockedDoors: gameData.state.lockedDoors
+    });
+    setGameLog((prevLog) => [
+      ...prevLog,
+      "> restart",
+      "Game restarted.",
+      "",
+      "ZORK I: The Great Underground Empire",
+      "Copyright (c) 1981, 1982, 1983 Infocom, Inc.",
+      "All rights reserved.",
+      "",
+      gameData.rooms[gameData.state.currentRoom].description
+    ]);
+  };
+
+  const handleHelp = () => {
+    setGameLog((prevLog) => [
+      ...prevLog,
+      "> help",
+      "Available commands:",
+      "- look: Look around the current room",
+      "- go [direction]: Move in a direction (north, south, east, west)",
+      "- take [item]: Pick up an item",
+      "- drop [item]: Drop an item from your inventory",
+      "- inventory: Check your inventory",
+      "- examine [item]: Look at an item closely",
+      "- open [object]: Open something",
+      "- enter [object]: Enter something",
+      "- save: Save your current game",
+      "- load/restore: Load your saved game",
+      "- restart: Start a new game",
+      "- help: Show this help message"
+    ]);
+  };
+
   return (
     <div className="game-interface">
-      <div className="game-log">
+      <div className="game-log" ref={logRef}>
         {gameLog.map((log, index) => (
           <p key={index}>{log}</p>
         ))}
@@ -245,9 +413,9 @@ function GameInterface() {
           type="text"
           value={input}
           onChange={handleInput}
-          placeholder="Enter command..."
+          placeholder="What do you want to do?"
+          autoFocus
         />
-        <button type="submit">Submit</button>
       </form>
     </div>
   );

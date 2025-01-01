@@ -88,8 +88,8 @@
             "actions": {
                 "go west": "house",
                 "go east": "clearing",
-                "enter window": "kitchen",
-                "open window": "The window is already slightly open."
+                "enter": "kitchen",
+                "open": "The window is already slightly open."
             },
             "items": []
         },
@@ -98,7 +98,7 @@
             "actions": {
                 "go west": "living room",
                 "go east": "east of house",
-                "exit window": "east of house",
+                "exit": "east of house",
                 "go up": "attic"
             },
             "items": ["sack", "bottle", "garlic"]
@@ -594,12 +594,16 @@
             "syntax": "climb [object]"
         },
         "open": {
-            "description": "Opens a container or door.",
+            "description": "Opens a container, door, or window.",
             "syntax": "open [object]"
         },
         "enter": {
-            "description": "Enters a building or passage.",
-            "syntax": "enter [location]"
+            "description": "Enters a building, passage, or window.",
+            "syntax": "enter [object]"
+        },
+        "exit": {
+            "description": "Exits through a door or window.",
+            "syntax": "exit [object]"
         },
         "pray": {
             "description": "Pray at a holy site.",

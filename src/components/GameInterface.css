@@ -1,0 +1,80 @@
+@font-face {
+    font-family: 'Apple2';
+    src: url('https://cdn.jsdelivr.net/npm/apple2-font/dist/Apple2.woff2') format('woff2');
+}
+
+.game-interface {
+    background-color: #000000;
+    min-height: 100vh;
+    padding: 20px;
+    font-family: 'Apple2', monospace;
+    color: #33ff33;
+    text-shadow: 0 0 5px #33ff33;
+}
+
+.game-log {
+    text-align: left;
+    white-space: pre-wrap;
+    margin-bottom: 20px;
+    padding: 20px;
+    overflow-y: auto;
+    max-height: 80vh;
+}
+
+.game-log p {
+    margin: 0;
+    padding: 2px 0;
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+form {
+    display: flex;
+    gap: 10px;
+}
+
+input {
+    flex: 1;
+    background-color: #000000;
+    border: 1px solid #33ff33;
+    color: #33ff33;
+    font-family: 'Apple2', monospace;
+    font-size: 16px;
+    padding: 5px 10px;
+}
+
+input::placeholder {
+    color: #1a661a;
+}
+
+button {
+    background-color: #000000;
+    border: 1px solid #33ff33;
+    color: #33ff33;
+    font-family: 'Apple2', monospace;
+    font-size: 16px;
+    padding: 5px 15px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #33ff33;
+    color: #000000;
+}
+
+/* Hide scrollbar but keep functionality */
+.game-log::-webkit-scrollbar {
+    width: 0px;
+}
+
+/* Blinking cursor effect */
+input {
+    caret-color: #33ff33;
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    50% {
+        caret-color: transparent;
+    }
+} 
