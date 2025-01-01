@@ -42,6 +42,11 @@
                     "destination": "grating room",
                     "message": "You climb down through the grating into darkness."
                 },
+                "d": {
+                    "requires": ["gratingRevealed", "gratingUnlocked", "gratingOpen"],
+                    "destination": "grating room",
+                    "message": "You climb down through the grating into darkness."
+                },
                 "move leaves": {
                     "message": "Moving aside the thick pile of leaves reveals a metal grating embedded in the ground!",
                     "sets": {
@@ -755,63 +760,52 @@
             "items": ["chalice", "stolen items"]
         },
         "maze11": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
+            "description": "This is part of a maze of twisty little passages, all 11 alike.",
             "actions": {
                 "go north": "grating room",
-                "go south": "maze12",
-                "go east": "maze13",
-                "go west": "maze14",
-                "go up": "maze11",
-                "go down": "maze11"
+                "go southwest": "maze12",
+                "go northwest": "maze13",
+                "go down": "maze10"
             },
             "items": []
         },
         "maze12": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
+            "description": "This is part of a maze of twisty little passages, all 12 alike.",
             "actions": {
-                "go north": "maze13",
-                "go south": "maze14",
-                "go east": "maze11",
-                "go west": "maze15",
-                "go up": "maze12",
-                "go down": "maze12"
+                "go north": "maze19",
+                "go southwest": "maze11",
+                "go east": "maze13",
+                "go up": "maze9",
+                "go down": "maze5"
             },
             "items": []
         },
         "maze13": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
+            "description": "This is part of a maze of twisty little passages, all 13 alike.",
             "actions": {
-                "go north": "maze14",
-                "go south": "maze15",
-                "go east": "maze11",
-                "go west": "maze12",
-                "go up": "maze13",
+                "go south": "maze10",
+                "go west": "maze11",
+                "go east": "maze9",
                 "go down": "maze13"
             },
             "items": []
         },
         "maze14": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
+            "description": "This is part of a maze of twisty little passages, all 14 alike.",
             "actions": {
-                "go north": "maze15",
-                "go south": "maze11",
-                "go east": "maze12",
-                "go west": "maze13",
-                "go up": "maze14",
-                "go down": "maze14"
+                "go northeast": "maze7",
+                "go east": "maze14",
+                "go west": "maze15"
             },
             "items": []
         },
         "maze15": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
+            "description": "This is part of a maze of twisty little passages, all 15 alike.",
             "actions": {
-                "go north": "maze12",
-                "go south": "maze14",
-                "go east": "maze13",
-                "go west": "adventurers remains",
+                "go south": "maze7",
+                "go west": "maze14",
                 "go southeast": "cyclops room",
-                "go up": "maze15",
-                "go down": "maze15"
+                "go down": "adventurers remains"
             },
             "items": []
         },
@@ -862,6 +856,23 @@
                 "go down": "maze19"
             },
             "items": []
+        },
+        "grating room": {
+            "description": "You are in a small room with a metal grating in the ceiling. A pile of leaves has fallen through.",
+            "actions": {
+                "go south": "maze11",
+                "go up": {
+                    "requires": ["gratingRevealed", "gratingUnlocked", "gratingOpen"],
+                    "destination": "grating clearing",
+                    "message": "You climb up through the grating into the forest."
+                }
+            },
+            "state": {
+                "gratingRevealed": false,
+                "gratingUnlocked": false,
+                "gratingOpen": false
+            },
+            "items": ["leaves"]
         }
     },
     "inventory": [],
