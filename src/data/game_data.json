@@ -794,7 +794,7 @@
             "treasure": "treasure room",
             "leaflet": "west of house",
             "bottle": "kitchen",
-            "garlic": "kitchen",
+            "garlic": null,
             "knife": "attic",
             "rope": "attic",
             "jewels": "treasure room",
