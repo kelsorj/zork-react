@@ -270,6 +270,9 @@ function GameInterface() {
         const [item, _, target] = rest.join(" ").split(" to ");
         handleTie(item, target);
         break;
+      case "wave":
+        handleWave(target);
+        break;
       default:
         // Check for profanity
         if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
@@ -491,7 +494,33 @@ function GameInterface() {
   const handleOpen = (target) => {
     const currentRoom = gameData.rooms[gameState.currentRoom];
     
-    // First check if it's a container
+    // Special case for coffin in east of chasm
+    if (target === "coffin" && gameState.currentRoom === "east of chasm") {
+      const openAction = currentRoom.actions["open coffin"];
+      if (openAction && gameState.inventory.includes("coffin")) {
+        setGameState(prevState => ({
+          ...prevState,
+          inventory: prevState.inventory.filter(i => i !== "coffin"),
+          itemsInWorld: { 
+            ...prevState.itemsInWorld, 
+            coffin: null,
+            sceptre: gameState.currentRoom 
+          },
+          roomStates: {
+            ...prevState.roomStates,
+            "east of chasm": { ...prevState.roomStates?.["east of chasm"], coffinOpened: true }
+          }
+        }));
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> open ${target}`,
+          openAction.message
+        ]);
+        return;
+      }
+    }
+    
+    // Rest of the original handleOpen function...
     if (gameData.state.containerContents[target]) {
       if (gameState.inventory.includes(target) || gameState.itemsInWorld[target] === gameState.currentRoom) {
         const description = gameData.state.itemDescriptions[target];
@@ -504,7 +533,6 @@ function GameInterface() {
       }
     }
     
-    // Then check room actions
     const openAction = currentRoom.actions["open"];
     if (openAction) {
       setGameLog((prevLog) => [
@@ -952,6 +980,41 @@ function GameInterface() {
         ...prevLog,
         `> tie ${item} to ${target}`,
         `You can't tie the ${item} to that.`
+      ]);
+    }
+  };
+
+  const handleWave = (item) => {
+    if (!gameState.inventory.includes(item)) {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> wave ${item}`,
+        `You don't have the ${item}.`
+      ]);
+      return;
+    }
+
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    const waveAction = currentRoom.actions["wave " + item];
+    
+    if (waveAction && waveAction.requires && waveAction.requires.includes(item)) {
+      setGameState(prevState => ({
+        ...prevState,
+        roomStates: {
+          ...prevState.roomStates,
+          "east of chasm": { ...prevState.roomStates?.["east of chasm"], potRevealed: true }
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> wave ${item}`,
+        waveAction.message
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> wave ${item}`,
+        `Waving the ${item} accomplishes nothing.`
       ]);
     }
   };

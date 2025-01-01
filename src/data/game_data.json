@@ -145,9 +145,21 @@
             "actions": {
                 "go north": "cellar",
                 "go east": "gallery",
-                "jump": "In a moment of insanity, you jump into the chasm. You hit the bottom... eventually."
+                "jump": "In a moment of insanity, you jump into the chasm. You hit the bottom... eventually.",
+                "open coffin": {
+                    "requires": ["coffin"],
+                    "message": "The coffin breaks open as it hits the bottom of the chasm, revealing a beautiful golden sceptre!"
+                },
+                "wave sceptre": {
+                    "requires": ["sceptre"],
+                    "message": "As you wave the sceptre, a magical light fills the chasm, revealing a pot of gold that was hidden in the shadows!"
+                }
             },
-            "items": []
+            "state": {
+                "coffinOpened": false,
+                "potRevealed": false
+            },
+            "items": ["pot of gold"]
         },
         "gallery": {
             "description": "This appears to be an art gallery. Most of the paintings have been stolen by vandals through the years. The vandals have shown good taste, as the remaining paintings are of exceptionally poor quality. The gallery continues to the north.",
