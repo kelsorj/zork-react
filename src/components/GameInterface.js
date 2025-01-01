@@ -491,7 +491,7 @@ function GameInterface() {
 
   const handleGo = (direction) => {
     const currentRoom = gameData.rooms[gameState.currentRoom];
-    const nextRoom = currentRoom.actions[`go ${direction}`];
+    const nextAction = currentRoom.actions[`go ${direction}`];
 
     // Special handling for dome room descent
     if (gameState.currentRoom === "dome room" && direction === "down") {
@@ -525,6 +525,35 @@ function GameInterface() {
       }
     }
 
+    // Special handling for grating descent
+    if (gameState.currentRoom === "grating clearing" && direction === "down") {
+      const roomStates = gameState.roomStates?.["grating clearing"] || {};
+      if (!roomStates.gratingRevealed) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> go ${direction}`,
+          "You can't go that way."
+        ]);
+        return;
+      }
+      if (!roomStates.gratingUnlocked) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> go ${direction}`,
+          "The grating is locked."
+        ]);
+        return;
+      }
+      if (!roomStates.gratingOpen) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> go ${direction}`,
+          "The grating is closed."
+        ]);
+        return;
+      }
+    }
+
     // Check if troll is blocking the way
     if (gameState.currentRoom === "troll room" && 
         !gameState.roomStates?.["troll room"]?.trollDefeated) {
@@ -536,15 +565,39 @@ function GameInterface() {
       return;
     }
 
-    if (nextRoom && gameData.rooms[nextRoom]) {
+    if (typeof nextAction === 'string' && gameData.rooms[nextAction]) {
       setGameState((prevState) => ({
         ...prevState,
-        currentRoom: nextRoom
+        currentRoom: nextAction
       }));
       setGameLog((prevLog) => [
         ...prevLog,
         `> go ${direction}`,
-        getBasicRoomDescription(nextRoom)
+        getBasicRoomDescription(nextAction)
+      ]);
+    } else if (typeof nextAction === 'object' && nextAction.destination) {
+      // Check if all requirements are met
+      if (nextAction.requires) {
+        const roomStates = gameState.roomStates?.[gameState.currentRoom] || {};
+        const missingRequirements = nextAction.requires.filter(req => !roomStates[req]);
+        if (missingRequirements.length > 0) {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> go ${direction}`,
+            "You can't go that way."
+          ]);
+          return;
+        }
+      }
+
+      setGameState((prevState) => ({
+        ...prevState,
+        currentRoom: nextAction.destination
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> go ${direction}`,
+        nextAction.message || getBasicRoomDescription(nextAction.destination)
       ]);
     } else {
       setGameLog((prevLog) => [
