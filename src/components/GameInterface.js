@@ -548,16 +548,15 @@ function GameInterface() {
   };
 
   const handleTake = (item) => {
-    const currentRoom = gameData.rooms[gameState.currentRoom];
-    const roomItems = gameState.itemsInWorld;
-
     // Check for deadly skeleton interaction
     if (item === "skeleton" && gameState.currentRoom === "adventurers remains") {
       handleDeath("skeleton");
       return;
     }
 
-    if (roomItems[item] === gameState.currentRoom) {
+    // Check if the item exists in the current room
+    const itemLocation = gameState.itemsInWorld[item];
+    if (itemLocation === gameState.currentRoom) {
       setGameState((prevState) => ({
         ...prevState,
         inventory: [...prevState.inventory, item],
@@ -576,13 +575,13 @@ function GameInterface() {
       setGameLog((prevLog) => [
         ...prevLog,
         `> take ${item}`,
-        `You have picked up the ${item}.`
+        `Taken.`
       ]);
     } else {
       setGameLog((prevLog) => [
         ...prevLog,
         `> take ${item}`,
-        `There is no ${item} here.`
+        `You can't see any ${item} here.`
       ]);
     }
   };

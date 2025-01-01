@@ -164,10 +164,10 @@
             "items": ["pot of gold"]
         },
         "gallery": {
-            "description": "This appears to be an art gallery. Most of the paintings have been stolen by vandals through the years. The vandals have shown good taste, as the remaining paintings are of exceptionally poor quality. The gallery continues to the north.",
+            "description": "This appears to be an art gallery. The walls are lined with paintings and there is a beautiful portrait prominently displayed.",
             "actions": {
-                "go west": "east of chasm",
-                "go north": "studio"
+                "go west": "studio",
+                "go east": "east of chasm"
             },
             "items": ["painting"]
         },
