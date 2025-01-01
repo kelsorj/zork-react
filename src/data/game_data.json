@@ -311,7 +311,7 @@
             "items": ["bell"]
         },
         "egyptian room": {
-            "description": "This is the Egyptian Room. Ancient hieroglyphs cover the walls, and a stone sarcophagus rests in the center.",
+            "description": "This is the Egyptian Room. Ancient hieroglyphs cover the walls, and a stone coffin rests in the center.",
             "actions": {
                 "go west": "temple"
             },
@@ -649,6 +649,8 @@
             "actions": {
                 "go up": "canyon view",
                 "climb up": "canyon view",
+                "go southwest": "canyon view",
+                "climb": "canyon view",
                 "open coffin": {
                     "message": "The coffin creaks open, revealing an ancient sceptre inside.",
                     "reveals": {
@@ -858,7 +860,7 @@
             "rope": "This is a sturdy rope, suitable for climbing.",
             "book": "This appears to be a prayer book written in Latin.",
             "candles": "These are ceremonial black candles.",
-            "coffin": "This is an elaborately decorated stone sarcophagus, covered in hieroglyphs.",
+            "coffin": "This is an elaborately decorated stone coffin, covered in hieroglyphs.",
             "sceptre": "This is a beautiful golden sceptre, encrusted with precious gems.",
             "matches": "These are waterproof matches.",
             "crystal skull": "This is an exquisitely carved crystal skull, perfectly transparent.",

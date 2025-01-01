@@ -349,18 +349,7 @@ function GameInterface() {
         handleRepeatLastCommand();
         break;
       case "climb":
-        const currentRoom = gameData.rooms[gameState.currentRoom];
-        if (currentRoom.actions["climb tree"]) {
-          handleGo("up");
-        } else if (currentRoom.actions["climb down"]) {
-          handleGo("down");
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            "> climb",
-            "There's nothing here to climb."
-          ]);
-        }
+        handleClimb();
         break;
       case "tie":
         const tieWords = target.split(" to ");
@@ -2066,6 +2055,36 @@ function GameInterface() {
         ...prevLog,
         `> kill ${target} with ${weapon}`,
         "Violence isn't the answer to this one."
+      ]);
+    }
+  };
+
+  const handleClimb = () => {
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    if (gameState.currentRoom === "canyon bottom") {
+      setGameState(prevState => ({
+        ...prevState,
+        currentRoom: "canyon_view"
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        "> climb",
+        "You climb back up to Canyon View.",
+        "",
+        getBasicRoomDescription("canyon_view")
+      ]);
+      return;
+    }
+    
+    if (currentRoom.actions["climb tree"]) {
+      handleGo("up");
+    } else if (currentRoom.actions["climb down"]) {
+      handleGo("down");
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        "> climb",
+        "There's nothing here to climb."
       ]);
     }
   };
