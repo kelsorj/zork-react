@@ -492,6 +492,16 @@ function GameInterface() {
         inventory: [...prevState.inventory, item],
         itemsInWorld: { ...prevState.itemsInWorld, [item]: null }
       }));
+
+      // Award points if it's a treasure
+      if (gameData.state.trophyItems.includes(item)) {
+        const points = gameData.state.treasurePoints[item].take;
+        setGameSettings(prev => ({
+          ...prev,
+          score: prev.score + points
+        }));
+      }
+
       setGameLog((prevLog) => [
         ...prevLog,
         `> take ${item}`,
@@ -893,32 +903,20 @@ function GameInterface() {
       return;
     }
 
-    if (container === "basket" && gameState.currentRoom === "shaft room") {
-      setGameState(prevState => ({
-        ...prevState,
-        inventory: prevState.inventory.filter(i => i !== item),
-        containerContents: {
-          ...prevState.containerContents,
-          basket: [...(prevState.containerContents.basket || []), item]
-        }
-      }));
-      setGameLog((prevLog) => [
-        ...prevLog,
-        `> put ${item} in ${container}`,
-        `You put the ${item} in the basket.`
-      ]);
-      return;
-    }
-
     if (container === "case" && gameState.currentRoom === "living room") {
-      // List of trophy items that can go in the case
-      const trophyItems = gameData.state.trophyItems;
-      
-      if (trophyItems.includes(item)) {
+      // Check if it's a trophy item
+      if (gameData.state.trophyItems.includes(item)) {
         setGameState(prevState => ({
           ...prevState,
           inventory: prevState.inventory.filter(i => i !== item),
           itemsInWorld: { ...prevState.itemsInWorld, [item]: "case" }
+        }));
+
+        // Add points for putting the treasure in the case
+        const points = gameData.state.treasurePoints[item].case;
+        setGameSettings(prev => ({
+          ...prev,
+          score: prev.score + points
         }));
 
         let message = `You put the ${item} in the trophy case.`;
@@ -928,9 +926,9 @@ function GameInterface() {
           .filter(([item, location]) => location === "case")
           .map(([item]) => item);
           
-        if (itemsInCase.length === trophyItems.length - 1) {
+        if (itemsInCase.length === gameData.state.trophyItems.length - 1) {
           message += "\n\nCongratulations! You have collected all the treasures and won the game!\n" +
-                    "Your score is 350 points out of 350, in 330 moves.\n" +
+                    "Your score is 350 points out of 350 (175 for finding treasures, 175 for putting them in the case).\n" +
                     "This gives you the rank of Master Adventurer.\n\n" +
                     "Would you like to continue exploring the Great Underground Empire?";
         }
@@ -940,12 +938,6 @@ function GameInterface() {
           `> put ${item} in ${container}`,
           message
         ]);
-        
-        // Update score
-        setGameSettings(prev => ({
-          ...prev,
-          score: prev.score + 10
-        }));
       } else {
         setGameLog((prevLog) => [
           ...prevLog,
