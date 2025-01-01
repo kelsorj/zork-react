@@ -208,11 +208,18 @@
             "items": []
         },
         "dam": {
-            "description": "You are standing on top of the Flood Control Dam #3, which was quite a tourist attraction in times far distant. There are paths to the north and south.",
+            "description": "You are standing on top of the Flood Control Dam #3. The dam's control panel has a large bolt and several indicator lights, including a green bubble. Paths lead north and south.",
             "actions": {
                 "go north": "dam lobby",
                 "go south": "dam base",
-                "go down": "dam base"
+                "go down": "dam base",
+                "turn bolt with wrench": {
+                    "requires": ["wrench"],
+                    "message": "The bolt turns! A rumbling sound fills the area as the sluice gates open and water begins to flow. The green bubble glows brightly."
+                }
+            },
+            "state": {
+                "damOpened": false
             },
             "items": []
         },
@@ -234,6 +241,92 @@
                 "press yellow button": "Click."
             },
             "items": ["wrench", "screwdriver"]
+        },
+        "loud room": {
+            "description": "This is a large room with a ceiling which cannot be detected from the ground. There is a narrow passage from east to west and a stone stairway leading upward. The room is deafeningly loud with an undetermined rushing sound. The sound seems to reverberate from all of the walls, making it difficult even to think.",
+            "actions": {
+                "go west": "round room",
+                "go east": "deep canyon",
+                "go up": "engravings cave"
+            },
+            "items": ["platinum bar"]
+        },
+        "round room": {
+            "description": "This is a circular room with passages in all directions. The walls are made of stone and are inscribed with strange runes.",
+            "actions": {
+                "go southeast": "dome room",
+                "go east": "loud room",
+                "go west": "east west passage"
+            },
+            "items": []
+        },
+        "dome room": {
+            "description": "You are at the periphery of a large dome, which forms the ceiling of another room below. Protecting you from a precipitous drop is a wooden railing which circles the dome.",
+            "actions": {
+                "go west": "round room",
+                "climb down": "torch room",
+                "go down": "torch room"
+            },
+            "items": []
+        },
+        "torch room": {
+            "description": "This is a large room with a prominent doorway leading to a down staircase. Above you is a large dome. A passage leads south.",
+            "actions": {
+                "go up": "dome room",
+                "go south": "temple",
+                "go down": "cave"
+            },
+            "items": ["torch"]
+        },
+        "temple": {
+            "description": "This is the temple. A passage leads south and massive wooden doors lead west. The doors are locked.",
+            "actions": {
+                "go south": "torch room",
+                "go west": "altar",
+                "pray": "A voice whispers: 'The doors are now unlocked.'",
+                "open doors": "The doors are locked."
+            },
+            "items": ["bell"]
+        },
+        "altar": {
+            "description": "This is the altar. A huge mirror fills the north wall. A small window can be seen in the east wall.",
+            "actions": {
+                "go east": "temple",
+                "go down": "cave"
+            },
+            "items": ["book", "candles"]
+        },
+        "cave": {
+            "description": "This is a dark and damp cave. A stairway leads up to the temple, and another stairway leads down.",
+            "actions": {
+                "go up": "altar",
+                "go down": "entrance to hades"
+            },
+            "items": []
+        },
+        "entrance to hades": {
+            "description": "You are outside a large gateway inscribed 'Abandon every hope all ye who enter here!' The gate is guarded by demons.",
+            "actions": {
+                "go up": "cave",
+                "go south": "hades",
+                "ring bell": "The bell suddenly becomes red hot! You drop it, along with the candles!",
+                "light candles with match": {
+                    "requires": ["candles", "matches"],
+                    "message": "The candles are now lit, casting an eerie glow."
+                }
+            },
+            "state": {
+                "candlesLit": false,
+                "bellRung": false
+            },
+            "items": []
+        },
+        "hades": {
+            "description": "You are in Hades. Flames leap up from fiery pits, and demons dance in the shadows.",
+            "actions": {
+                "go north": "entrance to hades"
+            },
+            "items": []
         }
     },
     "inventory": [],
@@ -260,7 +353,7 @@
             "platinum bar": "loud room",
             "wrench": "dam room",
             "torch": "torch room",
-            "bell": "atlantis room",
+            "bell": "temple",
             "candles": "altar",
             "book": "altar",
             "sack": "kitchen",
@@ -299,10 +392,10 @@
             "axe": "This is a bloody axe, evidence of its owner's violent tendencies.",
             "platinum bar": "This is a large and very heavy platinum bar.",
             "bell": "This is a beautiful brass bell.",
-            "torch": "This is an old torch, still burning brightly.",
+            "torch": "This is an ancient torch, still burning brightly.",
             "rope": "This is a sturdy rope, suitable for climbing.",
-            "book": "This appears to be a prayer book of some sort.",
-            "candles": "These are ceremonial candles.",
+            "book": "This appears to be a prayer book written in Latin.",
+            "candles": "These are ceremonial black candles.",
             "coffin": "This is an elaborately decorated stone sarcophagus, covered in hieroglyphs.",
             "sceptre": "This is a beautiful golden sceptre, encrusted with precious gems.",
             "matches": "These are waterproof matches."

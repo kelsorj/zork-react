@@ -182,11 +182,23 @@ function GameInterface() {
         handlePut(putItem, container);
         break;
       case "turn":
-        if (target.startsWith("on ")) {
+        if (target.includes(" with ")) {
+          const [item, _, tool] = target.split(" with ");
+          handleTurn(item, tool);
+        } else if (target.startsWith("on ")) {
           handleTurnOn(target.substring(3));
         } else if (target.startsWith("off ")) {
           handleTurnOff(target.substring(4));
         }
+        break;
+      case "light":
+        if (target.includes(" with ")) {
+          const [item, _, source] = target.split(" with ");
+          handleLight(item, source);
+        }
+        break;
+      case "ring":
+        handleRing(target);
         break;
       case "attack":
       case "kill":
@@ -1039,6 +1051,105 @@ function GameInterface() {
         `> push ${target}`,
         `You can't push that.`
       ]);
+    }
+  };
+
+  const handleTurn = (item, tool) => {
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    const turnAction = currentRoom.actions[`turn ${item} with ${tool}`];
+    
+    if (turnAction && turnAction.requires && gameState.inventory.includes(turnAction.requires[0])) {
+      setGameState(prevState => ({
+        ...prevState,
+        roomStates: {
+          ...prevState.roomStates,
+          "dam": { damOpened: true }
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> turn ${item} with ${tool}`,
+        turnAction.message
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> turn ${item} with ${tool}`,
+        `You can't turn that.`
+      ]);
+    }
+  };
+
+  const handleLight = (item, source) => {
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    
+    if (item === "candles" && source === "match" && 
+        gameState.inventory.includes("candles") && 
+        gameState.inventory.includes("matches")) {
+      setGameState(prevState => ({
+        ...prevState,
+        roomStates: {
+          ...prevState.roomStates,
+          "entrance to hades": { 
+            ...prevState.roomStates?.["entrance to hades"],
+            candlesLit: true 
+          }
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> light ${item} with ${source}`,
+        "The candles are now lit, casting an eerie glow."
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> light ${item} with ${source}`,
+        `You can't light that.`
+      ]);
+    }
+  };
+
+  const handleRing = (item) => {
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    
+    if (item === "bell" && gameState.currentRoom === "entrance to hades") {
+      setGameState(prevState => ({
+        ...prevState,
+        inventory: prevState.inventory.filter(i => i !== "bell" && i !== "candles"),
+        itemsInWorld: {
+          ...prevState.itemsInWorld,
+          bell: gameState.currentRoom,
+          candles: gameState.currentRoom
+        },
+        roomStates: {
+          ...prevState.roomStates,
+          "entrance to hades": { 
+            ...prevState.roomStates?.["entrance to hades"],
+            bellRung: true 
+          }
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> ring ${item}`,
+        "The bell suddenly becomes red hot! You drop it, along with the candles!"
+      ]);
+    } else {
+      const ringAction = currentRoom.actions[`ring ${item}`];
+      if (ringAction) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> ring ${item}`,
+          ringAction
+        ]);
+      } else {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> ring ${item}`,
+          `You can't ring that.`
+        ]);
+      }
     }
   };
 
