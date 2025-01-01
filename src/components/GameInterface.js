@@ -11,11 +11,12 @@ function GameInterface() {
     if (savedGame) {
       return JSON.parse(savedGame);
     }
+    // Initialize with the default game state
     return {
       currentRoom: gameData.state.currentRoom,
       inventory: [],
-      itemsInWorld: gameData.state.itemsInWorld,
-      lockedDoors: gameData.state.lockedDoors,
+      itemsInWorld: { ...gameData.state.itemsInWorld },  // Make a copy to ensure we get all items
+      lockedDoors: [...gameData.state.lockedDoors],
       rugMoved: false
     };
   });
@@ -556,6 +557,12 @@ function GameInterface() {
   };
 
   const handleTake = (item) => {
+    // Debug logging
+    console.log('Current room:', gameState.currentRoom);
+    console.log('Looking for item:', item);
+    console.log('Item location:', gameState.itemsInWorld[item]);
+    console.log('Room items:', gameData.rooms[gameState.currentRoom].items);
+
     // Check for deadly skeleton interaction
     if (item === "skeleton" && gameState.currentRoom === "adventurers remains") {
       handleDeath("skeleton");
