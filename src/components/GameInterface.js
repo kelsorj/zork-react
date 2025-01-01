@@ -483,6 +483,9 @@ function GameInterface() {
       case "unlock":
         handleUnlock(target);
         break;
+      case "open":
+        handleOpen(target);
+        break;
       default:
         // Check for profanity
         if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
@@ -2084,6 +2087,55 @@ function GameInterface() {
         ...prevLog,
         "> climb",
         "There's nothing here to climb."
+      ]);
+    }
+  };
+
+  const handleOpen = (target) => {
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    const openAction = currentRoom.actions[`open ${target}`];
+
+    // Special case for grating
+    if (target === "grating" && gameState.currentRoom === "grating clearing") {
+      if (!gameState.roomStates?.["grating clearing"]?.gratingUnlocked) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> open ${target}`,
+          "The grating is locked."
+        ]);
+        return;
+      }
+
+      setGameState(prevState => ({
+        ...prevState,
+        roomStates: {
+          ...prevState.roomStates,
+          "grating clearing": {
+            ...(prevState.roomStates?.["grating clearing"] || {}),
+            gratingOpen: true
+          }
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> open ${target}`,
+        "You open the grating."
+      ]);
+      return;
+    }
+
+    // Handle other cases
+    if (openAction) {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> open ${target}`,
+        typeof openAction === 'string' ? openAction : openAction.message
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> open ${target}`,
+        `You can't open that.`
       ]);
     }
   };
