@@ -21,6 +21,16 @@ function GameInterface() {
   });
   const logRef = useRef(null);
 
+  // Add state for game settings and last command
+  const [gameSettings, setGameSettings] = useState({
+    verbose: false,
+    brief: true,
+    superbrief: false,
+    score: 0,
+    health: 100,
+    lastCommand: ""
+  });
+
   // Add helper functions to get room descriptions
   const getBasicRoomDescription = (roomId) => {
     const room = gameData.rooms[roomId];
@@ -73,40 +83,68 @@ function GameInterface() {
     const command = input.trim().toLowerCase();
 
     if (command) {
+      setGameSettings(prev => ({
+        ...prev,
+        lastCommand: command
+      }));
       processCommand(command);
       setInput("");
     }
   };
 
   const processCommand = (command) => {
+    // Handle empty command
+    if (!command) {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        ">",
+        "I beg your pardon?"
+      ]);
+      return;
+    }
+
     const [action, ...rest] = command.split(" ");
     const target = rest.join(" ");
 
     // Handle directional shortcuts
-    if (["north", "south", "east", "west", "up", "down", "n", "s", "e", "w", "u", "d"].includes(action)) {
-      const directionMap = {
-        'n': 'north',
-        's': 'south',
-        'e': 'east',
-        'w': 'west',
-        'u': 'up',
-        'd': 'down'
-      };
+    const directionMap = {
+      'n': 'north',
+      's': 'south',
+      'e': 'east',
+      'w': 'west',
+      'ne': 'northeast',
+      'nw': 'northwest',
+      'se': 'southeast',
+      'sw': 'southwest',
+      'u': 'up',
+      'd': 'down'
+    };
+
+    // Handle movement commands
+    if (Object.keys(directionMap).includes(action) || 
+        Object.values(directionMap).includes(action)) {
       const direction = directionMap[action] || action;
       handleGo(direction);
       return;
     }
 
-    switch (action) {
+    // Handle special commands
+    switch (action.toLowerCase()) {
       case "go":
         handleGo(target);
         break;
       case "take":
       case "get":
-        handleTake(target);
+      case "grab":
+      case "pick":
+        if (target === "all") {
+          handleTakeAll();
+        } else {
+          handleTake(target);
+        }
         break;
-      case "use":
-        handleUse(target);
+      case "drop":
+        handleDrop(target);
         break;
       case "inventory":
       case "i":
@@ -115,12 +153,6 @@ function GameInterface() {
       case "look":
       case "l":
         handleLook();
-        break;
-      case "unlock":
-        handleUnlock(target);
-        break;
-      case "drop":
-        handleDrop(target);
         break;
       case "examine":
       case "x":
@@ -132,31 +164,111 @@ function GameInterface() {
       case "open":
         handleOpen(target);
         break;
+      case "close":
+        handleClose(target);
+        break;
       case "enter":
+      case "in":
         handleEnter(target);
         break;
-      case "save":
-        handleSave();
-        break;
-      case "load":
-      case "restore":
-        handleLoad();
-        break;
-      case "help":
-        handleHelp();
-        break;
-      case "restart":
-        handleRestart();
+      case "out":
+        handleOut();
         break;
       case "move":
         handleMove(target);
         break;
+      case "put":
+        const [putItem, preposition, container] = target.split(" ");
+        handlePut(putItem, container);
+        break;
+      case "turn":
+        if (target.startsWith("on ")) {
+          handleTurnOn(target.substring(3));
+        } else if (target.startsWith("off ")) {
+          handleTurnOff(target.substring(4));
+        }
+        break;
+      case "attack":
+      case "kill":
+        const [creature, withWord, weapon] = target.split(" ");
+        handleAttack(creature, weapon);
+        break;
+      case "throw":
+        const [throwItem, atWord, location] = target.split(" ");
+        handleThrow(throwItem, location);
+        break;
+      case "save":
+        handleSave();
+        break;
+      case "restore":
+      case "load":
+        handleLoad();
+        break;
+      case "restart":
+        handleRestart();
+        break;
+      case "quit":
+      case "q":
+        handleQuit();
+        break;
+      case "score":
+        handleScore();
+        break;
+      case "diagnose":
+        handleDiagnose();
+        break;
+      case "verbose":
+        handleVerbose();
+        break;
+      case "brief":
+        handleBrief();
+        break;
+      case "superbrief":
+        handleSuperbrief();
+        break;
+      case "pray":
+        handlePray();
+        break;
+      case "eat":
+        handleEat(target);
+        break;
+      case "drink":
+        handleDrink(target);
+        break;
+      case "smell":
+        handleSmell(target);
+        break;
+      case "listen":
+        handleListen(target);
+        break;
+      case "jump":
+        setGameLog((prevLog) => [...prevLog, "> jump", "Are you proud of yourself?"]);
+        break;
+      case "hello":
+      case "hi":
+        setGameLog((prevLog) => [...prevLog, `> ${action}`, "Hello."]);
+        break;
+      case "zork":
+        setGameLog((prevLog) => [...prevLog, "> zork", "At your service!"]);
+        break;
+      case "g":
+        handleRepeatLastCommand();
+        break;
       default:
-        setGameLog((prevLog) => [
-          ...prevLog,
-          `> ${command}`,
-          "I don't understand that command."
-        ]);
+        // Check for profanity
+        if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> ${command}`,
+            "Such language in a high-class establishment like this!"
+          ]);
+        } else {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> ${command}`,
+            "I don't understand that command."
+          ]);
+        }
         break;
     }
   };
@@ -474,6 +586,157 @@ function GameInterface() {
         ...prevLog,
         `> move ${item}`,
         `You can't move that.`
+      ]);
+    }
+  };
+
+  // Add new handler functions
+  const handleTakeAll = () => {
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    const roomItems = Object.entries(gameState.itemsInWorld)
+      .filter(([item, location]) => location === gameState.currentRoom)
+      .map(([item]) => item);
+
+    if (roomItems.length === 0) {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        "> take all",
+        "There is nothing here to take."
+      ]);
+      return;
+    }
+
+    const takenItems = [];
+    roomItems.forEach(item => {
+      setGameState((prevState) => ({
+        ...prevState,
+        inventory: [...prevState.inventory, item],
+        itemsInWorld: { ...prevState.itemsInWorld, [item]: null }
+      }));
+      takenItems.push(item);
+    });
+
+    setGameLog((prevLog) => [
+      ...prevLog,
+      "> take all",
+      `Taken: ${takenItems.join(", ")}`
+    ]);
+  };
+
+  const handlePut = (item, container) => {
+    if (!gameState.inventory.includes(item)) {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> put ${item} in ${container}`,
+        `You don't have the ${item}.`
+      ]);
+      return;
+    }
+    setGameLog((prevLog) => [
+      ...prevLog,
+      `> put ${item} in ${container}`,
+      `You can't put the ${item} in the ${container}.`
+    ]);
+  };
+
+  const handleOut = () => {
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    if (currentRoom.actions["exit"]) {
+      handleEnter("exit");
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        "> out",
+        "You can't go out here."
+      ]);
+    }
+  };
+
+  const handleClose = (target) => {
+    setGameLog((prevLog) => [
+      ...prevLog,
+      `> close ${target}`,
+      `You can't close that.`
+    ]);
+  };
+
+  const handleScore = () => {
+    setGameLog((prevLog) => [
+      ...prevLog,
+      "> score",
+      `Your score is ${gameSettings.score} points in ${gameState.inventory.length} moves.`,
+      "This gives you the rank of Beginner."
+    ]);
+  };
+
+  const handleDiagnose = () => {
+    setGameLog((prevLog) => [
+      ...prevLog,
+      "> diagnose",
+      "You are in perfect health.",
+      "You are wide awake.",
+      "You are not hungry."
+    ]);
+  };
+
+  const handleVerbose = () => {
+    setGameSettings(prev => ({
+      ...prev,
+      verbose: true,
+      brief: false,
+      superbrief: false
+    }));
+    setGameLog((prevLog) => [
+      ...prevLog,
+      "> verbose",
+      "Maximum verbosity."
+    ]);
+  };
+
+  const handleBrief = () => {
+    setGameSettings(prev => ({
+      ...prev,
+      verbose: false,
+      brief: true,
+      superbrief: false
+    }));
+    setGameLog((prevLog) => [
+      ...prevLog,
+      "> brief",
+      "Brief descriptions."
+    ]);
+  };
+
+  const handleSuperbrief = () => {
+    setGameSettings(prev => ({
+      ...prev,
+      verbose: false,
+      brief: false,
+      superbrief: true
+    }));
+    setGameLog((prevLog) => [
+      ...prevLog,
+      "> superbrief",
+      "Superbrief descriptions."
+    ]);
+  };
+
+  const handleQuit = () => {
+    setGameLog((prevLog) => [
+      ...prevLog,
+      "> quit",
+      "Thanks for playing! Refresh the page to start a new game."
+    ]);
+  };
+
+  const handleRepeatLastCommand = () => {
+    if (gameSettings.lastCommand) {
+      processCommand(gameSettings.lastCommand);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        "> g",
+        "No command to repeat."
       ]);
     }
   };

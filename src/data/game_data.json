@@ -363,19 +363,19 @@
         "east west passage": {
             "description": "This is a long east-west passage. There is a tight crawl to the north.",
             "actions": {
-                "go north": "cellar",
                 "go east": "round room",
-                "go west": "chasm"
+                "go west": "troll room",
+                "go up": "chasm"
             },
             "items": []
         },
         "round room": {
-            "description": "This is a circular room with passages in all directions.",
+            "description": "This is a circular room with passages in almost all directions.",
             "actions": {
-                "go north": "gas room",
-                "go south": "engravings cave",
-                "go east": "deep canyon",
-                "go west": "east west passage"
+                "go north": "north south passage",
+                "go south": "narrow passage",
+                "go east": "loud room",
+                "go south east": "engravings cave"
             },
             "items": []
         },
