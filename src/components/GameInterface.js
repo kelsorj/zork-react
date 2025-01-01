@@ -157,6 +157,27 @@ function GameInterface() {
       case "read":
         handleRead(target);
         break;
+      case "climb":
+        const currentRoom = gameData.rooms[gameState.currentRoom];
+        if (target === "tree" && currentRoom.actions["climb tree"]) {
+          const nextRoom = currentRoom.actions["climb tree"];
+          setGameState(prevState => ({
+            ...prevState,
+            currentRoom: nextRoom
+          }));
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> climb tree`,
+            getBasicRoomDescription(nextRoom)
+          ]);
+        } else {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> climb ${target}`,
+            "You can't climb that."
+          ]);
+        }
+        break;
       case "open":
         if (target === "trapdoor" && gameState.currentRoom === "living room") {
           if (!gameState.rugMoved) {

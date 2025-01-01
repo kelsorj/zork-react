@@ -16,8 +16,10 @@
                 "go west": "forest1",
                 "go east": "forest2",
                 "go northwest": "grating clearing",
-                "climb tree": "tree",
-                "up": "tree"
+                "climb": "tree top",
+                "climb tree": "tree top",
+                "go up": "tree top",
+                "up": "tree top"
             },
             "items": []
         },
@@ -645,22 +647,12 @@
                 }
             }
         },
-        "large tree": {
-            "description": "You are at the base of a large tree. Its branches look climbable.",
-            "actions": {
-                "go up": "tree top",
-                "climb tree": "tree top",
-                "climb up": "tree top",
-                "go south": "forest path",
-                "go east": "clearing"
-            },
-            "items": []
-        },
         "tree top": {
             "description": "You are in the top of the large tree. There is a bird's nest here.",
             "actions": {
-                "go down": "large tree",
-                "climb down": "large tree",
+                "go down": "path",
+                "climb down": "path",
+                "down": "path",
                 "wind canary": {
                     "requires": ["jeweled egg"],
                     "message": "You wind up the mechanical canary and carefully remove it from the jeweled egg. Now you have both a beautiful mechanical canary and an exquisite jeweled egg!"
