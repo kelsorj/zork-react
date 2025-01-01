@@ -5,20 +5,13 @@ import "./GameInterface.css";
 function GameInterface() {
   const [gameLog, setGameLog] = useState([]);
   const [input, setInput] = useState("");
-  const [gameState, setGameState] = useState(() => {
-    // Try to load saved game on initial load
-    const savedGame = localStorage.getItem('zorkSaveGame');
-    if (savedGame) {
-      return JSON.parse(savedGame);
-    }
-    // Initialize with the default game state
-    return {
-      currentRoom: gameData.state.currentRoom,
-      inventory: [],
-      itemsInWorld: { ...gameData.state.itemsInWorld },  // Make a copy to ensure we get all items
-      lockedDoors: [...gameData.state.lockedDoors],
-      rugMoved: false
-    };
+  const [gameState, setGameState] = useState({
+    currentRoom: "west of house",
+    inventory: [],
+    itemsInWorld: gameData.state.itemsInWorld,
+    containerContents: gameData.state.containerContents,
+    roomStates: {},
+    trophyItems: gameData.state.trophyItems
   });
   const logRef = useRef(null);
 
@@ -947,7 +940,10 @@ function GameInterface() {
     }
 
     if (container === "case") {
-      if (gameState.trophyItems?.includes(fullItemName)) {
+      // Check if the item is in the trophy items list
+      const isTrophy = gameState.trophyItems?.includes(fullItemName);
+      
+      if (isTrophy) {
         setGameState(prevState => ({
           ...prevState,
           inventory: prevState.inventory.filter(i => i !== fullItemName),
