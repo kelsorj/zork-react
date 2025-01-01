@@ -184,6 +184,34 @@ function GameInterface() {
             "The window is already slightly open."
           ]);
           return;
+        } else if (target === "sack") {
+          if (gameState.inventory.includes("sack") || gameState.itemsInWorld["sack"] === gameState.currentRoom) {
+            const sackContents = gameState.containerContents["sack"] || [];
+            if (sackContents.length > 0) {
+              setGameState(prevState => ({
+                ...prevState,
+                itemsInWorld: {
+                  ...prevState.itemsInWorld,
+                  ...sackContents.reduce((acc, item) => ({
+                    ...acc,
+                    [item]: gameState.currentRoom
+                  }), {})
+                }
+              }));
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> open ${target}`,
+                `Opening the sack reveals: ${sackContents.join(", ")}`
+              ]);
+            } else {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> open ${target}`,
+                "The sack is empty."
+              ]);
+            }
+            return;
+          }
         } else if (target === "coffin" && gameState.currentRoom === "canyon bottom") {
           if (!gameState.itemsInWorld["coffin"] === "canyon bottom") {
             setGameLog((prevLog) => [
@@ -252,120 +280,6 @@ function GameInterface() {
         break;
       case "move":
         handleMove(target);
-        break;
-      case "put":
-        const [putItem, preposition, container] = target.split(" ");
-        handlePut(putItem, container);
-        break;
-      case "turn":
-        if (target.includes(" with ")) {
-          const parts = target.split(" with ");
-          const item = parts[0].trim();
-          const tool = parts[1].trim();
-          handleTurn(item, tool);
-        } else if (target.startsWith("on ")) {
-          handleTurnOn(target.substring(3));
-        } else if (target.startsWith("off ")) {
-          handleTurnOff(target.substring(4));
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> turn ${target}`,
-            "What do you want to turn it with?"
-          ]);
-        }
-        break;
-      case "light":
-        if (target.includes(" with ")) {
-          const [item, _, source] = target.split(" with ");
-          handleLight(item, source);
-        }
-        break;
-      case "ring":
-        handleRing(target);
-        break;
-      case "attack":
-      case "kill":
-        const [creature, withWord, weapon] = target.split(" ");
-        handleAttack(creature, weapon);
-        break;
-      case "throw":
-        const [throwItem, atWord, location] = target.split(" ");
-        handleThrow(throwItem, location);
-        break;
-      case "save":
-        handleSave();
-        break;
-      case "restore":
-      case "load":
-        handleLoad();
-        break;
-      case "restart":
-        handleRestart();
-        break;
-      case "quit":
-      case "q":
-        handleQuit();
-        break;
-      case "score":
-        handleScore();
-        break;
-      case "diagnose":
-        handleDiagnose();
-        break;
-      case "verbose":
-        handleVerbose();
-        break;
-      case "brief":
-        handleBrief();
-        break;
-      case "superbrief":
-        handleSuperbrief();
-        break;
-      case "pray":
-        handlePray();
-        break;
-      case "eat":
-        handleEat(target);
-        break;
-      case "drink":
-        handleDrink(target);
-        break;
-      case "smell":
-        handleSmell(target);
-        break;
-      case "listen":
-        handleListen(target);
-        break;
-      case "jump":
-        setGameLog((prevLog) => [...prevLog, "> jump", "Are you proud of yourself?"]);
-        break;
-      case "hello":
-      case "hi":
-        setGameLog((prevLog) => [...prevLog, `> ${action}`, "Hello."]);
-        break;
-      case "zork":
-        setGameLog((prevLog) => [...prevLog, "> zork", "At your service!"]);
-        break;
-      case "g":
-        handleRepeatLastCommand();
-        break;
-      case "climb":
-        handleClimb();
-        break;
-      case "tie":
-        const tieWords = target.split(" to ");
-        handleTie(tieWords[0], tieWords[1]);
-        break;
-      case "wave":
-        handleWave(target);
-        break;
-      case "push":
-      case "press":
-        handlePush(target);
-        break;
-      case "rub":
-        handleRub(target);
         break;
       case "put":
         if (target.startsWith("out ")) {
@@ -1391,7 +1305,7 @@ function GameInterface() {
   };
 
   const handlePutOut = (item) => {
-    if (item === "candles" && gameState.currentRoom === "mirror room south") {
+    if (item === "candles" && gameState.inventory.includes("candles") && gameState.currentRoom === "mirror room south") {
       setGameState(prevState => ({
         ...prevState,
         roomStates: {
