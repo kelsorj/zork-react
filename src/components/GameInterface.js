@@ -924,62 +924,55 @@ function GameInterface() {
   };
 
   const handlePut = (item, container) => {
-    if (!gameState.inventory.includes(item)) {
+    // Handle special cases for items with spaces
+    if (item === "pot" && container === "gold") {
       setGameLog((prevLog) => [
         ...prevLog,
         `> put ${item} in ${container}`,
-        `You don't have the ${item}.`
+        "Did you mean 'put pot of gold in case'?"
       ]);
       return;
     }
 
-    if (container === "case" && gameState.currentRoom === "living room") {
-      // Check if it's a trophy item
-      if (gameData.state.trophyItems.includes(item)) {
+    // Convert "pot of gold" variations to the full item name
+    const fullItemName = item === "pot" || item === "gold" ? "pot of gold" : item;
+
+    if (!gameState.inventory.includes(fullItemName)) {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> put ${item} in ${container}`,
+        `You don't have the ${fullItemName}.`
+      ]);
+      return;
+    }
+
+    if (container === "case") {
+      if (gameState.trophyItems.includes(fullItemName)) {
         setGameState(prevState => ({
           ...prevState,
-          inventory: prevState.inventory.filter(i => i !== item),
-          itemsInWorld: { ...prevState.itemsInWorld, [item]: "case" }
+          inventory: prevState.inventory.filter(i => i !== fullItemName),
+          containerContents: {
+            ...prevState.containerContents,
+            case: [...(prevState.containerContents.case || []), fullItemName]
+          }
         }));
-
-        // Add points for putting the treasure in the case
-        const points = gameData.state.treasurePoints[item].case;
-        setGameSettings(prev => ({
-          ...prev,
-          score: prev.score + points
-        }));
-
-        let message = `You put the ${item} in the trophy case.`;
-        
-        // Check if this was the last trophy
-        const itemsInCase = Object.entries(gameState.itemsInWorld)
-          .filter(([item, location]) => location === "case")
-          .map(([item]) => item);
-          
-        if (itemsInCase.length === gameData.state.trophyItems.length - 1) {
-          message += "\n\nCongratulations! You have collected all the treasures and won the game!\n" +
-                    "Your score is 350 points out of 350 (175 for finding treasures, 175 for putting them in the case).\n" +
-                    "This gives you the rank of Master Adventurer.\n\n" +
-                    "Would you like to continue exploring the Great Underground Empire?";
-        }
-
         setGameLog((prevLog) => [
           ...prevLog,
           `> put ${item} in ${container}`,
-          message
+          `You put the ${fullItemName} in the trophy case.`
         ]);
       } else {
         setGameLog((prevLog) => [
           ...prevLog,
           `> put ${item} in ${container}`,
-          `The ${item} isn't valuable enough to go in the trophy case.`
+          `The ${fullItemName} isn't a treasure.`
         ]);
       }
     } else {
       setGameLog((prevLog) => [
         ...prevLog,
         `> put ${item} in ${container}`,
-        `You can't put the ${item} in the ${container}.`
+        `You can't put anything in the ${container}.`
       ]);
     }
   };
