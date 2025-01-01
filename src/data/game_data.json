@@ -169,7 +169,7 @@
                 "go west": "studio",
                 "go east": "east of chasm"
             },
-            "items": ["painting"]
+            "items": ["portrait"]
         },
         "studio": {
             "description": "This appears to be the studio of a painter, but it has been neglected for years. Paint drippings cover everything, and several early attempts at painting have been left on easels to gather dust. A dark and narrow chimney leads up. A doorway leads south.",
@@ -793,7 +793,7 @@
             "coal": "dead end",
             "pick": "mine",
             "machine parts": "machine room",
-            "painting": "gallery",
+            "portrait": "gallery",
             "easel": "studio",
             "paintbrush": "studio",
             "axe": "troll room",
@@ -814,7 +814,8 @@
             "jeweled egg": "tree top",
             "bag of coins": "adventurers remains",
             "key": "adventurers remains",
-            "bauble": null
+            "bauble": null,
+            "portrait": "gallery"
         },
         "lockedDoors": [
             "house-door",
@@ -861,7 +862,8 @@
             "bag of coins": "This is a heavy bag of ancient coins.",
             "key": "This is an ornate brass key.",
             "chalice": "This is an exquisite silver chalice.",
-            "bauble": "This is a beautiful golden bauble dropped by the mechanical canary."
+            "bauble": "This is a beautiful golden bauble dropped by the mechanical canary.",
+            "portrait": "This is a beautiful portrait prominently displayed."
         },
         "containerContents": {
             "sack": ["lunch", "garlic"],
@@ -879,7 +881,7 @@
         "trophyItems": [
             "jeweled egg",
             "canary",
-            "painting",
+            "portrait",
             "platinum bar",
             "torch",
             "coffin",
@@ -895,12 +897,13 @@
             "emerald",
             "chalice",
             "pot of gold",
-            "bauble"
+            "bauble",
+            "portrait"
         ],
         "treasurePoints": {
             "jeweled egg": {"take": 10, "case": 10},
             "canary": {"take": 10, "case": 10},
-            "painting": {"take": 10, "case": 10},
+            "portrait": {"take": 10, "case": 10},
             "platinum bar": {"take": 10, "case": 10},
             "torch": {"take": 14, "case": 14},
             "coffin": {"take": 15, "case": 15},
@@ -916,7 +919,8 @@
             "emerald": {"take": 10, "case": 10},
             "chalice": {"take": 10, "case": 10},
             "pot of gold": {"take": 15, "case": 15},
-            "bauble": {"take": 5, "case": 5}
+            "bauble": {"take": 5, "case": 5},
+            "portrait": {"take": 10, "case": 10}
         },
         "deathMessages": {
             "skeleton": "As you touch the skeleton, a deadly curse takes effect. You die instantly!\n\n*** You have died ***\n\nYou scored 0 out of a possible 350 points.\nWould you like to restart the game?"

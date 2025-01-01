@@ -507,6 +507,14 @@ function GameInterface() {
 
     // Special handling for trapdoor descent
     if (gameState.currentRoom === "living room" && direction === "down") {
+      if (!gameState.rugMoved) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> go ${direction}`,
+          "You can't go that way."
+        ]);
+        return;
+      }
       if (!gameState.trapdoorOpen) {
         setGameLog((prevLog) => [
           ...prevLog,
