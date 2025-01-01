@@ -102,6 +102,22 @@ function GameInterface() {
       return;
     }
 
+    // Secret cheat command
+    if (command.toLowerCase() === "show me the money") {
+      const allItems = Object.keys(gameData.state.itemsInWorld);
+      setGameState(prevState => ({
+        ...prevState,
+        inventory: allItems
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        "> show me the money",
+        "Cheat activated! All items added to inventory.",
+        "You are now carrying: " + allItems.join(", ")
+      ]);
+      return;
+    }
+
     // Split the command into words
     const words = command.toLowerCase().split(" ");
     const action = words[0];
