@@ -324,7 +324,268 @@
         "hades": {
             "description": "You are in Hades. Flames leap up from fiery pits, and demons dance in the shadows.",
             "actions": {
-                "go north": "entrance to hades"
+                "go north": "entrance to hades",
+                "go up": "entrance to hades"
+            },
+            "items": ["crystal skull"]
+        },
+        "mirror room south": {
+            "description": "You are in a large square room with tall ceilings. Huge mirrors line the walls, making it difficult to tell which are doors and which are mirrors.",
+            "actions": {
+                "go north": "deep canyon",
+                "go south": "cave",
+                "rub mirror": "As you rub the mirror, your surroundings shimmer and shift. You find yourself in a different mirror room!",
+                "put out candles": "You extinguish the candles."
+            },
+            "state": {
+                "candlesOut": false,
+                "mirrorRubbed": false
+            },
+            "items": []
+        },
+        "mirror room north": {
+            "description": "This mirror room looks almost identical to the one you were just in, but something feels different.",
+            "actions": {
+                "go north": "maze exit",
+                "go west": "twisty passage"
+            },
+            "items": []
+        },
+        "maze exit": {
+            "description": "You are at the exit of the maze. Passages lead in several directions.",
+            "actions": {
+                "go south": "mirror room north",
+                "go west": "narrow room",
+                "go north": "round room"
+            },
+            "items": []
+        },
+        "narrow room": {
+            "description": "This is a narrow room with passages leading east and west.",
+            "actions": {
+                "go east": "maze exit",
+                "go west": "squeaky room",
+                "go north": "bat room"
+            },
+            "items": []
+        },
+        "squeaky room": {
+            "description": "The floor boards squeak loudly with every step. A strong draft blows from the north.",
+            "actions": {
+                "go east": "narrow room",
+                "go north": "bat room"
+            },
+            "items": []
+        },
+        "bat room": {
+            "description": "This room is filled with sleeping bats hanging from the ceiling. You'd better not wake them!",
+            "actions": {
+                "go south": "squeaky room",
+                "go east": "shaft room"
+            },
+            "items": []
+        },
+        "shaft room": {
+            "description": "You are in a room with a deep shaft. A basket on a chain hangs here.",
+            "actions": {
+                "go west": "bat room",
+                "go north": "smelly room",
+                "put torch in basket": {
+                    "requires": ["torch"],
+                    "message": "You place the torch in the basket."
+                }
+            },
+            "state": {
+                "torchInBasket": false
+            },
+            "items": ["basket"]
+        },
+        "smelly room": {
+            "description": "This room has a peculiar odor, different from the gas room.",
+            "actions": {
+                "go south": "shaft room",
+                "go down": "gas room"
+            },
+            "items": []
+        },
+        "gas room": {
+            "description": "This is a gas-filled room. A strong chemical smell permeates the air.",
+            "actions": {
+                "go up": "smelly room"
+            },
+            "items": ["gas mask"]
+        },
+        "maze1": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go north": "maze1",
+                "go east": "troll room",
+                "go west": "maze4",
+                "go south": "maze2"
+            },
+            "items": []
+        },
+        "maze2": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go south": "maze1",
+                "go east": "maze3",
+                "go down": "maze3"
+            },
+            "items": []
+        },
+        "maze3": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go west": "maze2",
+                "go up": "maze5",
+                "go north": "maze4"
+            },
+            "items": []
+        },
+        "maze4": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go north": "maze1",
+                "go east": "maze16",
+                "go west": "maze3"
+            },
+            "items": []
+        },
+        "maze5": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go south west": "maze6",
+                "go east": "maze18",
+                "go north": "maze3"
+            },
+            "items": ["coins", "knife"]
+        },
+        "maze6": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go east": "maze7",
+                "go down": "maze5",
+                "go up": "maze9",
+                "go west": "maze6"
+            },
+            "items": []
+        },
+        "maze7": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go south": "maze15",
+                "go up": "maze14",
+                "go down": "maze16",
+                "go west": "maze6",
+                "go east": "maze8"
+            },
+            "items": []
+        },
+        "maze8": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go west": "maze8",
+                "go north east": "maze7",
+                "go south east": "maze17"
+            },
+            "items": []
+        },
+        "maze9": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go north": "maze6",
+                "go west": "maze12",
+                "go south": "maze13",
+                "go east": "maze10",
+                "go down": "maze11",
+                "go north west": "maze9"
+            },
+            "items": []
+        },
+        "maze10": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go up": "maze11",
+                "go east": "maze9",
+                "go west": "maze13"
+            },
+            "items": []
+        },
+        "maze11": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go down": "maze10",
+                "go south west": "maze12",
+                "go north west": "maze13",
+                "go north": "grating room"
+            },
+            "items": []
+        },
+        "maze12": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go up": "maze9",
+                "go south west": "maze11",
+                "go east": "maze13",
+                "go north": "maze19",
+                "go down": "maze5"
+            },
+            "items": []
+        },
+        "maze13": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go south": "maze10",
+                "go west": "maze11",
+                "go east": "maze9",
+                "go down": "maze12"
+            },
+            "items": []
+        },
+        "maze14": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go west": "maze15",
+                "go east": "maze14",
+                "go north east": "maze7"
+            },
+            "items": []
+        },
+        "maze15": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go south east": "cyclops room",
+                "go west": "maze14",
+                "go south": "maze7"
+            },
+            "items": []
+        },
+        "maze16": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go south": "maze4"
+            },
+            "items": []
+        },
+        "maze17": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go north": "maze8"
+            },
+            "items": []
+        },
+        "maze18": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go west": "maze5"
+            },
+            "items": []
+        },
+        "maze19": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go south": "maze12"
             },
             "items": []
         }
@@ -373,7 +634,11 @@
             "axe": "troll room",
             "coffin": "egyptian room",
             "sceptre": "egyptian room",
-            "matches": "dam lobby"
+            "matches": "dam lobby",
+            "crystal skull": "hades",
+            "gas mask": "gas room",
+            "coins": "maze5",
+            "knife": "maze5"
         },
         "lockedDoors": [
             "house-door",
@@ -398,7 +663,11 @@
             "candles": "These are ceremonial black candles.",
             "coffin": "This is an elaborately decorated stone sarcophagus, covered in hieroglyphs.",
             "sceptre": "This is a beautiful golden sceptre, encrusted with precious gems.",
-            "matches": "These are waterproof matches."
+            "matches": "These are waterproof matches.",
+            "crystal skull": "This is an exquisitely carved crystal skull, perfectly transparent.",
+            "gas mask": "This is a standard-issue gas mask, it should protect you from toxic fumes.",
+            "coins": "These are ancient coins, possibly valuable to collectors.",
+            "knife": "This is a sharp knife, useful for cutting things."
         },
         "containerContents": {
             "sack": ["lunch", "garlic"],

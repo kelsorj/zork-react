@@ -289,6 +289,42 @@ function GameInterface() {
       case "press":
         handlePush(target);
         break;
+      case "rub":
+        handleRub(target);
+        break;
+      case "put":
+        if (target.startsWith("out ")) {
+          handlePutOut(target.substring(4));
+        } else if (target.includes(" in ")) {
+          const [putItem, preposition, container] = target.split(" in ");
+          if (putItem === "torch" && container === "basket" && gameState.currentRoom === "shaft room") {
+            if (gameState.inventory.includes("torch")) {
+              setGameState(prevState => ({
+                ...prevState,
+                inventory: prevState.inventory.filter(i => i !== "torch"),
+                itemsInWorld: { ...prevState.itemsInWorld, torch: "basket" },
+                roomStates: {
+                  ...prevState.roomStates,
+                  "shaft room": { torchInBasket: true }
+                }
+              }));
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> put torch in basket`,
+                "You place the torch in the basket."
+              ]);
+            } else {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> put torch in basket`,
+                "You don't have the torch."
+              ]);
+            }
+          } else {
+            handlePut(putItem, container);
+          }
+        }
+        break;
       default:
         // Check for profanity
         if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
@@ -1150,6 +1186,72 @@ function GameInterface() {
           `You can't ring that.`
         ]);
       }
+    }
+  };
+
+  const handleRub = (item) => {
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    
+    if (item === "mirror" && gameState.currentRoom === "mirror room south") {
+      if (!gameState.roomStates?.["mirror room south"]?.candlesOut) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> rub ${item}`,
+          "Nothing happens. The candles need to be extinguished first."
+        ]);
+        return;
+      }
+      
+      setGameState(prevState => ({
+        ...prevState,
+        currentRoom: "mirror room north",
+        roomStates: {
+          ...prevState.roomStates,
+          "mirror room south": { 
+            ...prevState.roomStates?.["mirror room south"],
+            mirrorRubbed: true 
+          }
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> rub ${item}`,
+        "As you rub the mirror, your surroundings shimmer and shift. You find yourself in a different mirror room!",
+        "",
+        getBasicRoomDescription("mirror room north")
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> rub ${item}`,
+        `Rubbing the ${item} has no effect.`
+      ]);
+    }
+  };
+
+  const handlePutOut = (item) => {
+    if (item === "candles" && gameState.currentRoom === "mirror room south") {
+      setGameState(prevState => ({
+        ...prevState,
+        roomStates: {
+          ...prevState.roomStates,
+          "mirror room south": { 
+            ...prevState.roomStates?.["mirror room south"],
+            candlesOut: true 
+          }
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> put out ${item}`,
+        "You extinguish the candles."
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> put out ${item}`,
+        `You can't put that out.`
+      ]);
     }
   };
 
