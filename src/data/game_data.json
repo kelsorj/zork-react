@@ -127,6 +127,7 @@
             "description": "You are at the west side of the white house. There is a small mailbox here.",
             "actions": {
                 "go north": "north of house",
+                "go south": "south of house",
                 "go southwest": "stone barrow",
                 "open mailbox": "Opening the mailbox reveals a leaflet."
             },
