@@ -15,7 +15,8 @@ function GameInterface() {
       currentRoom: gameData.state.currentRoom,
       inventory: [],
       itemsInWorld: gameData.state.itemsInWorld,
-      lockedDoors: gameData.state.lockedDoors
+      lockedDoors: gameData.state.lockedDoors,
+      rugMoved: false
     };
   });
   const logRef = useRef(null);
@@ -33,6 +34,12 @@ function GameInterface() {
       .map(([item]) => item);
 
     let description = room.description;
+    
+    // If in living room and rug is moved, add trapdoor to description
+    if (roomId === "living room" && gameState.rugMoved) {
+      description = description.replace("A beautiful oriental rug lies in the center.", "A trapdoor is visible in the floor.");
+    }
+    
     if (roomItems.length > 0) {
       description += "\n\nYou can see: " + roomItems.join(", ") + " here.";
     }
@@ -77,7 +84,6 @@ function GameInterface() {
 
     // Handle directional shortcuts
     if (["north", "south", "east", "west", "up", "down", "n", "s", "e", "w", "u", "d"].includes(action)) {
-      // Convert shortcuts to full directions
       const directionMap = {
         'n': 'north',
         's': 'south',
@@ -141,6 +147,9 @@ function GameInterface() {
         break;
       case "restart":
         handleRestart();
+        break;
+      case "move":
+        handleMove(target);
         break;
       default:
         setGameLog((prevLog) => [
@@ -405,7 +414,8 @@ function GameInterface() {
       currentRoom: initialRoom,
       inventory: [],
       itemsInWorld: gameData.state.itemsInWorld,
-      lockedDoors: gameData.state.lockedDoors
+      lockedDoors: gameData.state.lockedDoors,
+      rugMoved: false
     });
     setGameLog((prevLog) => [
       ...prevLog,
@@ -430,6 +440,7 @@ function GameInterface() {
       "- north (n), south (s), east (e), west (w), up (u), down (d): Move in that direction",
       "- take/get [item]: Pick up an item",
       "- drop [item]: Drop an item from your inventory",
+      "- move [item]: Move an item to reveal what's underneath",
       "- inventory (i): Check your inventory",
       "- examine (x) [item]: Look at an item closely",
       "- open [object]: Open something",
@@ -439,6 +450,32 @@ function GameInterface() {
       "- restart: Start a new game",
       "- help: Show this help message"
     ]);
+  };
+
+  const handleMove = (item) => {
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    const moveAction = currentRoom.actions[`move ${item}`];
+    
+    if (moveAction) {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> move ${item}`,
+        moveAction
+      ]);
+      // If it's the rug, update the room description to show the trapdoor
+      if (item === "rug" && gameState.currentRoom === "living room") {
+        setGameState(prevState => ({
+          ...prevState,
+          rugMoved: true
+        }));
+      }
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> move ${item}`,
+        `You can't move that.`
+      ]);
+    }
   };
 
   return (

@@ -3,22 +3,59 @@
     src: url('https://cdn.jsdelivr.net/npm/apple2-font/dist/Apple2.woff2') format('woff2');
 }
 
-.game-interface {
+body {
+    margin: 0;
+    padding: 0;
     background-color: #000000;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
     min-height: 100vh;
-    padding: 20px;
+}
+
+.game-interface {
+    position: relative;
+    width: 800px;
+    min-height: 100vh;
+    margin: 0 auto;
     font-family: 'Apple2', monospace;
     color: #33ff33;
     text-shadow: 0 0 5px #33ff33;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    background-color: #000000;
+}
+
+/* Add fixed green borders */
+.game-interface::before,
+.game-interface::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #33ff33;
+    box-shadow: 0 0 5px #33ff33;
+}
+
+.game-interface::before {
+    left: -2px;
+}
+
+.game-interface::after {
+    right: -2px;
 }
 
 .game-log {
     text-align: left;
     white-space: pre-wrap;
     margin-bottom: 20px;
-    padding: 20px;
+    padding: 20px 40px;
     overflow-y: auto;
+    overflow-x: hidden;
     max-height: 80vh;
+    flex-grow: 1;
 }
 
 .game-log p {
@@ -30,7 +67,7 @@
 
 form {
     display: flex;
-    gap: 10px;
+    padding: 0 40px 20px 40px;
 }
 
 input {
@@ -41,25 +78,11 @@ input {
     font-family: 'Apple2', monospace;
     font-size: 16px;
     padding: 5px 10px;
+    box-shadow: 0 0 5px #33ff33;
 }
 
 input::placeholder {
     color: #1a661a;
-}
-
-button {
-    background-color: #000000;
-    border: 1px solid #33ff33;
-    color: #33ff33;
-    font-family: 'Apple2', monospace;
-    font-size: 16px;
-    padding: 5px 15px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #33ff33;
-    color: #000000;
 }
 
 /* Hide scrollbar but keep functionality */
