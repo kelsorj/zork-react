@@ -263,7 +263,8 @@
             "actions": {
                 "go west": "round room",
                 "go east": "deep canyon",
-                "go up": "engravings cave"
+                "go up": "engravings cave",
+                "echo": "The acoustics of the room cause your voice to echo and reverberate. As the sound dies away, you notice a platinum bar has appeared!"
             },
             "items": ["platinum bar"]
         },
@@ -655,7 +656,14 @@
             "description": "You are in the top of the large tree. There is a bird's nest here.",
             "actions": {
                 "go down": "large tree",
-                "climb down": "large tree"
+                "climb down": "large tree",
+                "wind canary": {
+                    "requires": ["jeweled egg"],
+                    "message": "You wind up the mechanical canary. It chirps a beautiful melody and drops something shiny!"
+                }
+            },
+            "state": {
+                "canaryWound": false
             },
             "items": ["jeweled egg", "nest"]
         },
@@ -672,7 +680,92 @@
             "description": "This is the lair of the cyclops. The walls are decorated with human bones.",
             "actions": {
                 "go northwest": "maze15",
-                "go east": "strange passage"
+                "go east": "strange passage",
+                "go up": "treasure room",
+                "ulysses": "At the sound of his ancient enemy's name, the cyclops flees in terror, smashing through the wall to the living room!",
+                "odysseus": "At the sound of his ancient enemy's name, the cyclops flees in terror, smashing through the wall to the living room!",
+                "give food": {
+                    "requires": ["lunch", "water"],
+                    "message": "The cyclops accepts the food and water, then falls into a deep sleep."
+                }
+            },
+            "state": {
+                "cyclopsFled": false,
+                "cyclopsSleeping": false
+            },
+            "items": []
+        },
+        "treasure room": {
+            "description": "This is a large room filled with treasures. A suspicious-looking thief lurks in the shadows.",
+            "actions": {
+                "go down": "cyclops room",
+                "give egg to thief": {
+                    "requires": ["jeweled egg"],
+                    "message": "The thief examines the egg carefully and pockets it with a grin."
+                },
+                "kill thief with knife": {
+                    "requires": ["knife"],
+                    "message": "You catch the thief off guard! After a brief struggle, he falls to the ground, dropping his loot."
+                }
+            },
+            "state": {
+                "thiefAlive": true,
+                "thiefHasEgg": false
+            },
+            "items": ["chalice", "stolen items"]
+        },
+        "grating room": {
+            "description": "You are in a small room with a metal grating in the ceiling. A pile of leaves has fallen through.",
+            "actions": {
+                "go south": "maze11",
+                "go up": {
+                    "requires": ["grateUnlocked"],
+                    "destination": "forest clearing",
+                    "message": "You climb up through the grating into the forest."
+                },
+                "unlock grate": {
+                    "requires": ["key"],
+                    "message": "You unlock the grating with the brass key."
+                },
+                "open grate": {
+                    "requires": ["grateUnlocked"],
+                    "message": "You open the grating. Some leaves fall in from above."
+                }
+            },
+            "state": {
+                "grateUnlocked": false,
+                "grateOpen": false
+            },
+            "items": ["leaves"]
+        },
+        "forest clearing": {
+            "description": "You are in a clearing in the forest. A metal grating is set into the ground here.",
+            "actions": {
+                "go south": "large tree",
+                "go down": "grating room"
+            },
+            "items": []
+        },
+        "tree top": {
+            "description": "You are in the top of the large tree. There is a bird's nest here.",
+            "actions": {
+                "go down": "large tree",
+                "climb down": "large tree",
+                "wind canary": {
+                    "requires": ["jeweled egg"],
+                    "message": "You wind up the mechanical canary. It chirps a beautiful melody and drops something shiny!"
+                }
+            },
+            "state": {
+                "canaryWound": false
+            },
+            "items": ["jeweled egg", "nest"]
+        },
+        "stone barrow": {
+            "description": "You are in an ancient stone barrow. Strange runes are carved into the walls. A dark passage leads downward into the earth.",
+            "actions": {
+                "go northeast": "west of house",
+                "go down": "You have completed Zork I! The passage leads to Zork II..."
             },
             "items": []
         }
@@ -739,7 +832,9 @@
             "buoy": "in boat",
             "jeweled egg": "tree top",
             "bag of coins": "adventurers remains",
-            "key": "adventurers remains"
+            "key": "adventurers remains",
+            "chalice": "treasure room",
+            "bauble": null
         },
         "lockedDoors": [
             "house-door",
@@ -784,7 +879,9 @@
             "buoy": "This is a navigation buoy. It looks like it might open.",
             "jeweled egg": "This is a beautiful egg, encrusted with precious jewels.",
             "bag of coins": "This is a heavy bag of ancient coins.",
-            "key": "This is an ornate brass key."
+            "key": "This is an ornate brass key.",
+            "chalice": "This is an exquisite silver chalice.",
+            "bauble": "This is a beautiful golden bauble dropped by the mechanical canary."
         },
         "containerContents": {
             "sack": ["lunch", "garlic"],
@@ -802,7 +899,9 @@
         "trophyItems": ["platinum bar", "jewels", "chalice", "egg", "sceptre", "coffin", "torch", "jade figurine", "diamond"],
         "deathMessages": {
             "skeleton": "As you touch the skeleton, a deadly curse takes effect. You die instantly!\n\n*** You have died ***\n\nYou scored 0 out of a possible 350 points.\nWould you like to restart the game?"
-        }
+        },
+        "stolenItems": [],
+        "thiefInventory": []
     },
     "commands": {
         "go": {

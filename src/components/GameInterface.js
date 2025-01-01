@@ -352,6 +352,65 @@ function GameInterface() {
       case "touch":
         handleTouch(target);
         break;
+      case "wind":
+        handleWind(target);
+        break;
+      case "give":
+        const [giveItem, toWord, giveTarget] = target.split(" to ");
+        handleGive(giveItem, giveTarget);
+        break;
+      case "kill":
+        const [killTarget, killWithWord, killWeapon] = target.split(" with ");
+        handleKill(killTarget, killWeapon);
+        break;
+      case "ulysses":
+      case "odysseus":
+        if (gameState.currentRoom === "cyclops room") {
+          setGameState(prevState => ({
+            ...prevState,
+            roomStates: {
+              ...prevState.roomStates,
+              "cyclops room": { 
+                ...prevState.roomStates?.["cyclops room"],
+                cyclopsFled: true 
+              }
+            }
+          }));
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> ${action}`,
+            "At the sound of his ancient enemy's name, the cyclops flees in terror, smashing through the wall to the living room!"
+          ]);
+        } else {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> ${action}`,
+            "Nothing happens."
+          ]);
+        }
+        break;
+      case "echo":
+        if (gameState.currentRoom === "loud room") {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            "> echo",
+            "The acoustics of the room cause your voice to echo and reverberate. As the sound dies away, you notice a platinum bar has appeared!"
+          ]);
+          setGameState(prevState => ({
+            ...prevState,
+            itemsInWorld: {
+              ...prevState.itemsInWorld,
+              "platinum bar": "loud room"
+            }
+          }));
+        } else {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            "> echo",
+            "Your voice echoes slightly."
+          ]);
+        }
+        break;
       default:
         // Check for profanity
         if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
@@ -1780,6 +1839,148 @@ function GameInterface() {
       `> touch skeleton`,
       deathMessage
     ]);
+  };
+
+  const handleWind = (item) => {
+    if (item === "canary" && gameState.currentRoom === "tree top") {
+      if (!gameState.inventory.includes("jeweled egg")) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> wind canary`,
+          "You don't have the jeweled egg."
+        ]);
+        return;
+      }
+
+      setGameState(prevState => ({
+        ...prevState,
+        inventory: [
+          ...prevState.inventory.filter(i => i !== "jeweled egg"),
+          "canary",
+          "egg"
+        ],
+        roomStates: {
+          ...prevState.roomStates,
+          "tree top": { canaryWound: true }
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> wind canary`,
+        "You wind up the mechanical canary and carefully remove it from the jeweled egg. Now you have both a beautiful mechanical canary and an exquisite jeweled egg!"
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> wind ${item}`,
+        "You can't wind that up."
+      ]);
+    }
+  };
+
+  const handleGive = (item, target) => {
+    if (!gameState.inventory.includes(item)) {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> give ${item} to ${target}`,
+        `You don't have the ${item}.`
+      ]);
+      return;
+    }
+
+    if (target === "thief" && item === "jeweled egg" && gameState.currentRoom === "treasure room") {
+      setGameState(prevState => ({
+        ...prevState,
+        inventory: prevState.inventory.filter(i => i !== "jeweled egg"),
+        thiefInventory: [...(prevState.thiefInventory || []), "jeweled egg"],
+        roomStates: {
+          ...prevState.roomStates,
+          "treasure room": { 
+            ...prevState.roomStates?.["treasure room"],
+            thiefHasEgg: true 
+          }
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> give ${item} to ${target}`,
+        "The thief examines the egg carefully and pockets it with a grin."
+      ]);
+    } else if (target === "cyclops" && (item === "lunch" || item === "water") && 
+               gameState.currentRoom === "cyclops room") {
+      if (gameState.inventory.includes("lunch") && gameState.inventory.includes("water")) {
+        setGameState(prevState => ({
+          ...prevState,
+          inventory: prevState.inventory.filter(i => i !== "lunch" && i !== "water"),
+          roomStates: {
+            ...prevState.roomStates,
+            "cyclops room": { 
+              ...prevState.roomStates?.["cyclops room"],
+              cyclopsSleeping: true 
+            }
+          }
+        }));
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> give food to cyclops`,
+          "The cyclops accepts the food and water, then falls into a deep sleep."
+        ]);
+      } else {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> give food to cyclops`,
+          "You need both food and water to satisfy the cyclops."
+        ]);
+      }
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> give ${item} to ${target}`,
+        "That wouldn't be useful."
+      ]);
+    }
+  };
+
+  const handleKill = (target, weapon) => {
+    if (target === "thief" && weapon === "knife" && gameState.currentRoom === "treasure room") {
+      if (!gameState.inventory.includes("knife")) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> kill thief with knife`,
+          "You don't have the knife."
+        ]);
+        return;
+      }
+
+      setGameState(prevState => ({
+        ...prevState,
+        roomStates: {
+          ...prevState.roomStates,
+          "treasure room": { 
+            ...prevState.roomStates?.["treasure room"],
+            thiefAlive: false 
+          }
+        },
+        itemsInWorld: {
+          ...prevState.itemsInWorld,
+          ...(prevState.thiefInventory || []).reduce((acc, item) => ({
+            ...acc,
+            [item]: "treasure room"
+          }), {})
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> kill thief with knife`,
+        "You catch the thief off guard! After a brief struggle, he falls to the ground, dropping his loot."
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> kill ${target} with ${weapon}`,
+        "Violence isn't the answer to this one."
+      ]);
+    }
   };
 
   return (
