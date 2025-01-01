@@ -884,13 +884,13 @@ function GameInterface() {
         }));
       }
       // If it's the leaves, update the room state to show the grating
-      else if (item === "leaves" && gameState.currentRoom === "forest clearing") {
+      else if (item === "leaves" && gameState.currentRoom === "grating clearing") {
         setGameState(prevState => ({
           ...prevState,
           roomStates: {
             ...prevState.roomStates,
-            "forest clearing": {
-              ...prevState.roomStates?.["forest clearing"],
+            "grating clearing": {
+              ...prevState.roomStates?.["grating clearing"],
               gratingRevealed: true
             }
           }
