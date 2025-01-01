@@ -44,6 +44,11 @@ function GameInterface() {
       description = description.replace("A beautiful oriental rug lies in the center.", "A trapdoor is visible in the floor.");
     }
     
+    // If in forest clearing and leaves are moved, update description
+    if (roomId === "forest clearing" && gameState.roomStates?.["forest clearing"]?.gratingRevealed) {
+      description = "You are in a forest clearing. A metal grating is embedded in the ground here.";
+    }
+    
     if (roomItems.length > 0) {
       description += "\n\nYou can see: " + roomItems.join(", ") + " here.";
     }
@@ -459,6 +464,9 @@ function GameInterface() {
       case "rub":
         handleRub(target);
         break;
+      case "unlock":
+        handleUnlock(target);
+        break;
       default:
         // Check for profanity
         if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
@@ -616,23 +624,50 @@ function GameInterface() {
   };
 
   const handleUnlock = (target) => {
-    if (gameState.lockedDoors.includes(target)) {
-      setGameState((prevState) => ({
-        ...prevState,
-        lockedDoors: prevState.lockedDoors.filter((door) => door !== target)
-      }));
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    const unlockAction = currentRoom.actions[`unlock ${target}`];
+
+    if (!unlockAction) {
       setGameLog((prevLog) => [
         ...prevLog,
         `> unlock ${target}`,
-        `${target} is now unlocked.`
+        `You can't unlock that.`
       ]);
-    } else {
-      setGameLog((prevLog) => [
-        ...prevLog,
-        `> unlock ${target}`,
-        `${target} is not locked.`
-      ]);
+      return;
     }
+
+    // Check if we have the required items
+    if (unlockAction.requires) {
+      const missingItems = unlockAction.requires.filter(item => !gameState.inventory.includes(item));
+      if (missingItems.length > 0) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> unlock ${target}`,
+          `You need a ${missingItems[0]} to unlock that.`
+        ]);
+        return;
+      }
+    }
+
+    // Apply the unlock action
+    if (unlockAction.sets) {
+      setGameState(prevState => ({
+        ...prevState,
+        roomStates: {
+          ...prevState.roomStates,
+          [gameState.currentRoom]: {
+            ...(prevState.roomStates?.[gameState.currentRoom] || {}),
+            ...unlockAction.sets
+          }
+        }
+      }));
+    }
+
+    setGameLog((prevLog) => [
+      ...prevLog,
+      `> unlock ${target}`,
+      unlockAction.message
+    ]);
   };
 
   const handleDrop = (item) => {
@@ -832,10 +867,24 @@ function GameInterface() {
           rugMoved: true
         }));
       }
+      // If it's the leaves, update the room state to show the grating
+      else if (item === "leaves" && gameState.currentRoom === "forest clearing") {
+        setGameState(prevState => ({
+          ...prevState,
+          roomStates: {
+            ...prevState.roomStates,
+            "forest clearing": {
+              ...prevState.roomStates?.["forest clearing"],
+              gratingRevealed: true
+            }
+          }
+        }));
+      }
+      
       setGameLog((prevLog) => [
         ...prevLog,
         `> move ${item}`,
-        moveAction
+        typeof moveAction === 'string' ? moveAction : moveAction.message
       ]);
     } else {
       setGameLog((prevLog) => [

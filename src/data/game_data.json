@@ -15,7 +15,7 @@
                 "go south": "north of house",
                 "go west": "forest1",
                 "go east": "forest2",
-                "go northwest": "grating clearing",
+                "go north": "grating clearing",
                 "climb": "tree top",
                 "climb tree": "tree top",
                 "go up": "tree top",
@@ -31,6 +31,50 @@
                 "go north": "grating clearing"
             },
             "items": []
+        },
+        "grating clearing": {
+            "description": "You are in a forest clearing. The ground is covered with a thick pile of leaves that have fallen from the trees above.",
+            "actions": {
+                "go south": "path",
+                "go west": "forest1",
+                "go down": {
+                    "requires": ["gratingRevealed", "gratingUnlocked", "gratingOpen"],
+                    "destination": "grating room",
+                    "message": "You climb down through the grating into darkness."
+                },
+                "move leaves": {
+                    "message": "Moving aside the thick pile of leaves reveals a metal grating embedded in the ground!",
+                    "sets": {
+                        "gratingRevealed": true
+                    }
+                },
+                "clear leaves": {
+                    "message": "Clearing away the thick pile of leaves reveals a metal grating embedded in the ground!",
+                    "sets": {
+                        "gratingRevealed": true
+                    }
+                },
+                "unlock grating": {
+                    "requires": ["key", "gratingRevealed"],
+                    "message": "You unlock the grating with the key.",
+                    "sets": {
+                        "gratingUnlocked": true
+                    }
+                },
+                "open grating": {
+                    "requires": ["gratingUnlocked", "gratingRevealed"],
+                    "message": "You open the grating.",
+                    "sets": {
+                        "gratingOpen": true
+                    }
+                }
+            },
+            "state": {
+                "gratingRevealed": false,
+                "gratingUnlocked": false,
+                "gratingOpen": false
+            },
+            "items": ["leaves"]
         },
         "forest2": {
             "description": "You are in a dense forest. The trees seem to close in around you.",
@@ -715,32 +759,15 @@
             "actions": {
                 "go south": "maze11",
                 "go up": {
-                    "requires": ["grateUnlocked"],
-                    "destination": "forest clearing",
+                    "requires": ["gratingRevealed"],
+                    "destination": "grating clearing",
                     "message": "You climb up through the grating into the forest."
-                },
-                "unlock grate": {
-                    "requires": ["key"],
-                    "message": "You unlock the grating with the brass key."
-                },
-                "open grate": {
-                    "requires": ["grateUnlocked"],
-                    "message": "You open the grating. Some leaves fall in from above."
                 }
             },
             "state": {
-                "grateUnlocked": false,
-                "grateOpen": false
+                "gratingRevealed": false
             },
             "items": ["leaves"]
-        },
-        "forest clearing": {
-            "description": "You are in a clearing in the forest. A metal grating is set into the ground here.",
-            "actions": {
-                "go south": "large tree",
-                "go down": "grating room"
-            },
-            "items": []
         },
         "stone barrow": {
             "description": "You are in an ancient stone barrow. Strange runes are carved into the walls. A dark passage leads downward into the earth.",
