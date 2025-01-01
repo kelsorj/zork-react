@@ -78,7 +78,7 @@
             "items": []
         },
         "living room": {
-            "description": "You are in the living room of the white house. A beautiful oriental rug lies in the center. A wooden door leads east into the kitchen, while stairs lead up to the attic. A trophy case stands against one wall, and a gleaming sword lies nearby.",
+            "description": "You are in the living room of the white house. A beautiful oriental rug lies in the center. A wooden door leads east into the kitchen, while stairs lead up to the attic. A trophy case stands against one wall.",
             "actions": {
                 "go east": "kitchen",
                 "go down": "cellar",
