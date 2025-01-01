@@ -1,0 +1,621 @@
+{
+    "rooms": {
+        "north of house": {
+            "description": "You are at the north side of the white house. There is a path here leading north.",
+            "actions": {
+                "go south": "house",
+                "go north": "path",
+                "go east": "east of house"
+            },
+            "items": []
+        },
+        "path": {
+            "description": "You are on a winding path that leads through the forest.",
+            "actions": {
+                "go south": "north of house",
+                "go west": "forest1",
+                "go east": "forest2",
+                "go northwest": "grating clearing"
+            },
+            "items": []
+        },
+        "forest1": {
+            "description": "You are in a forest. Ancient trees tower above you.",
+            "actions": {
+                "go east": "path",
+                "go south": "forest3",
+                "go north": "grating clearing"
+            },
+            "items": []
+        },
+        "forest2": {
+            "description": "You are in a dense forest. The trees seem to close in around you.",
+            "actions": {
+                "go west": "forest1",
+                "go south": "clearing",
+                "go east": "mountains"
+            },
+            "items": []
+        },
+        "mountains": {
+            "description": "You are in a mountainous area. The peaks loom ominously above you.",
+            "actions": {
+                "go west": "forest2",
+                "go south": "forest2",
+                "go north": "forest2"
+            },
+            "items": []
+        },
+        "canyon_view": {
+            "description": "You are at Canyon View. Below you can see the magnificent Aragain Falls.",
+            "actions": {
+                "go west": "forest3",
+                "go north west": "clearing"
+            },
+            "items": []
+        },
+        "clearing": {
+            "description": "You are in a clearing. The forest opens up here, allowing sunlight to stream through.",
+            "actions": {
+                "go north": "forest2",
+                "go west": "east of house",
+                "go east": "canyon_view"
+            },
+            "items": []
+        },
+        "house": {
+            "description": "You are at the white house. It's an old, weathered building with a boarded front door.",
+            "actions": {
+                "go north": "north of house",
+                "go south": "south of house",
+                "go east": "east of house",
+                "go west": "west of house"
+            },
+            "items": []
+        },
+        "living room": {
+            "description": "You are in the living room of the white house. A beautiful oriental rug lies in the center. A wooden door leads east into the kitchen, while stairs lead up to the attic.",
+            "actions": {
+                "go east": "kitchen",
+                "go down": "cellar",
+                "move rug": "You discover a trap door under the rug leading to the cellar!",
+                "open trapdoor": "cellar"
+            },
+            "items": ["case", "lamp", "sword", "rug"]
+        },
+        "east of house": {
+            "description": "You are behind the white house. A path leads into the forest to the east. There is a small window here which is slightly ajar.",
+            "actions": {
+                "go west": "house",
+                "go east": "clearing",
+                "enter window": "kitchen",
+                "open window": "The window is already slightly open."
+            },
+            "items": []
+        },
+        "kitchen": {
+            "description": "You are in the kitchen of the white house. A table seems to have been used recently for the preparation of food. A window is open to the east, and a passage leads to the west.",
+            "actions": {
+                "go west": "living room",
+                "go east": "east of house",
+                "exit window": "east of house",
+                "go up": "attic"
+            },
+            "items": ["sack", "bottle", "garlic"]
+        },
+        "attic": {
+            "description": "This is the attic. The only exit is a stairway leading down.",
+            "actions": {
+                "go down": "kitchen"
+            },
+            "items": ["rope", "knife"]
+        },
+        "south of house": {
+            "description": "You are at the south side of the white house.",
+            "actions": {
+                "go north": "house",
+                "go south": "forest3",
+                "go east": "east of house",
+                "go west": "west of house"
+            },
+            "items": []
+        },
+        "west of house": {
+            "description": "You are at the west side of the white house. There is a small mailbox here.",
+            "actions": {
+                "go north": "north of house",
+                "go southwest": "stone barrow",
+                "open mailbox": "Opening the mailbox reveals a leaflet."
+            },
+            "items": ["leaflet"]
+        },
+        "cellar": {
+            "description": "You are in a dark and damp cellar with a narrow passageway leading north, and a crawlway to the south.",
+            "actions": {
+                "go up": "living room",
+                "go north": "troll room",
+                "go south": "east west passage"
+            },
+            "items": ["bottle"]
+        },
+        "troll room": {
+            "description": "This is a small room with passages to the east and south. Bloodstains and deep scratches mar the walls.",
+            "actions": {
+                "go south": "cellar",
+                "go east": "maze1"
+            },
+            "items": ["sword"]
+        },
+        "maze1": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go north": "maze1",
+                "go east": "troll room",
+                "go west": "maze4",
+                "go south": "maze2"
+            },
+            "items": []
+        },
+        "maze2": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go south": "maze1",
+                "go east": "maze3",
+                "go down": "maze3"
+            },
+            "items": []
+        },
+        "maze3": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go west": "maze2",
+                "go up": "maze5",
+                "go north": "maze4"
+            },
+            "items": []
+        },
+        "maze4": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go north": "maze1",
+                "go east": "maze16",
+                "go west": "maze3"
+            },
+            "items": []
+        },
+        "maze5": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go south west": "maze6",
+                "go east": "maze18",
+                "go north": "maze3"
+            },
+            "items": ["coins","knife"]
+        },
+        "maze6": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go east": "maze7",
+                "go down": "maze5",
+                "go up": "maze9",
+                "go west": "maze6"
+            },
+            "items": []
+        },
+        "maze7": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go south": "maze15",
+                "go up": "maze14",
+                "go down": "maze16",
+                "go west": "maze6",
+                "go east": "maze8"
+            },
+            "items": []
+        },
+        "maze8": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go west": "maze8",
+                "go north east": "maze7",
+                "go south east": "maze17"
+            },
+            "items": []
+        },
+        "maze9": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go north": "maze6",
+                "go west": "maze12",
+                "go south": "maze13",
+                "go east": "maze10",
+                "go down": "maze11",
+                "go north west": "maze9"
+            },
+            "items": []
+        },
+        "maze10": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go up": "maze11",
+                "go east": "maze9",
+                "go west": "maze13"
+            },
+            "items": []
+        },
+        "maze11": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go down": "maze10",
+                "go south west": "maze12",
+                "go north west": "maze13",
+                "go north": "grating room"
+            },
+            "items": []
+        },
+        "maze12": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go up": "maze9",
+                "go south west": "maze11",
+                "go east": "maze13",
+                "go north": "maze19",
+                "go down": "maze5"
+            },
+            "items": []
+        },
+        "maze13": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go south": "maze10",
+                "go west": "maze11",
+                "go east": "maze9",
+                "go down": "maze12"
+            },
+            "items": []
+        },
+        "maze14": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go west": "maze15",
+                "go east": "maze14",
+                "go north east": "maze7"
+            },
+            "items": []
+        },
+        "maze15": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go south east": "cyclops room",
+                "go west": "maze14",
+                "go south": "maze7"
+            },
+            "items": []
+        },
+        "maze16": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go south": "maze4"
+            },
+            "items": []
+        },
+        "maze17": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go north": "maze8"
+            },
+            "items": []
+        },
+        "maze18": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go west": "maze5"
+            },
+            "items": []
+        },
+        "maze19": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go south": "maze12"
+            },
+            "items": []
+        },
+        "cyclops room": {
+            "description": "This is a room with an enormous cyclops. The air smells of burning torches.",
+            "actions": {
+                "go north west": "maze15",
+                "go down": "treasure room",
+                "go east": "strange passage"
+            },
+            "items": []
+        },
+        "treasure room": {
+            "description": "This is the treasure room. Jewels and gold surround you!",
+            "actions": {
+                "go up": "cyclops room"
+            },
+            "items": ["jewels", "chalice", "coins"]
+        },
+        "east west passage": {
+            "description": "This is a long east-west passage. There is a tight crawl to the north.",
+            "actions": {
+                "go north": "cellar",
+                "go east": "round room",
+                "go west": "chasm"
+            },
+            "items": []
+        },
+        "round room": {
+            "description": "This is a circular room with passages in all directions.",
+            "actions": {
+                "go north": "gas room",
+                "go south": "engravings cave",
+                "go east": "deep canyon",
+                "go west": "east west passage"
+            },
+            "items": []
+        },
+        "gas room": {
+            "description": "This is a gas-filled room. A strong chemical smell permeates the air.",
+            "actions": {
+                "go south": "round room",
+                "go north": "mine entrance",
+                "go east": "smelly room"
+            },
+            "items": ["gas mask"]
+        },
+        "smelly room": {
+            "description": "This room has a peculiar odor, different from the gas room.",
+            "actions": {
+                "go west": "gas room",
+                "go east": "mine"
+            },
+            "items": []
+        },
+        "mine entrance": {
+            "description": "You are at the entrance to an old mine. A shaft leads down into darkness.",
+            "actions": {
+                "go south": "gas room",
+                "go east": "shaft room",
+                "go down": "ladder"
+            },
+            "items": []
+        },
+        "shaft room": {
+            "description": "You are in a room with a mine shaft. A basket on a chain hangs here.",
+            "actions": {
+                "go west": "mine entrance",
+                "enter basket": "You get in the basket",
+                "go down": "basket room"
+            },
+            "items": ["basket"]
+        },
+        "basket room": {
+            "description": "You are in a room with a basket mechanism. The shaft continues down.",
+            "actions": {
+                "go up": "shaft room",
+                "go down": "drafty room"
+            },
+            "items": []
+        },
+        "drafty room": {
+            "description": "There is a cold draft coming from somewhere in this room.",
+            "actions": {
+                "go up": "basket room",
+                "go east": "timber room"
+            },
+            "items": []
+        },
+        "timber room": {
+            "description": "This room is filled with old mining timbers.",
+            "actions": {
+                "go west": "drafty room",
+                "go east": "ladder bottom"
+            },
+            "items": ["timber"]
+        },
+        "ladder bottom": {
+            "description": "You are at the bottom of a ladder. Coal dust fills the air.",
+            "actions": {
+                "go west": "timber room",
+                "go up": "ladder"
+            },
+            "items": ["coal"]
+        },
+        "ladder": {
+            "description": "You are on a ladder in the mine shaft.",
+            "actions": {
+                "go up": "mine entrance",
+                "go down": "ladder bottom"
+            },
+            "items": []
+        },
+        "deep canyon": {
+            "description": "You are on the west edge of a deep canyon. A narrow passage leads north, and a path leads south.",
+            "actions": {
+                "go west": "round room",
+                "go north": "dam room",
+                "go south": "reservoir"
+            },
+            "items": []
+        },
+        "mine": {
+            "description": "You are in an abandoned mine. Old mining equipment lies scattered about.",
+            "actions": {
+                "go west": "smelly room",
+                "go east": "machine room"
+            },
+            "items": ["pick"]
+        },
+        "machine room": {
+            "description": "This room contains ancient mining machinery. A rusty control panel stands against one wall.",
+            "actions": {
+                "go west": "mine",
+                "go east": "machine room 2"
+            },
+            "items": ["machine parts"]
+        },
+        "machine room 2": {
+            "description": "More mining machinery fills this room. The air is thick with coal dust.",
+            "actions": {
+                "go west": "machine room",
+                "go east": "slide room"
+            },
+            "items": []
+        },
+        "slide room": {
+            "description": "There is a steep slide here that leads down into darkness.",
+            "actions": {
+                "go west": "machine room2",
+                "go down": "cellar",
+                "slide": "cellar"
+            },
+            "items": []
+        },
+        "grating room": {
+            "description": "You are in a small room beneath the grating. A ladder leads up through the grating, and a tunnel heads north.",
+            "actions": {
+                "go up": "grating clearing",
+                "go north": "cellar"
+            },
+            "items": []
+        },
+        "dam room": {
+            "description": "You are at the dam. Water rushes by below you.",
+            "actions": {
+                "go south": "deep canyon",
+                "go north": "maintenance room"
+            },
+            "items": ["wrench"]
+        },
+        "maintenance room": {
+            "description": "This is the maintenance room. Tools and equipment are scattered about.",
+            "actions": {
+                "go south": "dam room"
+            },
+            "items": ["screwdriver"]
+        },
+        "forest3": {
+            "description": "You are in a forest. The trees are less dense here.",
+            "actions": {
+                "go north": "south of house",
+                "go east": "canyon view",
+                "go west": "clearing"
+            },
+            "items": []
+        }
+    },
+    "inventory": [],
+    "state": {
+        "currentRoom": "west of house",
+        "itemsInWorld": {
+            "lantern": "house",
+            "case": "living room",
+            "lamp": "living room",
+            "sword": "living room",
+            "rug": "living room",
+            "nest": "tree",
+            "egg": "tree",
+            "canary": "tree",
+            "treasure": "treasure room",
+            "leaflet": "west of house",
+            "bottle": "kitchen",
+            "garlic": "kitchen",
+            "knife": "attic",
+            "rope": "attic",
+            "sword": "troll room",
+            "coins": "maze4",
+            "jewels": "treasure room",
+            "chalice": "treasure room",
+            "platinum bar": "loud room",
+            "wrench": "dam room",
+            "torch": "torch room",
+            "bell": "temple",
+            "candles": "altar room",
+            "book": "altar room",
+            "sack": "kitchen",
+            "skull": "land of dead",
+            "shovel": "sandy beach",
+            "screwdriver": "maintenance room",
+            "leaves": "grating clearing",
+            "gas mask": "gas room",
+            "basket": "shaft room",
+            "timber": "timber room",
+            "coal": "ladder bottom",
+            "pick": "mine",
+            "machine parts": "machine room"
+        },
+        "lockedDoors": [
+            "house-door",
+            "grating",
+            "treasure room door",
+            "gates of hades"
+        ]
+    },
+    "commands": {
+        "go": {
+            "description": "Moves to another room.",
+            "syntax": "go [direction]"
+        },
+        "take": {
+            "description": "Adds an item to your inventory.",
+            "syntax": "take [item]"
+        },
+        "use": {
+            "description": "Uses an item in your inventory.",
+            "syntax": "use [item]"
+        },
+        "inventory": {
+            "description": "Lists all items in your inventory.",
+            "syntax": "inventory"
+        },
+        "unlock": {
+            "description": "Unlocks a locked door or object.",
+            "syntax": "unlock [object]"
+        },
+        "drop": {
+            "description": "Drops an item from your inventory.",
+            "syntax": "drop [item]"
+        },
+        "examine": {
+            "description": "Examines an item or object closely.",
+            "syntax": "examine [item]"
+        },
+        "look": {
+            "description": "Describes the current room and its items.",
+            "syntax": "look"
+        },
+        "read": {
+            "description": "Reads a readable object.",
+            "syntax": "read [object]"
+        },
+        "climb": {
+            "description": "Climbs a climbable object.",
+            "syntax": "climb [object]"
+        },
+        "open": {
+            "description": "Opens a container or door.",
+            "syntax": "open [object]"
+        },
+        "enter": {
+            "description": "Enters a building or passage.",
+            "syntax": "enter [location]"
+        },
+        "pray": {
+            "description": "Pray at a holy site.",
+            "syntax": "pray"
+        },
+        "ring": {
+            "description": "Ring a bell or similar object.",
+            "syntax": "ring [object]"
+        },
+        "light": {
+            "description": "Light a candle, torch, or similar object.",
+            "syntax": "light [object]"
+        },
+        "swim": {
+            "description": "Swim in water.",
+            "syntax": "swim"
+        }
+    }
+}

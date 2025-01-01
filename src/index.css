@@ -1,0 +1,36 @@
+
+body {
+  font-family: 'Courier New', Courier, monospace;
+  background-color: #000;
+  color: #0f0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.App {
+  text-align: center;
+  width: 100%;
+}
+
+.game-interface {
+  width: 80%;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #111;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px #0f0;
+}
+
+.game-log {
+  height: 300px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  border: 1px solid #0f0;
+  padding: 10px;
+  background-color: #000;
+}
