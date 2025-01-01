@@ -106,9 +106,10 @@
             "items": ["sack", "bottle", "garlic"]
         },
         "attic": {
-            "description": "This is the attic. The only exit is a stairway leading down.",
+            "description": "This is the attic. The only exit is a stairway leading down, though there appears to be a tunnel leading north into darkness.",
             "actions": {
-                "go down": "kitchen"
+                "go down": "kitchen",
+                "go north": "dam lobby"
             },
             "items": ["rope", "knife"]
         },
@@ -182,454 +183,57 @@
             "description": "This is a small room with passages to the east and south. Bloodstains and deep scratches mar the walls. A menacing troll brandishing a bloody axe blocks all passages out of the room.",
             "actions": {
                 "go south": "cellar",
-                "go east": "maze1",
+                "go east": "east west passage",
                 "attack troll with sword": "The troll, disarmed by your skilled swordplay, takes flight. The troll, defeated, disappears into the gloom.",
                 "throw garlic at troll": "The troll catches the garlic and runs away in disgust. The troll, defeated, disappears into the gloom."
             },
-            "items": ["axe"],
-            "state": {
-                "trollDefeated": false
-            }
-        },
-        "maze1": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go north": "maze1",
-                "go east": "troll room",
-                "go west": "maze4",
-                "go south": "maze2"
-            },
-            "items": []
-        },
-        "maze2": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go south": "maze1",
-                "go east": "maze3",
-                "go down": "maze3"
-            },
-            "items": []
-        },
-        "maze3": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go west": "maze2",
-                "go up": "maze5",
-                "go north": "maze4"
-            },
-            "items": []
-        },
-        "maze4": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go north": "maze1",
-                "go east": "maze16",
-                "go west": "maze3"
-            },
-            "items": []
-        },
-        "maze5": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go south west": "maze6",
-                "go east": "maze18",
-                "go north": "maze3"
-            },
-            "items": ["coins","knife"]
-        },
-        "maze6": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go east": "maze7",
-                "go down": "maze5",
-                "go up": "maze9",
-                "go west": "maze6"
-            },
-            "items": []
-        },
-        "maze7": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go south": "maze15",
-                "go up": "maze14",
-                "go down": "maze16",
-                "go west": "maze6",
-                "go east": "maze8"
-            },
-            "items": []
-        },
-        "maze8": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go west": "maze8",
-                "go north east": "maze7",
-                "go south east": "maze17"
-            },
-            "items": []
-        },
-        "maze9": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go north": "maze6",
-                "go west": "maze12",
-                "go south": "maze13",
-                "go east": "maze10",
-                "go down": "maze11",
-                "go north west": "maze9"
-            },
-            "items": []
-        },
-        "maze10": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go up": "maze11",
-                "go east": "maze9",
-                "go west": "maze13"
-            },
-            "items": []
-        },
-        "maze11": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go down": "maze10",
-                "go south west": "maze12",
-                "go north west": "maze13",
-                "go north": "grating room"
-            },
-            "items": []
-        },
-        "maze12": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go up": "maze9",
-                "go south west": "maze11",
-                "go east": "maze13",
-                "go north": "maze19",
-                "go down": "maze5"
-            },
-            "items": []
-        },
-        "maze13": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go south": "maze10",
-                "go west": "maze11",
-                "go east": "maze9",
-                "go down": "maze12"
-            },
-            "items": []
-        },
-        "maze14": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go west": "maze15",
-                "go east": "maze14",
-                "go north east": "maze7"
-            },
-            "items": []
-        },
-        "maze15": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go south east": "cyclops room",
-                "go west": "maze14",
-                "go south": "maze7"
-            },
-            "items": []
-        },
-        "maze16": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go south": "maze4"
-            },
-            "items": []
-        },
-        "maze17": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go north": "maze8"
-            },
-            "items": []
-        },
-        "maze18": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go west": "maze5"
-            },
-            "items": []
-        },
-        "maze19": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go south": "maze12"
-            },
-            "items": []
-        },
-        "cyclops room": {
-            "description": "This is a room with an enormous cyclops. The air smells of burning torches.",
-            "actions": {
-                "go north west": "maze15",
-                "go down": "treasure room",
-                "go east": "strange passage"
-            },
-            "items": []
-        },
-        "treasure room": {
-            "description": "This is the treasure room. Jewels and gold surround you!",
-            "actions": {
-                "go up": "cyclops room"
-            },
-            "items": ["jewels", "chalice", "coins"]
+            "items": ["axe"]
         },
         "east west passage": {
-            "description": "This is a long east-west passage. There is a tight crawl to the north.",
+            "description": "This is a long east-west passage. There are exits to the north and east.",
             "actions": {
-                "go east": "round room",
                 "go west": "troll room",
-                "go up": "chasm"
+                "go east": "round room",
+                "go north": "dam base"
             },
             "items": []
         },
-        "round room": {
-            "description": "This is a circular room with passages in almost all directions.",
+        "dam base": {
+            "description": "You are at the base of the dam. A path leads up to the top.",
             "actions": {
-                "go north": "north south passage",
-                "go south": "narrow passage",
-                "go east": "loud room",
-                "go south east": "engravings cave"
+                "go south": "east west passage",
+                "go northeast": "dam",
+                "go up": "dam"
             },
             "items": []
         },
-        "gas room": {
-            "description": "This is a gas-filled room. A strong chemical smell permeates the air.",
+        "dam": {
+            "description": "You are standing on top of the Flood Control Dam #3, which was quite a tourist attraction in times far distant. There are paths to the north and south.",
             "actions": {
-                "go south": "round room",
-                "go north": "mine entrance",
-                "go east": "smelly room"
-            },
-            "items": ["gas mask"]
-        },
-        "smelly room": {
-            "description": "This room has a peculiar odor, different from the gas room.",
-            "actions": {
-                "go west": "gas room",
-                "go east": "mine"
+                "go north": "dam lobby",
+                "go south": "dam base",
+                "go down": "dam base"
             },
             "items": []
         },
-        "mine entrance": {
-            "description": "You are at the entrance to an old mine. A shaft leads down into darkness.",
+        "dam lobby": {
+            "description": "This room appears to have been the waiting room for tours of the dam. There are exits to the north and east, and a path leads south across the top of the dam.",
             "actions": {
-                "go south": "gas room",
-                "go east": "shaft room",
-                "go down": "ladder"
+                "go north": "maintenance room",
+                "go east": "maintenance room",
+                "go south": "dam"
             },
-            "items": []
+            "items": ["matches"]
         },
-        "shaft room": {
-            "description": "You are in a room with a mine shaft. A basket on a chain hangs here.",
+        "maintenance room": {
+            "description": "This is what appears to have been the maintenance room for the dam. Rusty tools and broken machinery lie everywhere. There is a prominent yellow button on one wall.",
             "actions": {
-                "go west": "mine entrance",
-                "enter basket": "You get in the basket",
-                "go down": "basket room"
+                "go south": "dam lobby",
+                "go west": "dam lobby",
+                "push yellow button": "Click.",
+                "press yellow button": "Click."
             },
-            "items": ["basket"]
-        },
-        "basket room": {
-            "description": "You are in a room with a basket mechanism. The shaft continues down.",
-            "actions": {
-                "go up": "shaft room",
-                "go down": "drafty room"
-            },
-            "items": []
-        },
-        "drafty room": {
-            "description": "There is a cold draft coming from somewhere in this room.",
-            "actions": {
-                "go up": "basket room",
-                "go east": "timber room"
-            },
-            "items": []
-        },
-        "timber room": {
-            "description": "This room is filled with old mining timbers.",
-            "actions": {
-                "go west": "drafty room",
-                "go east": "ladder bottom"
-            },
-            "items": ["timber"]
-        },
-        "ladder bottom": {
-            "description": "You are at the bottom of a ladder. Coal dust fills the air.",
-            "actions": {
-                "go west": "timber room",
-                "go up": "ladder"
-            },
-            "items": ["coal"]
-        },
-        "ladder": {
-            "description": "You are on a ladder in the mine shaft.",
-            "actions": {
-                "go up": "mine entrance",
-                "go down": "ladder bottom"
-            },
-            "items": []
-        },
-        "deep canyon": {
-            "description": "You are on the west edge of a deep canyon. Passages lead north and south, and the canyon is to the east. The walls of the canyon come together from below and there is no way down. The rushing sound is quite loud here.",
-            "actions": {
-                "go west": "loud room",
-                "go north": "reservoir south",
-                "go south": "mirror room"
-            },
-            "items": []
-        },
-        "reservoir south": {
-            "description": "You are in a long room on the south shore of a large reservoir. A low dam forms the north wall of the room. Dark passages lead south and west.",
-            "actions": {
-                "go south": "deep canyon",
-                "go west": "chasm room",
-                "go north": "reservoir"
-            },
-            "items": []
-        },
-        "reservoir": {
-            "description": "You are on the reservoir. The water is chilly, but swimmable. The reservoir extends north and south. Beaches lie to the north and south.",
-            "actions": {
-                "go north": "reservoir north",
-                "go south": "reservoir south",
-                "swim": "You swim in the chilly water."
-            },
-            "items": []
-        },
-        "reservoir north": {
-            "description": "You are in a long room on the north shore of a large reservoir. A low dam forms the south wall of the room. A western dam blocks the flow from this room. Dark passages lead north and east.",
-            "actions": {
-                "go south": "reservoir",
-                "go north": "atlantis room",
-                "go east": "cave"
-            },
-            "items": []
-        },
-        "atlantis room": {
-            "description": "This is an ancient room, long under water but now high and dry. The room is tall and circular, with a high domed roof. A large bronze bell hangs from the center of the room. A passage leads south.",
-            "actions": {
-                "go south": "reservoir north",
-                "ring bell": "The bell tolls deeply. The sound echoes throughout the cavern."
-            },
-            "items": ["bell"]
-        },
-        "mirror room": {
-            "description": "You are in a large square room with tall ceilings. Huge mirrors line the walls, making it difficult to tell which are doors and which are mirrors.",
-            "actions": {
-                "go north": "deep canyon",
-                "go south": "cave",
-                "go east": "cold passage"
-            },
-            "items": []
-        },
-        "cold passage": {
-            "description": "This is a cold and damp corridor where a long east-west passageway intersects a north-south one.",
-            "actions": {
-                "go west": "mirror room",
-                "go east": "slide room",
-                "go north": "round room",
-                "go south": "mine entrance"
-            },
-            "items": []
-        },
-        "engravings cave": {
-            "description": "You have entered a low cave with passages leading northwest and east. There are old engravings on the walls here.",
-            "actions": {
-                "go northwest": "round room",
-                "go east": "dome room",
-                "read engravings": "The engravings were incised in the living rock of the cave wall by an unknown hand. They depict, in symbolic form, the beliefs of the ancient peoples of Zork. Skillfully interwoven with the bas reliefs are excerpts illustrating the major religious tenets of that time."
-            },
-            "items": []
-        },
-        "dome room": {
-            "description": "You are at the periphery of a large dome, which forms the ceiling of another room below. Protecting you from a precipitous drop is a wooden railing which circles the dome.",
-            "actions": {
-                "go west": "engravings cave",
-                "tie rope to railing": "You tie the rope to the railing. It dangles down into the darkness below, reaching the torch room.",
-                "climb rope": "torch room",
-                "go down": "You can't go down without using the rope - that would be certain death!",
-                "jump": "In a moment of insanity, you jump from the edge of the dome. You hit the floor below with a sickening crash."
-            },
-            "state": {
-                "ropeAttached": false
-            },
-            "items": ["rope"]
-        },
-        "torch room": {
-            "description": "This is a large room with a prominent doorway leading to a down staircase. Above you is a large dome. A passage leads north.",
-            "actions": {
-                "go north": "temple",
-                "go down": "altar"
-            },
-            "items": ["torch"]
-        },
-        "temple": {
-            "description": "This is the temple. A passage leads south and massive wooden doors lead west. The doors are locked.",
-            "actions": {
-                "go south": "torch room",
-                "go west": "altar",
-                "pray": "A voice whispers: 'The doors are now unlocked.'",
-                "open doors": "The doors are locked."
-            },
-            "items": []
-        },
-        "altar": {
-            "description": "This is the altar. A huge mirror fills the north wall. A small window can be seen in the east wall.",
-            "actions": {
-                "go east": "temple",
-                "ring bell": "A deep resonant sound fills the room.",
-                "light candles": "The candles are now lit.",
-                "read book": "The book is in Latin, but you can make out a few phrases:\n'...with these objects of power...\n...the bell of truth...\n...the book of knowledge...\n...and the candles of light...\nshall the wise reveal the secret way...'"
-            },
-            "items": ["bell", "book", "candles"]
-        },
-        "loud room": {
-            "description": "This is a large room with a ceiling which cannot be detected from the ground. There is a narrow passage from east to west and a stone stairway leading upward. The room is deafeningly loud with an undetermined rushing sound. The sound seems to reverberate from all of the walls, making it difficult even to think.",
-            "actions": {
-                "go west": "round room",
-                "go east": "deep canyon",
-                "go up": "engravings cave"
-            },
-            "items": ["platinum bar"]
-        },
-        "strange passage": {
-            "description": "This is a long passage. The walls are covered with Egyptian hieroglyphs.",
-            "actions": {
-                "go west": "cyclops room",
-                "go east": "egyptian room",
-                "read hieroglyphs": "The hieroglyphs seem to tell a story about an ancient burial ritual."
-            },
-            "items": []
-        },
-        "egyptian room": {
-            "description": "This is a room which looks like part of an ancient Egyptian tomb. The walls are covered with hieroglyphs, and there is a large stone coffin in the center of the room. A passage leads west.",
-            "actions": {
-                "go west": "strange passage",
-                "read hieroglyphs": "The hieroglyphs describe the burial of a great pharaoh.",
-                "open coffin": "The stone lid is extremely heavy. You can't open it with your bare hands."
-            },
-            "items": ["coffin", "sceptre"]
-        },
-        "land of dead": {
-            "description": "You are in the Land of the Dead. A passage leads north, and stairs lead down. The room is deathly cold, and you hear distant howling.",
-            "actions": {
-                "go north": "egyptian room",
-                "go down": "hell"
-            },
-            "items": ["skull"]
-        },
-        "hell": {
-            "description": "You are in Hell. Flames leap up from fiery pits, and demons dance in the shadows.",
-            "actions": {
-                "go up": "land of dead"
-            },
-            "items": []
+            "items": ["wrench", "screwdriver"]
         }
     },
     "inventory": [],
@@ -675,7 +279,8 @@
             "paintbrush": "studio",
             "axe": "troll room",
             "coffin": "egyptian room",
-            "sceptre": "egyptian room"
+            "sceptre": "egyptian room",
+            "matches": "dam lobby"
         },
         "lockedDoors": [
             "house-door",
@@ -699,7 +304,8 @@
             "book": "This appears to be a prayer book of some sort.",
             "candles": "These are ceremonial candles.",
             "coffin": "This is an elaborately decorated stone sarcophagus, covered in hieroglyphs.",
-            "sceptre": "This is a beautiful golden sceptre, encrusted with precious gems."
+            "sceptre": "This is a beautiful golden sceptre, encrusted with precious gems.",
+            "matches": "These are waterproof matches."
         },
         "containerContents": {
             "sack": ["lunch", "garlic"],

@@ -273,6 +273,10 @@ function GameInterface() {
       case "wave":
         handleWave(target);
         break;
+      case "push":
+      case "press":
+        handlePush(target);
+        break;
       default:
         // Check for profanity
         if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
@@ -1015,6 +1019,25 @@ function GameInterface() {
         ...prevLog,
         `> wave ${item}`,
         `Waving the ${item} accomplishes nothing.`
+      ]);
+    }
+  };
+
+  const handlePush = (target) => {
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    const pushAction = currentRoom.actions[`push ${target}`];
+    
+    if (pushAction) {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> push ${target}`,
+        pushAction
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> push ${target}`,
+        `You can't push that.`
       ]);
     }
   };
