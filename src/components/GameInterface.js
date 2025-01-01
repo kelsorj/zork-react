@@ -20,6 +20,25 @@ function GameInterface() {
   });
   const logRef = useRef(null);
 
+  // Add helper functions to get room descriptions
+  const getBasicRoomDescription = (roomId) => {
+    const room = gameData.rooms[roomId];
+    return room.description;
+  };
+
+  const getRoomDescriptionWithItems = (roomId) => {
+    const room = gameData.rooms[roomId];
+    const roomItems = Object.entries(gameState.itemsInWorld)
+      .filter(([item, location]) => location === roomId)
+      .map(([item]) => item);
+
+    let description = room.description;
+    if (roomItems.length > 0) {
+      description += "\n\nYou can see: " + roomItems.join(", ") + " here.";
+    }
+    return description;
+  };
+
   useEffect(() => {
     const initialRoom = gameData.rooms[gameState.currentRoom];
     setGameLog([
@@ -27,7 +46,7 @@ function GameInterface() {
       "Copyright (c) 1981, 1982, 1983 Infocom, Inc.",
       "All rights reserved.",
       "",
-      initialRoom.description
+      getBasicRoomDescription(gameState.currentRoom)
     ]);
   }, [gameState.currentRoom]);
 
@@ -61,15 +80,18 @@ function GameInterface() {
         handleGo(target);
         break;
       case "take":
+      case "get":
         handleTake(target);
         break;
       case "use":
         handleUse(target);
         break;
       case "inventory":
+      case "i":
         handleInventory();
         break;
       case "look":
+      case "l":
         handleLook();
         break;
       case "unlock":
@@ -79,6 +101,7 @@ function GameInterface() {
         handleDrop(target);
         break;
       case "examine":
+      case "x":
         handleExamine(target);
         break;
       case "read":
@@ -125,7 +148,7 @@ function GameInterface() {
       setGameLog((prevLog) => [
         ...prevLog,
         `> go ${direction}`,
-        gameData.rooms[nextRoom].description
+        getBasicRoomDescription(nextRoom)
       ]);
     } else {
       setGameLog((prevLog) => [
@@ -200,11 +223,10 @@ function GameInterface() {
   };
 
   const handleLook = () => {
-    const currentRoom = gameData.rooms[gameState.currentRoom];
     setGameLog((prevLog) => [
       ...prevLog,
       "> look",
-      currentRoom.description
+      getRoomDescriptionWithItems(gameState.currentRoom)
     ]);
   };
 
@@ -304,7 +326,7 @@ function GameInterface() {
       setGameLog((prevLog) => [
         ...prevLog,
         `> enter ${target}`,
-        gameData.rooms[enterAction].description
+        getBasicRoomDescription(enterAction)
       ]);
     } else {
       setGameLog((prevLog) => [
@@ -362,8 +384,9 @@ function GameInterface() {
   };
 
   const handleRestart = () => {
+    const initialRoom = gameData.state.currentRoom;
     setGameState({
-      currentRoom: gameData.state.currentRoom,
+      currentRoom: initialRoom,
       inventory: [],
       itemsInWorld: gameData.state.itemsInWorld,
       lockedDoors: gameData.state.lockedDoors
@@ -377,7 +400,7 @@ function GameInterface() {
       "Copyright (c) 1981, 1982, 1983 Infocom, Inc.",
       "All rights reserved.",
       "",
-      gameData.rooms[gameData.state.currentRoom].description
+      getBasicRoomDescription(initialRoom)
     ]);
   };
 
@@ -386,12 +409,12 @@ function GameInterface() {
       ...prevLog,
       "> help",
       "Available commands:",
-      "- look: Look around the current room",
+      "- look (l): Look around the current room",
       "- go [direction]: Move in a direction (north, south, east, west)",
-      "- take [item]: Pick up an item",
+      "- take/get [item]: Pick up an item",
       "- drop [item]: Drop an item from your inventory",
-      "- inventory: Check your inventory",
-      "- examine [item]: Look at an item closely",
+      "- inventory (i): Check your inventory",
+      "- examine (x) [item]: Look at an item closely",
       "- open [object]: Open something",
       "- enter [object]: Enter something",
       "- save: Save your current game",
