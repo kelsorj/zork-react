@@ -103,8 +103,9 @@ function GameInterface() {
       return;
     }
 
-    const [action, ...rest] = command.split(" ");
-    const target = rest.join(" ");
+    const words = command.split(" ");
+    const action = words[0].toLowerCase();
+    const target = words.slice(1).join(" ").toLowerCase();
 
     // Handle directional shortcuts
     const directionMap = {
@@ -162,14 +163,34 @@ function GameInterface() {
         handleRead(target);
         break;
       case "open":
-        handleOpen(target);
+        if (target === "window" && gameState.currentRoom === "east of house") {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> open window`,
+            "The window is already slightly open."
+          ]);
+        } else {
+          handleOpen(target);
+        }
         break;
       case "close":
         handleClose(target);
         break;
       case "enter":
       case "in":
-        handleEnter(target);
+        if ((target === "window" || target === "") && gameState.currentRoom === "east of house") {
+          setGameState((prevState) => ({
+            ...prevState,
+            currentRoom: "kitchen"
+          }));
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> enter window`,
+            getBasicRoomDescription("kitchen")
+          ]);
+        } else {
+          handleEnter(target);
+        }
         break;
       case "out":
         handleOut();
