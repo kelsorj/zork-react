@@ -754,26 +754,112 @@
             },
             "items": ["chalice", "stolen items"]
         },
-        "grating room": {
-            "description": "You are in a small room with a metal grating in the ceiling. A pile of leaves has fallen through.",
+        "maze11": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
             "actions": {
-                "go south": "maze11",
-                "go up": {
-                    "requires": ["gratingRevealed"],
-                    "destination": "grating clearing",
-                    "message": "You climb up through the grating into the forest."
-                }
+                "go north": "grating room",
+                "go south": "maze12",
+                "go east": "maze13",
+                "go west": "maze14",
+                "go up": "maze11",
+                "go down": "maze11"
             },
-            "state": {
-                "gratingRevealed": false
-            },
-            "items": ["leaves"]
+            "items": []
         },
-        "stone barrow": {
-            "description": "You are in an ancient stone barrow. Strange runes are carved into the walls. A dark passage leads downward into the earth.",
+        "maze12": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
             "actions": {
-                "go northeast": "west of house",
-                "go down": "You have completed Zork I! The passage leads to Zork II..."
+                "go north": "maze13",
+                "go south": "maze14",
+                "go east": "maze11",
+                "go west": "maze15",
+                "go up": "maze12",
+                "go down": "maze12"
+            },
+            "items": []
+        },
+        "maze13": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go north": "maze14",
+                "go south": "maze15",
+                "go east": "maze11",
+                "go west": "maze12",
+                "go up": "maze13",
+                "go down": "maze13"
+            },
+            "items": []
+        },
+        "maze14": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go north": "maze15",
+                "go south": "maze11",
+                "go east": "maze12",
+                "go west": "maze13",
+                "go up": "maze14",
+                "go down": "maze14"
+            },
+            "items": []
+        },
+        "maze15": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go north": "maze12",
+                "go south": "maze14",
+                "go east": "maze13",
+                "go west": "adventurers remains",
+                "go southeast": "cyclops room",
+                "go up": "maze15",
+                "go down": "maze15"
+            },
+            "items": []
+        },
+        "maze16": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go north": "maze17",
+                "go south": "maze19",
+                "go east": "maze18",
+                "go west": "maze15",
+                "go up": "maze16",
+                "go down": "maze16"
+            },
+            "items": []
+        },
+        "maze17": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go north": "maze18",
+                "go south": "maze16",
+                "go east": "maze19",
+                "go west": "maze15",
+                "go up": "maze17",
+                "go down": "maze17"
+            },
+            "items": []
+        },
+        "maze18": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go north": "maze19",
+                "go south": "maze17",
+                "go east": "maze16",
+                "go west": "maze15",
+                "go up": "maze18",
+                "go down": "maze18"
+            },
+            "items": []
+        },
+        "maze19": {
+            "description": "This is part of a maze of twisty little passages, all alike.",
+            "actions": {
+                "go north": "maze16",
+                "go south": "maze18",
+                "go east": "maze17",
+                "go west": "maze15",
+                "go up": "maze19",
+                "go down": "maze19"
             },
             "items": []
         }
