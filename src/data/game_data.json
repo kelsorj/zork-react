@@ -659,7 +659,7 @@
                 "climb down": "large tree",
                 "wind canary": {
                     "requires": ["jeweled egg"],
-                    "message": "You wind up the mechanical canary. It chirps a beautiful melody and drops something shiny!"
+                    "message": "You wind up the mechanical canary and carefully remove it from the jeweled egg. Now you have both a beautiful mechanical canary and an exquisite jeweled egg!"
                 }
             },
             "state": {
@@ -746,21 +746,6 @@
             },
             "items": []
         },
-        "tree top": {
-            "description": "You are in the top of the large tree. There is a bird's nest here.",
-            "actions": {
-                "go down": "large tree",
-                "climb down": "large tree",
-                "wind canary": {
-                    "requires": ["jeweled egg"],
-                    "message": "You wind up the mechanical canary. It chirps a beautiful melody and drops something shiny!"
-                }
-            },
-            "state": {
-                "canaryWound": false
-            },
-            "items": ["jeweled egg", "nest"]
-        },
         "stone barrow": {
             "description": "You are in an ancient stone barrow. Strange runes are carved into the walls. A dark passage leads downward into the earth.",
             "actions": {
@@ -788,7 +773,6 @@
             "garlic": "kitchen",
             "knife": "attic",
             "rope": "dome room",
-            "coins": "maze5",
             "jewels": "treasure room",
             "chalice": "treasure room",
             "platinum bar": "loud room",
@@ -816,9 +800,6 @@
             "sceptre": "egyptian room",
             "matches": "dam lobby",
             "crystal skull": "hades",
-            "gas mask": "gas room",
-            "coins": "maze5",
-            "knife": "maze5",
             "diamond": "machine room",
             "bracelet": "gas room",
             "jade figurine": "bat room",
@@ -826,14 +807,12 @@
             "air pump": "reservoir north",
             "crystal trident": "atlantis room",
             "plastic boat": "dam base",
-            "shovel": "sandy beach",
             "scarab": null,
             "emerald": null,
             "buoy": "in boat",
             "jeweled egg": "tree top",
             "bag of coins": "adventurers remains",
             "key": "adventurers remains",
-            "chalice": "treasure room",
             "bauble": null
         },
         "lockedDoors": [
