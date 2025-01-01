@@ -937,7 +937,7 @@ function GameInterface() {
     // Convert "pot of gold" variations to the full item name
     const fullItemName = item === "pot" || item === "gold" ? "pot of gold" : item;
 
-    if (!gameState.inventory.includes(fullItemName)) {
+    if (!gameState.inventory?.includes(fullItemName)) {
       setGameLog((prevLog) => [
         ...prevLog,
         `> put ${item} in ${container}`,
@@ -947,13 +947,13 @@ function GameInterface() {
     }
 
     if (container === "case") {
-      if (gameState.trophyItems.includes(fullItemName)) {
+      if (gameState.trophyItems?.includes(fullItemName)) {
         setGameState(prevState => ({
           ...prevState,
           inventory: prevState.inventory.filter(i => i !== fullItemName),
           containerContents: {
             ...prevState.containerContents,
-            case: [...(prevState.containerContents.case || []), fullItemName]
+            case: [...(prevState.containerContents?.case || []), fullItemName]
           }
         }));
         setGameLog((prevLog) => [
