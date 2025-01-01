@@ -190,6 +190,32 @@ function GameInterface() {
             "The window is already slightly open."
           ]);
           return;
+        } else if (target === "coffin" && gameState.currentRoom === "canyon bottom") {
+          if (!gameState.itemsInWorld["coffin"] === "canyon bottom") {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> open ${target}`,
+              "You don't see a coffin here."
+            ]);
+            return;
+          }
+          setGameState(prevState => ({
+            ...prevState,
+            roomStates: {
+              ...prevState.roomStates,
+              "canyon bottom": { coffinOpened: true }
+            },
+            itemsInWorld: {
+              ...prevState.itemsInWorld,
+              sceptre: "canyon bottom"
+            }
+          }));
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> open ${target}`,
+            "The coffin breaks open as it hits the bottom of the chasm, revealing a beautiful golden sceptre!"
+          ]);
+          return;
         }
 
         const roomForOpen = gameData.rooms[gameState.currentRoom];
@@ -326,6 +352,8 @@ function GameInterface() {
         const currentRoom = gameData.rooms[gameState.currentRoom];
         if (currentRoom.actions["climb tree"]) {
           handleGo("up");
+        } else if (currentRoom.actions["climb down"]) {
+          handleGo("down");
         } else {
           setGameLog((prevLog) => [
             ...prevLog,

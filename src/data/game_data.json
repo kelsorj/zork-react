@@ -52,7 +52,9 @@
             "description": "You are at Canyon View. Below you can see the magnificent Aragain Falls.",
             "actions": {
                 "go west": "forest3",
-                "go north west": "clearing"
+                "go northwest": "clearing",
+                "go down": "canyon bottom",
+                "climb down": "canyon bottom"
             },
             "items": []
         },
@@ -313,7 +315,7 @@
             "actions": {
                 "go west": "temple"
             },
-            "items": ["coffin", "sceptre"]
+            "items": ["coffin"]
         },
         "altar": {
             "description": "This is the altar. A huge mirror fills the north wall. A small window can be seen in the east wall.",
@@ -647,7 +649,14 @@
             "actions": {
                 "go northeast": "end of rainbow",
                 "go north": "forest path",
-                "go east": "living room"
+                "go east": "living room",
+                "open coffin": {
+                    "requires": ["coffin"],
+                    "message": "The coffin breaks open as it hits the bottom of the chasm, revealing a beautiful golden sceptre!"
+                }
+            },
+            "state": {
+                "coffinOpened": false
             },
             "items": []
         },
