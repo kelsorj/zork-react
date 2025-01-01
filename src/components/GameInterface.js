@@ -1225,16 +1225,26 @@ function GameInterface() {
     }
 
     const currentRoom = gameData.rooms[gameState.currentRoom];
-    const waveAction = currentRoom.actions["wave " + item];
+    const waveAction = currentRoom.actions[`wave ${item}`];
     
-    if (waveAction && waveAction.requires && waveAction.requires.includes(item)) {
-      setGameState(prevState => ({
-        ...prevState,
-        roomStates: {
-          ...prevState.roomStates,
-          "east of chasm": { ...prevState.roomStates?.["east of chasm"], potRevealed: true }
-        }
-      }));
+    if (waveAction) {
+      if (gameState.currentRoom === "canyon bottom" && item === "sceptre") {
+        setGameState(prevState => ({
+          ...prevState,
+          roomStates: {
+            ...prevState.roomStates,
+            "canyon bottom": { 
+              ...prevState.roomStates?.["canyon bottom"],
+              rainbowSolid: true,
+              potRevealed: true 
+            }
+          },
+          itemsInWorld: {
+            ...prevState.itemsInWorld,
+            "pot of gold": "canyon bottom"
+          }
+        }));
+      }
       setGameLog((prevLog) => [
         ...prevLog,
         `> wave ${item}`,

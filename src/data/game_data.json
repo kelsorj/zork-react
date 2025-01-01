@@ -645,20 +645,23 @@
             "items": []
         },
         "canyon bottom": {
-            "description": "You are at the bottom of the canyon. The walls rise steeply on all sides.",
+            "description": "You are at the bottom of the canyon. A rainbow arcs across the chasm, its colors shimmering in the sunlight.",
             "actions": {
-                "go northeast": "end of rainbow",
-                "go north": "forest path",
-                "go east": "living room",
+                "go up": "canyon view",
+                "climb up": "canyon view",
                 "open coffin": {
-                    "requires": ["coffin"],
-                    "message": "The coffin breaks open as it hits the bottom of the chasm, revealing a beautiful golden sceptre!"
+                    "message": "The coffin creaks open, revealing an ancient sceptre inside.",
+                    "reveals": {
+                        "sceptre": "canyon bottom"
+                    }
+                },
+                "wave sceptre": {
+                    "message": "As you wave the sceptre, the rainbow solidifies into a beautiful bridge! A pot of gold appears at its base."
+                },
+                "look": {
+                    "message": "You are at the bottom of the canyon. A rainbow arcs across the chasm, its colors shimmering in the sunlight. {if roomStates.canyon bottom.rainbowSolid}The rainbow has solidified into a beautiful bridge. A pot of gold glimmers at its base.{/if}"
                 }
-            },
-            "state": {
-                "coffinOpened": false
-            },
-            "items": []
+            }
         },
         "large tree": {
             "description": "You are at the base of a large tree. Its branches look climbable.",
