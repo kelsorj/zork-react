@@ -349,6 +349,9 @@ function GameInterface() {
       case "cross":
         handleCross(target);
         break;
+      case "touch":
+        handleTouch(target);
+        break;
       default:
         // Check for profanity
         if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
@@ -417,6 +420,12 @@ function GameInterface() {
   const handleTake = (item) => {
     const currentRoom = gameData.rooms[gameState.currentRoom];
     const roomItems = gameState.itemsInWorld;
+
+    // Check for deadly skeleton interaction
+    if (item === "skeleton" && gameState.currentRoom === "adventurers remains") {
+      handleDeath("skeleton");
+      return;
+    }
 
     if (roomItems[item] === gameState.currentRoom) {
       setGameState((prevState) => ({
@@ -1735,6 +1744,42 @@ function GameInterface() {
         "You can't cross that."
       ]);
     }
+  };
+
+  const handleTouch = (target) => {
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    const touchAction = currentRoom.actions[`touch ${target}`];
+    
+    if (touchAction) {
+      if (target === "skeleton" && gameState.currentRoom === "adventurers remains") {
+        handleDeath("skeleton");
+      } else {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> touch ${target}`,
+          touchAction
+        ]);
+      }
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> touch ${target}`,
+        `You can't touch that.`
+      ]);
+    }
+  };
+
+  const handleDeath = (cause) => {
+    const deathMessage = gameData.state.deathMessages[cause];
+    setGameState((prevState) => ({
+      ...prevState,
+      isDead: true
+    }));
+    setGameLog((prevLog) => [
+      ...prevLog,
+      `> touch skeleton`,
+      deathMessage
+    ]);
   };
 
   return (

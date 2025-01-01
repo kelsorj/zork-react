@@ -623,6 +623,58 @@
                 "cross rainbow": "canyon view"
             },
             "items": []
+        },
+        "end of rainbow": {
+            "description": "You are at the end of the rainbow. The sun shines brightly here, creating the beautiful arc you just crossed.",
+            "actions": {
+                "go southwest": "canyon bottom"
+            },
+            "items": []
+        },
+        "canyon bottom": {
+            "description": "You are at the bottom of the canyon. The walls rise steeply on all sides.",
+            "actions": {
+                "go northeast": "end of rainbow",
+                "go north": "forest path",
+                "go east": "living room"
+            },
+            "items": []
+        },
+        "large tree": {
+            "description": "You are at the base of a large tree. Its branches look climbable.",
+            "actions": {
+                "go up": "tree top",
+                "climb tree": "tree top",
+                "climb up": "tree top",
+                "go south": "forest path",
+                "go east": "clearing"
+            },
+            "items": []
+        },
+        "tree top": {
+            "description": "You are in the top of the large tree. There is a bird's nest here.",
+            "actions": {
+                "go down": "large tree",
+                "climb down": "large tree"
+            },
+            "items": ["jeweled egg", "nest"]
+        },
+        "adventurers remains": {
+            "description": "You are in a small room. The skeletal remains of a previous adventurer lie here, clutching some items.",
+            "actions": {
+                "go southwest": "maze15",
+                "touch skeleton": "As you touch the skeleton, a deadly curse takes effect. You die instantly!",
+                "take skeleton": "As you touch the skeleton, a deadly curse takes effect. You die instantly!"
+            },
+            "items": ["bag of coins", "key"]
+        },
+        "cyclops room": {
+            "description": "This is the lair of the cyclops. The walls are decorated with human bones.",
+            "actions": {
+                "go northwest": "maze15",
+                "go east": "strange passage"
+            },
+            "items": []
         }
     },
     "inventory": [],
@@ -684,7 +736,10 @@
             "shovel": "sandy beach",
             "scarab": null,
             "emerald": null,
-            "buoy": "in boat"
+            "buoy": "in boat",
+            "jeweled egg": "tree top",
+            "bag of coins": "adventurers remains",
+            "key": "adventurers remains"
         },
         "lockedDoors": [
             "house-door",
@@ -726,7 +781,10 @@
             "shovel": "This is a sturdy shovel, perfect for digging.",
             "scarab": "This is an ancient Egyptian scarab, beautifully carved.",
             "emerald": "This is a brilliant emerald.",
-            "buoy": "This is a navigation buoy. It looks like it might open."
+            "buoy": "This is a navigation buoy. It looks like it might open.",
+            "jeweled egg": "This is a beautiful egg, encrusted with precious jewels.",
+            "bag of coins": "This is a heavy bag of ancient coins.",
+            "key": "This is an ornate brass key."
         },
         "containerContents": {
             "sack": ["lunch", "garlic"],
@@ -741,7 +799,10 @@
                 "trollDefeated": false
             }
         },
-        "trophyItems": ["platinum bar", "jewels", "chalice", "egg", "sceptre", "coffin", "torch", "jade figurine", "diamond"]
+        "trophyItems": ["platinum bar", "jewels", "chalice", "egg", "sceptre", "coffin", "torch", "jade figurine", "diamond"],
+        "deathMessages": {
+            "skeleton": "As you touch the skeleton, a deadly curse takes effect. You die instantly!\n\n*** You have died ***\n\nYou scored 0 out of a possible 350 points.\nWould you like to restart the game?"
+        }
     },
     "commands": {
         "go": {
