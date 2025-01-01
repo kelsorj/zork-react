@@ -705,7 +705,7 @@ function GameInterface() {
 
     if (container === "case" && gameState.currentRoom === "living room") {
       // List of trophy items that can go in the case
-      const trophyItems = ["platinum bar", "jewels", "chalice", "egg"];
+      const trophyItems = gameData.state.trophyItems;
       
       if (trophyItems.includes(item)) {
         setGameState(prevState => ({

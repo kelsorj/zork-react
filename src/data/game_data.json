@@ -585,6 +585,39 @@
                 "go up": "engravings cave"
             },
             "items": ["platinum bar"]
+        },
+        "strange passage": {
+            "description": "This is a long passage. The walls are covered with Egyptian hieroglyphs.",
+            "actions": {
+                "go west": "cyclops room",
+                "go east": "egyptian room",
+                "read hieroglyphs": "The hieroglyphs seem to tell a story about an ancient burial ritual."
+            },
+            "items": []
+        },
+        "egyptian room": {
+            "description": "This is a room which looks like part of an ancient Egyptian tomb. The walls are covered with hieroglyphs, and there is a large stone coffin in the center of the room. A passage leads west.",
+            "actions": {
+                "go west": "strange passage",
+                "read hieroglyphs": "The hieroglyphs describe the burial of a great pharaoh.",
+                "open coffin": "The stone lid is extremely heavy. You can't open it with your bare hands."
+            },
+            "items": ["coffin", "sceptre"]
+        },
+        "land of dead": {
+            "description": "You are in the Land of the Dead. A passage leads north, and stairs lead down. The room is deathly cold, and you hear distant howling.",
+            "actions": {
+                "go north": "egyptian room",
+                "go down": "hell"
+            },
+            "items": ["skull"]
+        },
+        "hell": {
+            "description": "You are in Hell. Flames leap up from fiery pits, and demons dance in the shadows.",
+            "actions": {
+                "go up": "land of dead"
+            },
+            "items": []
         }
     },
     "inventory": [],
@@ -628,7 +661,9 @@
             "painting": "gallery",
             "easel": "studio",
             "paintbrush": "studio",
-            "axe": "troll room"
+            "axe": "troll room",
+            "coffin": "egyptian room",
+            "sceptre": "egyptian room"
         },
         "lockedDoors": [
             "house-door",
@@ -650,7 +685,9 @@
             "torch": "This is an old torch, still burning brightly.",
             "rope": "This is a sturdy rope, suitable for climbing.",
             "book": "This appears to be a prayer book of some sort.",
-            "candles": "These are ceremonial candles."
+            "candles": "These are ceremonial candles.",
+            "coffin": "This is an elaborately decorated stone sarcophagus, covered in hieroglyphs.",
+            "sceptre": "This is a beautiful golden sceptre, encrusted with precious gems."
         },
         "containerContents": {
             "sack": ["lunch", "garlic"],
@@ -661,7 +698,8 @@
             "troll room": {
                 "trollDefeated": false
             }
-        }
+        },
+        "trophyItems": ["platinum bar", "jewels", "chalice", "egg", "sceptre", "coffin"]
     },
     "commands": {
         "go": {
