@@ -409,183 +409,108 @@
             "items": []
         },
         "gas room": {
-            "description": "This is a gas-filled room. A strong chemical smell permeates the air.",
+            "description": "This is a gas-filled room. A strong chemical smell permeates the air. A passage leads east into what appears to be a coal mine.",
             "actions": {
-                "go up": "smelly room"
+                "go up": "smelly room",
+                "go east": "coal mine"
             },
             "items": ["gas mask"]
         },
-        "maze1": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
+        "coal mine": {
+            "description": "You are in a coal mine. The walls are covered in coal dust and old mining equipment lies scattered about.",
             "actions": {
-                "go north": "maze1",
-                "go east": "troll room",
-                "go west": "maze4",
-                "go south": "maze2"
+                "go west": "gas room",
+                "go northeast": "mine passage 1",
+                "go southeast": "mine passage 2",
+                "go southwest": "mine passage 3",
+                "go down": "ladder top"
             },
             "items": []
         },
-        "maze2": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
+        "mine passage 1": {
+            "description": "This is a narrow mine passage. The walls are rough and uneven.",
             "actions": {
-                "go south": "maze1",
-                "go east": "maze3",
-                "go down": "maze3"
+                "go southwest": "coal mine"
             },
             "items": []
         },
-        "maze3": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
+        "mine passage 2": {
+            "description": "This is a narrow mine passage. Coal dust covers everything.",
             "actions": {
-                "go west": "maze2",
-                "go up": "maze5",
-                "go north": "maze4"
+                "go northwest": "coal mine"
             },
             "items": []
         },
-        "maze4": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
+        "mine passage 3": {
+            "description": "This is a narrow mine passage. Old mining equipment is scattered about.",
             "actions": {
-                "go north": "maze1",
-                "go east": "maze16",
-                "go west": "maze3"
+                "go northeast": "coal mine"
             },
             "items": []
         },
-        "maze5": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
+        "ladder top": {
+            "description": "You are at the top of a rickety wooden ladder that descends into darkness.",
             "actions": {
-                "go south west": "maze6",
-                "go east": "maze18",
-                "go north": "maze3"
-            },
-            "items": ["coins", "knife"]
-        },
-        "maze6": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go east": "maze7",
-                "go down": "maze5",
-                "go up": "maze9",
-                "go west": "maze6"
+                "go up": "coal mine",
+                "go down": "ladder bottom",
+                "go north": "mine passage 4",
+                "go east": "mine passage 5",
+                "go south": "dead end"
             },
             "items": []
         },
-        "maze7": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
+        "ladder bottom": {
+            "description": "You are at the bottom of a rickety wooden ladder. A passage leads west.",
             "actions": {
-                "go south": "maze15",
-                "go up": "maze14",
-                "go down": "maze16",
-                "go west": "maze6",
-                "go east": "maze8"
+                "go up": "ladder top",
+                "go west": "timber room"
+            },
+            "items": ["coal"]
+        },
+        "dead end": {
+            "description": "This is a dead end in the mine. There's a pile of coal here.",
+            "actions": {
+                "go north": "ladder top"
+            },
+            "items": ["coal"]
+        },
+        "timber room": {
+            "description": "This is a room filled with old mining timbers. A narrow crack in the west wall looks just barely wide enough to squeeze through.",
+            "actions": {
+                "go east": "ladder bottom",
+                "go west": "drafty room",
+                "squeeze west": "drafty room"
+            },
+            "items": ["timber"]
+        },
+        "drafty room": {
+            "description": "This is a drafty room. A cold wind blows from somewhere.",
+            "actions": {
+                "go east": "timber room"
             },
             "items": []
         },
-        "maze8": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
+        "mine passage 4": {
+            "description": "This is a narrow mine passage leading back to the gas room.",
             "actions": {
-                "go west": "maze8",
-                "go north east": "maze7",
-                "go south east": "maze17"
+                "go south": "ladder top",
+                "go north": "gas room"
             },
             "items": []
         },
-        "maze9": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
+        "mine passage 5": {
+            "description": "This is a narrow mine passage. The air is thick with coal dust.",
             "actions": {
-                "go north": "maze6",
-                "go west": "maze12",
-                "go south": "maze13",
-                "go east": "maze10",
-                "go down": "maze11",
-                "go north west": "maze9"
+                "go west": "ladder top",
+                "go south": "mine passage 6"
             },
             "items": []
         },
-        "maze10": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
+        "mine passage 6": {
+            "description": "This is a narrow mine passage connecting back to the main areas.",
             "actions": {
-                "go up": "maze11",
-                "go east": "maze9",
-                "go west": "maze13"
-            },
-            "items": []
-        },
-        "maze11": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go down": "maze10",
-                "go south west": "maze12",
-                "go north west": "maze13",
-                "go north": "grating room"
-            },
-            "items": []
-        },
-        "maze12": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go up": "maze9",
-                "go south west": "maze11",
-                "go east": "maze13",
-                "go north": "maze19",
-                "go down": "maze5"
-            },
-            "items": []
-        },
-        "maze13": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go south": "maze10",
-                "go west": "maze11",
-                "go east": "maze9",
-                "go down": "maze12"
-            },
-            "items": []
-        },
-        "maze14": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go west": "maze15",
-                "go east": "maze14",
-                "go north east": "maze7"
-            },
-            "items": []
-        },
-        "maze15": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go south east": "cyclops room",
-                "go west": "maze14",
-                "go south": "maze7"
-            },
-            "items": []
-        },
-        "maze16": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go south": "maze4"
-            },
-            "items": []
-        },
-        "maze17": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go north": "maze8"
-            },
-            "items": []
-        },
-        "maze18": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go west": "maze5"
-            },
-            "items": []
-        },
-        "maze19": {
-            "description": "This is part of a maze of twisty little passages, all alike.",
-            "actions": {
-                "go south": "maze12"
+                "go north": "mine passage 5",
+                "go south": "gas room"
             },
             "items": []
         }
@@ -625,7 +550,7 @@
             "gas mask": "gas room",
             "basket": "shaft room",
             "timber": "timber room",
-            "coal": "ladder bottom",
+            "coal": "dead end",
             "pick": "mine",
             "machine parts": "machine room",
             "painting": "gallery",
@@ -667,7 +592,9 @@
             "crystal skull": "This is an exquisitely carved crystal skull, perfectly transparent.",
             "gas mask": "This is a standard-issue gas mask, it should protect you from toxic fumes.",
             "coins": "These are ancient coins, possibly valuable to collectors.",
-            "knife": "This is a sharp knife, useful for cutting things."
+            "knife": "This is a sharp knife, useful for cutting things.",
+            "coal": "This is a chunk of coal, still good for burning.",
+            "timber": "This is a broken timber, apparently left over from the mine's operational days."
         },
         "containerContents": {
             "sack": ["lunch", "garlic"],

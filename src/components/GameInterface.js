@@ -325,6 +325,9 @@ function GameInterface() {
           }
         }
         break;
+      case "squeeze":
+        handleSqueeze(target);
+        break;
       default:
         // Check for profanity
         if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
@@ -779,6 +782,23 @@ function GameInterface() {
         ...prevLog,
         `> put ${item} in ${container}`,
         `You don't have the ${item}.`
+      ]);
+      return;
+    }
+
+    if (container === "basket" && gameState.currentRoom === "shaft room") {
+      setGameState(prevState => ({
+        ...prevState,
+        inventory: prevState.inventory.filter(i => i !== item),
+        containerContents: {
+          ...prevState.containerContents,
+          basket: [...(prevState.containerContents.basket || []), item]
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> put ${item} in ${container}`,
+        `You put the ${item} in the basket.`
       ]);
       return;
     }
@@ -1251,6 +1271,42 @@ function GameInterface() {
         ...prevLog,
         `> put out ${item}`,
         `You can't put that out.`
+      ]);
+    }
+  };
+
+  const handleSqueeze = (direction) => {
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    
+    if (currentRoom.actions[`squeeze ${direction}`]) {
+      // Check if player has dropped everything except screwdriver
+      const allowedItems = ["screwdriver"];
+      const extraItems = gameState.inventory.filter(item => !allowedItems.includes(item));
+      
+      if (extraItems.length > 0) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> squeeze ${direction}`,
+          "You're carrying too much to squeeze through the crack. You need to drop everything except the screwdriver."
+        ]);
+        return;
+      }
+      
+      const nextRoom = currentRoom.actions[`squeeze ${direction}`];
+      setGameState(prevState => ({
+        ...prevState,
+        currentRoom: nextRoom
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> squeeze ${direction}`,
+        getBasicRoomDescription(nextRoom)
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> squeeze ${direction}`,
+        "You can't squeeze through there."
       ]);
     }
   };
