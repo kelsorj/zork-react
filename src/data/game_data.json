@@ -96,7 +96,7 @@
             "items": []
         },
         "kitchen": {
-            "description": "You are in the kitchen of the white house. A table seems to have been used recently for the preparation of food. A window is open to the east, and passages lead west and down.",
+            "description": "You are in the kitchen of the white house. A table seems to have been used recently for the preparation of food. A window is open to the east, and a door leads west.",
             "actions": {
                 "go west": "living room",
                 "go east": "east of house",
@@ -773,7 +773,7 @@
             "bottle": "kitchen",
             "garlic": "kitchen",
             "knife": "attic",
-            "rope": "dome room",
+            "rope": "attic",
             "jewels": "treasure room",
             "chalice": "treasure room",
             "platinum bar": "loud room",
