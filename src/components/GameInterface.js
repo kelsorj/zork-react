@@ -348,9 +348,18 @@ function GameInterface() {
         const [giveItem, toWord, giveTarget] = target.split(" to ");
         handleGive(giveItem, giveTarget);
         break;
+      case "attack":
       case "kill":
-        const [killTarget, killWithWord, killWeapon] = target.split(" with ");
-        handleKill(killTarget, killWeapon);
+        if (target.includes(" with ")) {
+          const [creature, weapon] = target.split(" with ");
+          handleAttack(creature.trim(), weapon.trim());
+        } else {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> ${action} ${target}`,
+            "What do you want to kill it with?"
+          ]);
+        }
         break;
       case "ulysses":
       case "odysseus":
@@ -403,6 +412,16 @@ function GameInterface() {
       case "help":
       case "?":
         handleHelp();
+        break;
+      case "restart":
+        handleRestart();
+        break;
+      case "save":
+        handleSave();
+        break;
+      case "restore":
+      case "load":
+        handleLoad();
         break;
       default:
         // Check for profanity
@@ -667,7 +686,11 @@ function GameInterface() {
 
   const handleSave = () => {
     try {
-      localStorage.setItem('zorkSaveGame', JSON.stringify(gameState));
+      const saveState = {
+        gameState,
+        gameSettings
+      };
+      localStorage.setItem('zorkSaveGame', JSON.stringify(saveState));
       setGameLog((prevLog) => [
         ...prevLog,
         "> save",
@@ -687,13 +710,14 @@ function GameInterface() {
       const savedGame = localStorage.getItem('zorkSaveGame');
       if (savedGame) {
         const loadedState = JSON.parse(savedGame);
-        setGameState(loadedState);
+        setGameState(loadedState.gameState);
+        setGameSettings(loadedState.gameSettings);
         setGameLog((prevLog) => [
           ...prevLog,
           "> load",
           "Game loaded.",
           "",
-          gameData.rooms[loadedState.currentRoom].description
+          getBasicRoomDescription(loadedState.gameState.currentRoom)
         ]);
       } else {
         setGameLog((prevLog) => [
@@ -712,14 +736,19 @@ function GameInterface() {
   };
 
   const handleRestart = () => {
-    const initialRoom = gameData.state.currentRoom;
     setGameState({
-      currentRoom: initialRoom,
+      currentRoom: "west of house",
       inventory: [],
       itemsInWorld: gameData.state.itemsInWorld,
-      lockedDoors: gameData.state.lockedDoors,
-      rugMoved: false
+      containerContents: gameData.state.containerContents,
+      roomStates: {},
+      trophyItems: gameData.state.trophyItems
     });
+    setGameSettings(prev => ({
+      ...prev,
+      score: 0,
+      lastCommand: ""
+    }));
     setGameLog((prevLog) => [
       ...prevLog,
       "> restart",
@@ -729,7 +758,7 @@ function GameInterface() {
       "Copyright (c) 1981, 1982, 1983 Infocom, Inc.",
       "All rights reserved.",
       "",
-      getBasicRoomDescription(initialRoom)
+      getBasicRoomDescription("west of house")
     ]);
   };
 
