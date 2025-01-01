@@ -328,6 +328,9 @@ function GameInterface() {
       case "squeeze":
         handleSqueeze(target);
         break;
+      case "slide":
+        handleSlide();
+        break;
       default:
         // Check for profanity
         if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
@@ -1457,6 +1460,77 @@ function GameInterface() {
         ...prevLog,
         `> put ${item} in machine`,
         "That doesn't belong in the machine."
+      ]);
+    }
+  };
+
+  const handleSlide = () => {
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    
+    if (currentRoom.actions["slide"] || currentRoom.actions["slide down"]) {
+      const nextRoom = currentRoom.actions["slide"] || currentRoom.actions["slide down"];
+      setGameState(prevState => ({
+        ...prevState,
+        currentRoom: nextRoom
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        "> slide",
+        "Wheeeeeee! You slide down the chute...",
+        "",
+        getBasicRoomDescription(nextRoom)
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        "> slide",
+        "There's nothing to slide down here."
+      ]);
+    }
+  };
+
+  const handleTurnOn = (item) => {
+    if (item === "lamp" && gameState.inventory.includes("lamp")) {
+      setGameState(prevState => ({
+        ...prevState,
+        roomStates: {
+          ...prevState.roomStates,
+          lamp: { isOn: true }
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> turn on ${item}`,
+        "The lamp is now on."
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> turn on ${item}`,
+        `You can't turn that on.`
+      ]);
+    }
+  };
+
+  const handleTurnOff = (item) => {
+    if (item === "lamp" && gameState.inventory.includes("lamp")) {
+      setGameState(prevState => ({
+        ...prevState,
+        roomStates: {
+          ...prevState.roomStates,
+          lamp: { isOn: false }
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> turn off ${item}`,
+        "The lamp is now off."
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> turn off ${item}`,
+        `You can't turn that off.`
       ]);
     }
   };

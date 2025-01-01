@@ -381,7 +381,18 @@
             "description": "This room is filled with sleeping bats hanging from the ceiling. You'd better not wake them!",
             "actions": {
                 "go south": "squeaky room",
-                "go east": "shaft room"
+                "go east": "shaft room",
+                "go west": "slide room"
+            },
+            "items": ["jade figurine"]
+        },
+        "slide room": {
+            "description": "This is a small room with smooth walls. The most notable feature is a steep metal slide that descends into darkness.",
+            "actions": {
+                "go east": "bat room",
+                "slide": "cellar",
+                "slide down": "cellar",
+                "go down": "cellar"
             },
             "items": []
         },
@@ -516,6 +527,15 @@
                 "machineRun": false
             },
             "items": ["diamond"]
+        },
+        "reservoir south": {
+            "description": "You are at the south end of a large reservoir. Paths lead north and northeast.",
+            "actions": {
+                "go north": "reservoir",
+                "go northeast": "deep canyon",
+                "go southwest": "east west passage"
+            },
+            "items": []
         }
     },
     "inventory": [],
@@ -568,7 +588,8 @@
             "coins": "maze5",
             "knife": "maze5",
             "diamond": "machine room",
-            "bracelet": "gas room"
+            "bracelet": "gas room",
+            "jade figurine": "bat room"
         },
         "lockedDoors": [
             "house-door",
@@ -601,7 +622,8 @@
             "coal": "This is a chunk of coal, still good for burning.",
             "timber": "This is a broken timber, apparently left over from the mine's operational days.",
             "diamond": "This is a brilliant diamond, clearly worth a fortune.",
-            "bracelet": "This is an exquisite jade bracelet."
+            "bracelet": "This is an exquisite jade bracelet.",
+            "jade figurine": "This is an exquisite jade figurine."
         },
         "containerContents": {
             "sack": ["lunch", "garlic"],
@@ -615,7 +637,7 @@
                 "trollDefeated": false
             }
         },
-        "trophyItems": ["platinum bar", "jewels", "chalice", "egg", "sceptre", "coffin"]
+        "trophyItems": ["platinum bar", "jewels", "chalice", "egg", "sceptre", "coffin", "torch", "jade figurine", "diamond"]
     },
     "commands": {
         "go": {
