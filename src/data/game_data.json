@@ -895,7 +895,7 @@
             "items": []
         },
         "maze15": {
-            "description": "This is part of a maze of twisty little passages, all 15 alike.",
+            "description": "This is part of a maze of twisty little passages, all 15 alike. Something below you smells like death.",
             "actions": {
                 "go south": "maze7",
                 "go west": "maze14",
