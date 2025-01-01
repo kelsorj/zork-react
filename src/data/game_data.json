@@ -94,7 +94,7 @@
             "items": []
         },
         "kitchen": {
-            "description": "You are in the kitchen of the white house. A table seems to have been used recently for the preparation of food. A window is open to the east, and a passage leads to the west.",
+            "description": "You are in the kitchen of the white house. A table seems to have been used recently for the preparation of food. A window is open to the east, and passages lead west and down.",
             "actions": {
                 "go west": "living room",
                 "go east": "east of house",
@@ -134,9 +134,33 @@
             "actions": {
                 "go up": "living room",
                 "go north": "troll room",
-                "go south": "east west passage"
+                "go south": "east of chasm"
             },
             "items": ["bottle"]
+        },
+        "east of chasm": {
+            "description": "You are on the east edge of a deep chasm. The ground here is littered with loose rocks, and you can hear water rushing far below. A narrow passage leads north, and a dark tunnel heads east.",
+            "actions": {
+                "go north": "cellar",
+                "go east": "gallery"
+            },
+            "items": []
+        },
+        "gallery": {
+            "description": "This appears to be an art gallery. Beautiful paintings and sculptures line the walls, though they are covered in dust and cobwebs. A passage leads west, and there is a doorway to the north.",
+            "actions": {
+                "go west": "east of chasm",
+                "go north": "studio"
+            },
+            "items": ["painting"]
+        },
+        "studio": {
+            "description": "You are in what appears to be an artist's studio. Easels and half-finished paintings are scattered about, and the air smells of old paint and turpentine. A steep stairway leads up, and a doorway leads south.",
+            "actions": {
+                "go south": "gallery",
+                "go up": "kitchen"
+            },
+            "items": ["easel", "paintbrush"]
         },
         "troll room": {
             "description": "This is a small room with passages to the east and south. Bloodstains and deep scratches mar the walls.",
@@ -543,7 +567,10 @@
             "timber": "timber room",
             "coal": "ladder bottom",
             "pick": "mine",
-            "machine parts": "machine room"
+            "machine parts": "machine room",
+            "painting": "gallery",
+            "easel": "studio",
+            "paintbrush": "studio"
         },
         "lockedDoors": [
             "house-door",
