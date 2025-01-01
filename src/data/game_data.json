@@ -199,13 +199,29 @@
             "items": []
         },
         "dam base": {
-            "description": "You are at the base of the dam. A path leads up to the top.",
+            "description": "You are at the base of the dam. A pile of plastic lies on the ground - it appears to be a Frobozz Magic Inflatable Boat.",
             "actions": {
                 "go south": "east west passage",
                 "go northeast": "dam",
-                "go up": "dam"
+                "go up": "dam",
+                "inflate plastic": {
+                    "requires": ["air pump"],
+                    "message": "The plastic pile inflates into a sturdy rubber boat!"
+                },
+                "inflate boat": {
+                    "requires": ["air pump"],
+                    "message": "The boat is already inflated."
+                },
+                "board boat": {
+                    "requires": ["boatInflated"],
+                    "destination": "in boat",
+                    "message": "You board the rubber boat."
+                }
             },
-            "items": []
+            "state": {
+                "boatInflated": false
+            },
+            "items": ["plastic boat"]
         },
         "dam": {
             "description": "You are standing on top of the Flood Control Dam #3. The dam's control panel has a large bolt and several indicator lights, including a green bubble. Paths lead north and south.",
@@ -529,11 +545,82 @@
             "items": ["diamond"]
         },
         "reservoir south": {
-            "description": "You are at the south end of a large reservoir. Paths lead north and northeast.",
+            "description": "You are at the south end of a large reservoir. The dam's sluice gates are open, allowing passage to the north.",
             "actions": {
-                "go north": "reservoir",
+                "go north": {
+                    "requires": ["damOpened"],
+                    "destination": "reservoir",
+                    "message": "You proceed north through the open sluice gates."
+                },
                 "go northeast": "deep canyon",
                 "go southwest": "east west passage"
+            },
+            "items": []
+        },
+        "reservoir": {
+            "description": "You are in the middle of a vast reservoir. The water stretches out in all directions.",
+            "actions": {
+                "go south": "reservoir south",
+                "go north": "reservoir north"
+            },
+            "items": ["trunk of jewels"]
+        },
+        "reservoir north": {
+            "description": "You are at the north end of the reservoir. A passage leads north into darkness.",
+            "actions": {
+                "go south": "reservoir",
+                "go north": "atlantis room"
+            },
+            "items": ["air pump"]
+        },
+        "atlantis room": {
+            "description": "This appears to be the ruins of the legendary city of Atlantis. Ancient columns rise from the water.",
+            "actions": {
+                "go south": "reservoir north"
+            },
+            "items": ["crystal trident"]
+        },
+        "in boat": {
+            "description": "You are sitting in a rubber boat on the river. The current is strong here.",
+            "actions": {
+                "wait": "The boat drifts in the current...",
+                "launch": "The boat begins to move with the current.",
+                "go east": "sandy beach"
+            },
+            "state": {
+                "waitCount": 0,
+                "buoyVisible": false
+            },
+            "items": []
+        },
+        "sandy beach": {
+            "description": "You are on a sandy beach at the edge of the river. The water is too rough to swim.",
+            "actions": {
+                "go northeast": "sandy cave",
+                "go south": "aragain falls",
+                "exit boat": "You step out of the boat onto the beach.",
+                "get out": "You step out of the boat onto the beach."
+            },
+            "items": ["shovel"]
+        },
+        "sandy cave": {
+            "description": "This is a sandy cave near the beach. The sand here seems loose and shifting.",
+            "actions": {
+                "go southwest": "sandy beach",
+                "dig": "You dig in the sand...",
+                "dig sand": "You dig deeper in the sand..."
+            },
+            "state": {
+                "digCount": 0,
+                "scarabRevealed": false
+            },
+            "items": []
+        },
+        "aragain falls": {
+            "description": "You are at the base of Aragain Falls. A beautiful rainbow arcs across the falls.",
+            "actions": {
+                "go north": "sandy beach",
+                "cross rainbow": "canyon view"
             },
             "items": []
         }
@@ -589,7 +676,15 @@
             "knife": "maze5",
             "diamond": "machine room",
             "bracelet": "gas room",
-            "jade figurine": "bat room"
+            "jade figurine": "bat room",
+            "trunk of jewels": "reservoir",
+            "air pump": "reservoir north",
+            "crystal trident": "atlantis room",
+            "plastic boat": "dam base",
+            "shovel": "sandy beach",
+            "scarab": null,
+            "emerald": null,
+            "buoy": "in boat"
         },
         "lockedDoors": [
             "house-door",
@@ -623,14 +718,23 @@
             "timber": "This is a broken timber, apparently left over from the mine's operational days.",
             "diamond": "This is a brilliant diamond, clearly worth a fortune.",
             "bracelet": "This is an exquisite jade bracelet.",
-            "jade figurine": "This is an exquisite jade figurine."
+            "jade figurine": "This is an exquisite jade figurine.",
+            "trunk of jewels": "This is an ornate trunk filled with precious jewels.",
+            "air pump": "This is a hand-operated air pump.",
+            "crystal trident": "This is a beautiful crystal trident.",
+            "plastic boat": "This is a deflated Frobozz Magic Inflatable Boat.",
+            "shovel": "This is a sturdy shovel, perfect for digging.",
+            "scarab": "This is an ancient Egyptian scarab, beautifully carved.",
+            "emerald": "This is a brilliant emerald.",
+            "buoy": "This is a navigation buoy. It looks like it might open."
         },
         "containerContents": {
             "sack": ["lunch", "garlic"],
             "bottle": ["water"],
             "case": [],
             "basket": [],
-            "machine": []
+            "machine": [],
+            "buoy": ["emerald"]
         },
         "roomStates": {
             "troll room": {

@@ -331,6 +331,24 @@ function GameInterface() {
       case "slide":
         handleSlide();
         break;
+      case "inflate":
+        handleInflate(target);
+        break;
+      case "board":
+        handleBoard(target);
+        break;
+      case "launch":
+        handleLaunch();
+        break;
+      case "wait":
+        handleWait();
+        break;
+      case "dig":
+        handleDig();
+        break;
+      case "cross":
+        handleCross(target);
+        break;
       default:
         // Check for profanity
         if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
@@ -1531,6 +1549,190 @@ function GameInterface() {
         ...prevLog,
         `> turn off ${item}`,
         `You can't turn that off.`
+      ]);
+    }
+  };
+
+  const handleInflate = (item) => {
+    if (item === "plastic" || item === "boat") {
+      if (!gameState.inventory.includes("air pump")) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> inflate ${item}`,
+          "You need something to inflate it with."
+        ]);
+        return;
+      }
+
+      setGameState(prevState => ({
+        ...prevState,
+        roomStates: {
+          ...prevState.roomStates,
+          "dam base": { boatInflated: true }
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> inflate ${item}`,
+        "The plastic pile inflates into a sturdy rubber boat!"
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> inflate ${item}`,
+        "You can't inflate that."
+      ]);
+    }
+  };
+
+  const handleBoard = (item) => {
+    if (item === "boat" && gameState.currentRoom === "dam base") {
+      if (!gameState.roomStates?.["dam base"]?.boatInflated) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> board ${item}`,
+          "The boat needs to be inflated first."
+        ]);
+        return;
+      }
+
+      setGameState(prevState => ({
+        ...prevState,
+        currentRoom: "in boat"
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> board ${item}`,
+        "You board the rubber boat.",
+        "",
+        getBasicRoomDescription("in boat")
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> board ${item}`,
+        "You can't board that."
+      ]);
+    }
+  };
+
+  const handleLaunch = () => {
+    if (gameState.currentRoom === "in boat") {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        "> launch",
+        "The boat begins to move with the current."
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        "> launch",
+        "You're not in anything that can be launched."
+      ]);
+    }
+  };
+
+  const handleWait = () => {
+    if (gameState.currentRoom === "in boat") {
+      const waitCount = (gameState.roomStates?.["in boat"]?.waitCount || 0) + 1;
+      
+      setGameState(prevState => ({
+        ...prevState,
+        roomStates: {
+          ...prevState.roomStates,
+          "in boat": { 
+            waitCount,
+            buoyVisible: waitCount >= 3
+          }
+        }
+      }));
+
+      let message = "The boat drifts in the current...";
+      if (waitCount === 3) {
+        message += "\nYou notice a buoy floating in the water nearby.";
+      }
+
+      setGameLog((prevLog) => [
+        ...prevLog,
+        "> wait",
+        message
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        "> wait",
+        "Time passes..."
+      ]);
+    }
+  };
+
+  const handleDig = () => {
+    if (gameState.currentRoom === "sandy cave") {
+      if (!gameState.inventory.includes("shovel")) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          "> dig",
+          "You need a shovel to dig here."
+        ]);
+        return;
+      }
+
+      const digCount = (gameState.roomStates?.["sandy cave"]?.digCount || 0) + 1;
+      
+      setGameState(prevState => ({
+        ...prevState,
+        roomStates: {
+          ...prevState.roomStates,
+          "sandy cave": { 
+            digCount,
+            scarabRevealed: digCount >= 3
+          }
+        },
+        itemsInWorld: digCount >= 3 ? {
+          ...prevState.itemsInWorld,
+          scarab: "sandy cave"
+        } : prevState.itemsInWorld
+      }));
+
+      let message = "You dig in the sand...";
+      if (digCount === 3) {
+        message += "\nYou uncover an ancient scarab!";
+      } else if (digCount > 3) {
+        message += "\nYou find nothing else of interest.";
+      }
+
+      setGameLog((prevLog) => [
+        ...prevLog,
+        "> dig",
+        message
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        "> dig",
+        "The ground is too hard to dig here."
+      ]);
+    }
+  };
+
+  const handleCross = (target) => {
+    if (target === "rainbow" && gameState.currentRoom === "aragain falls") {
+      setGameState(prevState => ({
+        ...prevState,
+        currentRoom: "canyon view"
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> cross ${target}`,
+        "You cross the rainbow bridge...",
+        "",
+        getBasicRoomDescription("canyon view")
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> cross ${target}`,
+        "You can't cross that."
       ]);
     }
   };
