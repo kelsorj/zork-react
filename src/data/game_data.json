@@ -527,10 +527,10 @@
             "items": ["coal"]
         },
         "ladder bottom": {
-            "description": "You are at the bottom of a rickety wooden ladder. A passage leads west.",
+            "description": "You are at the bottom of a rickety wooden ladder. A passage leads south.",
             "actions": {
                 "go up": "ladder top",
-                "go west": "timber room"
+                "go south": "dead end"
             },
             "items": []
         },
