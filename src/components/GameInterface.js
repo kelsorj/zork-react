@@ -134,10 +134,10 @@ function GameInterface() {
         handleGo(target);
         break;
       case "take":
-      case "get":
-      case "grab":
-      case "pick":
-        if (target === "all") {
+        if (target.includes(" from ")) {
+          const [item, _, container] = target.split(" from ");
+          handleTakeFrom(item, container);
+        } else if (target === "all") {
           handleTakeAll();
         } else {
           handleTake(target);
@@ -547,6 +547,24 @@ function GameInterface() {
   };
 
   const handleOpen = (target) => {
+    if (target === "lid" && gameState.currentRoom === "machine room") {
+      setGameState(prevState => ({
+        ...prevState,
+        roomStates: {
+          ...prevState.roomStates,
+          "machine room": {
+            ...prevState.roomStates?.["machine room"],
+            lidOpen: true
+          }
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> open ${target}`,
+        "You open the machine's lid, revealing a coal chamber."
+      ]);
+      return;
+    }
     const currentRoom = gameData.rooms[gameState.currentRoom];
     
     // Special case for coffin in east of chasm
@@ -869,6 +887,24 @@ function GameInterface() {
   };
 
   const handleClose = (target) => {
+    if (target === "lid" && gameState.currentRoom === "machine room") {
+      setGameState(prevState => ({
+        ...prevState,
+        roomStates: {
+          ...prevState.roomStates,
+          "machine room": {
+            ...prevState.roomStates?.["machine room"],
+            lidOpen: false
+          }
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> close ${target}`,
+        "You close the machine's lid."
+      ]);
+      return;
+    }
     setGameLog((prevLog) => [
       ...prevLog,
       `> close ${target}`,
@@ -1111,6 +1147,48 @@ function GameInterface() {
   };
 
   const handleTurn = (item, tool) => {
+    if (item === "switch" && tool === "screwdriver" && 
+        gameState.currentRoom === "machine room") {
+      if (!gameState.roomStates?.["machine room"]?.coalInMachine) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> turn switch with screwdriver`,
+          "The machine needs coal to operate."
+        ]);
+        return;
+      }
+      
+      if (gameState.roomStates?.["machine room"]?.lidOpen) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> turn switch with screwdriver`,
+          "You should close the lid first."
+        ]);
+        return;
+      }
+
+      setGameState(prevState => ({
+        ...prevState,
+        roomStates: {
+          ...prevState.roomStates,
+          "machine room": {
+            ...prevState.roomStates?.["machine room"],
+            machineRun: true,
+            coalInMachine: false
+          }
+        },
+        itemsInWorld: {
+          ...prevState.itemsInWorld,
+          diamond: "machine room"
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> turn switch with screwdriver`,
+        "The machine rumbles to life, processing the coal. After a moment, it stops."
+      ]);
+      return;
+    }
     const currentRoom = gameData.rooms[gameState.currentRoom];
     const turnAction = currentRoom.actions[`turn ${item} with ${tool}`];
     
@@ -1307,6 +1385,78 @@ function GameInterface() {
         ...prevLog,
         `> squeeze ${direction}`,
         "You can't squeeze through there."
+      ]);
+    }
+  };
+
+  const handleTakeFrom = (item, container) => {
+    if (container === "basket" && gameState.currentRoom === "drafty room") {
+      if (gameState.containerContents.basket.includes(item)) {
+        setGameState(prevState => ({
+          ...prevState,
+          inventory: [...prevState.inventory, item],
+          containerContents: {
+            ...prevState.containerContents,
+            basket: prevState.containerContents.basket.filter(i => i !== item)
+          }
+        }));
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> take ${item} from ${container}`,
+          `You take the ${item} from the basket.`
+        ]);
+      } else {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> take ${item} from ${container}`,
+          `There is no ${item} in the basket.`
+        ]);
+      }
+      return;
+    }
+  };
+
+  const handlePutInMachine = (item) => {
+    if (!gameState.inventory.includes(item)) {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> put ${item} in machine`,
+        `You don't have the ${item}.`
+      ]);
+      return;
+    }
+
+    if (!gameState.roomStates?.["machine room"]?.lidOpen) {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> put ${item} in machine`,
+        "The machine's lid is closed."
+      ]);
+      return;
+    }
+
+    if (item === "coal") {
+      setGameState(prevState => ({
+        ...prevState,
+        inventory: prevState.inventory.filter(i => i !== item),
+        roomStates: {
+          ...prevState.roomStates,
+          "machine room": {
+            ...prevState.roomStates?.["machine room"],
+            coalInMachine: true
+          }
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> put ${item} in machine`,
+        "You put the coal in the machine."
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> put ${item} in machine`,
+        "That doesn't belong in the machine."
       ]);
     }
   };

@@ -484,35 +484,38 @@
             "items": ["timber"]
         },
         "drafty room": {
-            "description": "This is a drafty room. A cold wind blows from somewhere.",
+            "description": "This is the drafty room at the bottom of the shaft. A basket hangs here, and passages lead east and south.",
             "actions": {
-                "go east": "timber room"
+                "go east": "timber room",
+                "go south": "machine room",
+                "take torch from basket": {
+                    "requires": ["basket"],
+                    "message": "You take the torch from the basket."
+                },
+                "take coal from basket": {
+                    "requires": ["basket"],
+                    "message": "You take the coal from the basket."
+                }
             },
-            "items": []
+            "items": ["basket"]
         },
-        "mine passage 4": {
-            "description": "This is a narrow mine passage leading back to the gas room.",
+        "machine room": {
+            "description": "This is a room filled with machinery. A large coal-burning machine dominates the center of the room. A passage leads north.",
             "actions": {
-                "go south": "ladder top",
-                "go north": "gas room"
+                "go north": "drafty room",
+                "open lid": "You open the machine's lid, revealing a coal chamber.",
+                "close lid": "You close the machine's lid.",
+                "turn switch with screwdriver": {
+                    "requires": ["screwdriver"],
+                    "message": "The machine rumbles to life, processing the coal. After a moment, it stops."
+                }
             },
-            "items": []
-        },
-        "mine passage 5": {
-            "description": "This is a narrow mine passage. The air is thick with coal dust.",
-            "actions": {
-                "go west": "ladder top",
-                "go south": "mine passage 6"
+            "state": {
+                "lidOpen": false,
+                "coalInMachine": false,
+                "machineRun": false
             },
-            "items": []
-        },
-        "mine passage 6": {
-            "description": "This is a narrow mine passage connecting back to the main areas.",
-            "actions": {
-                "go north": "mine passage 5",
-                "go south": "gas room"
-            },
-            "items": []
+            "items": ["diamond"]
         }
     },
     "inventory": [],
@@ -563,7 +566,9 @@
             "crystal skull": "hades",
             "gas mask": "gas room",
             "coins": "maze5",
-            "knife": "maze5"
+            "knife": "maze5",
+            "diamond": "machine room",
+            "bracelet": "gas room"
         },
         "lockedDoors": [
             "house-door",
@@ -594,12 +599,16 @@
             "coins": "These are ancient coins, possibly valuable to collectors.",
             "knife": "This is a sharp knife, useful for cutting things.",
             "coal": "This is a chunk of coal, still good for burning.",
-            "timber": "This is a broken timber, apparently left over from the mine's operational days."
+            "timber": "This is a broken timber, apparently left over from the mine's operational days.",
+            "diamond": "This is a brilliant diamond, clearly worth a fortune.",
+            "bracelet": "This is an exquisite jade bracelet."
         },
         "containerContents": {
             "sack": ["lunch", "garlic"],
             "bottle": ["water"],
-            "case": []
+            "case": [],
+            "basket": [],
+            "machine": []
         },
         "roomStates": {
             "troll room": {
