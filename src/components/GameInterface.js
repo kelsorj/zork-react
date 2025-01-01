@@ -254,6 +254,18 @@ function GameInterface() {
       case "g":
         handleRepeatLastCommand();
         break;
+      case "climb":
+        const currentRoom = gameData.rooms[gameState.currentRoom];
+        if (currentRoom.actions["climb tree"]) {
+          handleGo("up");
+        } else {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            "> climb",
+            "There's nothing here to climb."
+          ]);
+        }
+        break;
       default:
         // Check for profanity
         if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
@@ -425,17 +437,48 @@ function GameInterface() {
   };
 
   const handleRead = (object) => {
-    setGameLog((prevLog) => [
-      ...prevLog,
-      `> read ${object}`,
-      `You try to read the ${object}, but there's nothing written on it.`
-    ]);
+    if (gameState.inventory.includes(object) || gameState.itemsInWorld[object] === gameState.currentRoom) {
+      const description = gameData.state.itemDescriptions[object];
+      if (description) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> read ${object}`,
+          description
+        ]);
+      } else {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> read ${object}`,
+          `There's nothing written on the ${object}.`
+        ]);
+      }
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> read ${object}`,
+        `You don't have the ${object}.`
+      ]);
+    }
   };
 
   const handleOpen = (target) => {
     const currentRoom = gameData.rooms[gameState.currentRoom];
-    const openAction = currentRoom.actions["open"];
     
+    // First check if it's a container
+    if (gameData.state.containerContents[target]) {
+      if (gameState.inventory.includes(target) || gameState.itemsInWorld[target] === gameState.currentRoom) {
+        const description = gameData.state.itemDescriptions[target];
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> open ${target}`,
+          description
+        ]);
+        return;
+      }
+    }
+    
+    // Then check room actions
+    const openAction = currentRoom.actions["open"];
     if (openAction) {
       setGameLog((prevLog) => [
         ...prevLog,

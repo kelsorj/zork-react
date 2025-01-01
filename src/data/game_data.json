@@ -10,12 +10,14 @@
             "items": []
         },
         "path": {
-            "description": "You are on a winding path that leads through the forest.",
+            "description": "You are on a winding path that leads through the forest. A large tree with low branches stands here.",
             "actions": {
                 "go south": "north of house",
                 "go west": "forest1",
                 "go east": "forest2",
-                "go northwest": "grating clearing"
+                "go northwest": "grating clearing",
+                "climb tree": "tree",
+                "up": "tree"
             },
             "items": []
         },
@@ -527,6 +529,14 @@
                 "go west": "clearing"
             },
             "items": []
+        },
+        "tree": {
+            "description": "You are up in the branches of a large tree. Among the branches is a small bird's nest.",
+            "actions": {
+                "go down": "path",
+                "down": "path"
+            },
+            "items": ["nest", "egg"]
         }
     },
     "inventory": [],
@@ -569,14 +579,29 @@
             "machine parts": "machine room",
             "painting": "gallery",
             "easel": "studio",
-            "paintbrush": "studio"
+            "paintbrush": "studio",
+            "nest": "tree",
+            "egg": "nest"
         },
         "lockedDoors": [
             "house-door",
             "grating",
             "treasure room door",
             "gates of hades"
-        ]
+        ],
+        "itemDescriptions": {
+            "leaflet": "Welcome to ZORK!\n\nZORK is a game of adventure, danger, and low cunning. In it you will explore some of the most amazing territory ever seen by mortals.\n\nNo computer should be without one!",
+            "egg": "The egg is covered in intricate jeweled patterns. You can't seem to find a way to open it.",
+            "sack": "Opening the sack reveals a lunch and a clove of garlic.",
+            "bottle": "The bottle contains water.",
+            "lunch": "A tasty-looking lunch.",
+            "garlic": "A pungent clove of garlic.",
+            "nest": "A small bird's nest."
+        },
+        "containerContents": {
+            "sack": ["lunch", "garlic"],
+            "bottle": ["water"]
+        }
     },
     "commands": {
         "go": {
