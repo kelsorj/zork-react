@@ -266,6 +266,10 @@ function GameInterface() {
           ]);
         }
         break;
+      case "tie":
+        const [item, _, target] = rest.join(" ").split(" to ");
+        handleTie(item, target);
+        break;
       default:
         // Check for profanity
         if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
@@ -288,6 +292,18 @@ function GameInterface() {
   const handleGo = (direction) => {
     const currentRoom = gameData.rooms[gameState.currentRoom];
     const nextRoom = currentRoom.actions[`go ${direction}`];
+
+    // Special handling for dome room descent
+    if (gameState.currentRoom === "dome room" && direction === "down") {
+      if (!gameState.roomStates?.["dome room"]?.ropeAttached) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> go ${direction}`,
+          "You can't go down without using the rope - that would be certain death!"
+        ]);
+        return;
+      }
+    }
 
     // Check if troll is blocking the way
     if (gameState.currentRoom === "troll room" && 
@@ -903,6 +919,39 @@ function GameInterface() {
         ...prevLog,
         `> throw ${item} at ${target}`,
         `Throwing the ${item} doesn't accomplish anything.`
+      ]);
+    }
+  };
+
+  const handleTie = (item, target) => {
+    if (!gameState.inventory.includes(item)) {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> tie ${item} to ${target}`,
+        `You don't have the ${item}.`
+      ]);
+      return;
+    }
+
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    if (currentRoom.actions[`tie ${item} to ${target}`]) {
+      setGameState(prevState => ({
+        ...prevState,
+        roomStates: {
+          ...prevState.roomStates,
+          "dome room": { ropeAttached: true }
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> tie ${item} to ${target}`,
+        currentRoom.actions[`tie ${item} to ${target}`]
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> tie ${item} to ${target}`,
+        `You can't tie the ${item} to that.`
       ]);
     }
   };

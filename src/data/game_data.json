@@ -539,8 +539,13 @@
             "description": "You are at the periphery of a large dome, which forms the ceiling of another room below. Protecting you from a precipitous drop is a wooden railing which circles the dome.",
             "actions": {
                 "go west": "engravings cave",
-                "go down": "torch room",
+                "tie rope to railing": "You tie the rope to the railing. It dangles down into the darkness below, reaching the torch room.",
+                "climb rope": "torch room",
+                "go down": "You can't go down without using the rope - that would be certain death!",
                 "jump": "In a moment of insanity, you jump from the edge of the dome. You hit the floor below with a sickening crash."
+            },
+            "state": {
+                "ropeAttached": false
             },
             "items": ["rope"]
         },
