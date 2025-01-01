@@ -283,7 +283,8 @@
             "actions": {
                 "go west": "round room",
                 "climb down": "torch room",
-                "go down": "torch room"
+                "go down": "torch room",
+                "tie rope to railing": "You tie the rope securely to the railing. It dangles down into the darkness below."
             },
             "items": []
         },
@@ -301,10 +302,18 @@
             "actions": {
                 "go south": "torch room",
                 "go west": "altar",
+                "go east": "egyptian room",
                 "pray": "A voice whispers: 'The doors are now unlocked.'",
                 "open doors": "The doors are locked."
             },
             "items": ["bell"]
+        },
+        "egyptian room": {
+            "description": "This is the Egyptian Room. Ancient hieroglyphs cover the walls, and a stone sarcophagus rests in the center.",
+            "actions": {
+                "go west": "temple"
+            },
+            "items": ["coffin", "sceptre"]
         },
         "altar": {
             "description": "This is the altar. A huge mirror fills the north wall. A small window can be seen in the east wall.",
