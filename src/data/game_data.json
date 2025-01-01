@@ -32,6 +32,24 @@
             },
             "items": []
         },
+        "forest2": {
+            "description": "You are in a dense forest. The trees seem to close in around you.",
+            "actions": {
+                "go west": "path",
+                "go south": "clearing",
+                "go east": "mountains"
+            },
+            "items": []
+        },
+        "forest3": {
+            "description": "You are in a forest. Ancient trees tower above you.",
+            "actions": {
+                "go east": "canyon view",
+                "go north": "clearing",
+                "go northwest": "south of house"
+            },
+            "items": []
+        },
         "grating clearing": {
             "description": "You are in a forest clearing. The ground is covered with a thick pile of leaves that have fallen from the trees above.",
             "actions": {
@@ -81,15 +99,6 @@
             },
             "items": ["leaves"]
         },
-        "forest2": {
-            "description": "You are in a dense forest. The trees seem to close in around you.",
-            "actions": {
-                "go west": "forest1",
-                "go south": "clearing",
-                "go east": "mountains"
-            },
-            "items": []
-        },
         "mountains": {
             "description": "You are in a mountainous area. The peaks loom ominously above you.",
             "actions": {
@@ -99,7 +108,7 @@
             },
             "items": []
         },
-        "canyon_view": {
+        "canyon view": {
             "description": "You are at Canyon View. Below you can see the magnificent Aragain Falls.",
             "actions": {
                 "go west": "forest3",
@@ -114,7 +123,7 @@
             "actions": {
                 "go north": "forest2",
                 "go west": "east of house",
-                "go east": "canyon_view"
+                "go east": "canyon view"
             },
             "items": []
         },
@@ -317,7 +326,6 @@
             "actions": {
                 "go west": "round room",
                 "go east": "deep canyon",
-                "go up": "engravings cave",
                 "echo": "The acoustics of the room cause your voice to echo and reverberate. As the sound dies away, you notice a platinum bar has appeared!"
             },
             "items": ["platinum bar"]
@@ -325,19 +333,54 @@
         "round room": {
             "description": "This is a circular room with passages in all directions. The walls are made of stone and are inscribed with strange runes.",
             "actions": {
-                "go southeast": "dome room",
+                "go southeast": "engravings cave",
+                "go north": "north south passage",
                 "go east": "loud room",
+                "go south": "narrow passage",
                 "go west": "east west passage"
+            },
+            "items": []
+        },
+        "engravings cave": {
+            "description": "You are in a cave with engravings on the walls. The engravings are of a strange language, but you can make out the words 'Abandon every hope all ye who enter here!'",
+            "actions": {
+                "go east": "dome room",
+                "go west": "round room"
+            },
+            "items": []
+        },
+        "narrow passage": {
+            "description": "You are in a narrow passage. There are exits to the north and south.",
+            "actions": {
+                "go north": "round room",
+                "go south": "mirror room 2"
             },
             "items": []
         },
         "dome room": {
             "description": "You are at the periphery of a large dome, which forms the ceiling of another room below. Protecting you from a precipitous drop is a wooden railing which circles the dome.",
             "actions": {
-                "go west": "round room",
-                "climb down": "torch room",
-                "go down": "torch room",
-                "tie rope to railing": "You tie the rope securely to the railing. It dangles down into the darkness below."
+                "go west": "engravings cave",
+                "climb down": {
+                    "requires": ["ropeTied"],
+                    "destination": "torch room",
+                    "message": "You carefully climb down the rope into the room below."
+                },
+                "go down": {
+                    "requires": ["ropeTied"],
+                    "destination": "torch room",
+                    "message": "You carefully climb down the rope into the room below."
+                },
+                "tie rope to railing": {
+                    "requires": ["rope"],
+                    "message": "You tie the rope securely to the railing. It dangles down into the darkness below.",
+                    "sets": {
+                        "ropeTied": true
+                    }
+                }
+            },
+            "state": {
+                "ropeTied": false
             },
             "items": []
         },
@@ -345,16 +388,15 @@
             "description": "This is a large room with a prominent doorway leading to a down staircase. Above you is a large dome. A passage leads south.",
             "actions": {
                 "go up": "dome room",
-                "go south": "temple",
-                "go down": "cave"
+                "go down": "temple"
             },
             "items": ["torch"]
         },
         "temple": {
-            "description": "This is the temple. A passage leads south and massive wooden doors lead west. The doors are locked.",
+            "description": "This is the temple. A passage leads south and another east. A massive wooden door lead west, the doors are locked.",
             "actions": {
                 "go south": "altar",
-                "go north": "torch room",
+                "go up": "torch room",
                 "go east": "egyptian room",
                 "pray": "A voice whispers: 'The doors are now unlocked.'",
                 "open doors": "The doors are locked."
@@ -371,7 +413,7 @@
         "altar": {
             "description": "This is the altar. A huge mirror fills the north wall. A small window can be seen in the east wall.",
             "actions": {
-                "go north": "temple",
+                "go up": "temple",
                 "go down": "cave"
             },
             "items": ["book", "candles"]
@@ -379,9 +421,16 @@
         "cave": {
             "description": "This is a dark and damp cave. A stairway leads up to the temple, and another stairway leads down.",
             "actions": {
-                "go up": "altar",
                 "go down": "entrance to hades",
-                "go north": "mirror room south"
+                "go west": "winding passage"
+            },
+            "items": []
+        },
+        "winding passage": {
+            "description": "This is a winding passage with passages leading north and east.",
+            "actions": {
+                "go north": "mirror room 2",
+                "go east": "cave"
             },
             "items": []
         },
@@ -678,10 +727,18 @@
         "canyon bottom": {
             "description": "You are at the bottom of the canyon. A rainbow arcs across the chasm, its colors shimmering in the sunlight.",
             "actions": {
-                "go up": "canyon view",
-                "climb up": "canyon view",
-                "go southwest": "canyon view",
-                "climb": "canyon view",
+                "go up": {
+                    "destination": "canyon view",
+                    "message": "You carefully climb back up the canyon wall."
+                },
+                "climb up": {
+                    "destination": "canyon view",
+                    "message": "You carefully climb back up the canyon wall."
+                },
+                "climb": {
+                    "destination": "canyon view",
+                    "message": "You carefully climb back up the canyon wall."
+                },
                 "open coffin": {
                     "message": "The coffin creaks open, revealing an ancient sceptre inside.",
                     "reveals": {
@@ -715,7 +772,7 @@
         "adventurers remains": {
             "description": "You are in a small room. The skeletal remains of a previous adventurer lie here, clutching some items.",
             "actions": {
-                "go southwest": "maze15",
+                "go up": "maze15",
                 "touch skeleton": "As you touch the skeleton, a deadly curse takes effect. You die instantly!",
                 "take skeleton": "As you touch the skeleton, a deadly curse takes effect. You die instantly!"
             },
@@ -764,6 +821,7 @@
             "actions": {
                 "go north": "maze1",
                 "go south": "maze2",
+                "go east": "troll room",
                 "go west": "maze4"
             },
             "items": []
