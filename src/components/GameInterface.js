@@ -282,21 +282,8 @@ function GameInterface() {
           return;
         }
 
-        const roomForOpen = gameData.rooms[gameState.currentRoom];
-        const openAction = roomForOpen.actions["open"];
-        if (openAction) {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> open ${target}`,
-            openAction
-          ]);
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> open ${target}`,
-            `You can't open that.`
-          ]);
-        }
+        // Handle grating and other cases with handleOpen
+        handleOpen(target);
         break;
       case "close":
         handleClose(target);
@@ -482,9 +469,6 @@ function GameInterface() {
         break;
       case "unlock":
         handleUnlock(target);
-        break;
-      case "open":
-        handleOpen(target);
         break;
       default:
         // Check for profanity
@@ -679,18 +663,16 @@ function GameInterface() {
     }
 
     // Apply the unlock action
-    if (unlockAction.sets) {
-      setGameState(prevState => ({
-        ...prevState,
-        roomStates: {
-          ...prevState.roomStates,
-          [gameState.currentRoom]: {
-            ...(prevState.roomStates?.[gameState.currentRoom] || {}),
-            ...unlockAction.sets
-          }
+    setGameState(prevState => ({
+      ...prevState,
+      roomStates: {
+        ...prevState.roomStates,
+        "grating clearing": {
+          ...(prevState.roomStates?.["grating clearing"] || {}),
+          gratingUnlocked: true
         }
-      }));
-    }
+      }
+    }));
 
     setGameLog((prevLog) => [
       ...prevLog,
@@ -2093,10 +2075,20 @@ function GameInterface() {
 
   const handleOpen = (target) => {
     const currentRoom = gameData.rooms[gameState.currentRoom];
-    const openAction = currentRoom.actions[`open ${target}`];
 
     // Special case for grating
     if (target === "grating" && gameState.currentRoom === "grating clearing") {
+      // Check if grating is revealed
+      if (!gameState.roomStates?.["grating clearing"]?.gratingRevealed) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> open ${target}`,
+          "You don't see any grating here."
+        ]);
+        return;
+      }
+
+      // Check if grating is unlocked
       if (!gameState.roomStates?.["grating clearing"]?.gratingUnlocked) {
         setGameLog((prevLog) => [
           ...prevLog,
@@ -2106,6 +2098,7 @@ function GameInterface() {
         return;
       }
 
+      // Open the grating
       setGameState(prevState => ({
         ...prevState,
         roomStates: {
@@ -2116,6 +2109,7 @@ function GameInterface() {
           }
         }
       }));
+
       setGameLog((prevLog) => [
         ...prevLog,
         `> open ${target}`,
@@ -2125,17 +2119,51 @@ function GameInterface() {
     }
 
     // Handle other cases
+    const openAction = currentRoom.actions[`open ${target}`];
     if (openAction) {
-      setGameLog((prevLog) => [
-        ...prevLog,
-        `> open ${target}`,
-        typeof openAction === 'string' ? openAction : openAction.message
-      ]);
+      if (typeof openAction === 'string') {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> open ${target}`,
+          openAction
+        ]);
+      } else {
+        if (openAction.requires) {
+          const missingRequirements = openAction.requires.filter(req => !gameState.roomStates?.[gameState.currentRoom]?.[req]);
+          if (missingRequirements.length > 0) {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> open ${target}`,
+              "You can't open that yet."
+            ]);
+            return;
+          }
+        }
+
+        if (openAction.sets) {
+          setGameState(prevState => ({
+            ...prevState,
+            roomStates: {
+              ...prevState.roomStates,
+              [gameState.currentRoom]: {
+                ...(prevState.roomStates?.[gameState.currentRoom] || {}),
+                ...openAction.sets
+              }
+            }
+          }));
+        }
+
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> open ${target}`,
+          openAction.message
+        ]);
+      }
     } else {
       setGameLog((prevLog) => [
         ...prevLog,
         `> open ${target}`,
-        `You can't open that.`
+        "You can't open that."
       ]);
     }
   };
