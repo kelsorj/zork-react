@@ -55,14 +55,14 @@
                     }
                 },
                 "unlock grating": {
-                    "requires": ["key", "gratingRevealed"],
+                    "requires": ["key"],
                     "message": "You unlock the grating with the key.",
                     "sets": {
                         "gratingUnlocked": true
                     }
                 },
                 "open grating": {
-                    "requires": ["gratingUnlocked", "gratingRevealed"],
+                    "requires": ["gratingUnlocked"],
                     "message": "You open the grating.",
                     "sets": {
                         "gratingOpen": true

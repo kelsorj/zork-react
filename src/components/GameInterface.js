@@ -643,6 +643,16 @@ function GameInterface() {
     const currentRoom = gameData.rooms[gameState.currentRoom];
     const unlockAction = currentRoom.actions[`unlock ${target}`];
 
+    // Check if the grating is revealed before allowing unlock
+    if (target === "grating" && !gameState.roomStates?.["grating clearing"]?.gratingRevealed) {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> unlock ${target}`,
+        `You don't see any grating here.`
+      ]);
+      return;
+    }
+
     if (!unlockAction) {
       setGameLog((prevLog) => [
         ...prevLog,
