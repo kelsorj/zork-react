@@ -75,6 +75,22 @@ function GameInterface() {
     const [action, ...rest] = command.split(" ");
     const target = rest.join(" ");
 
+    // Handle directional shortcuts
+    if (["north", "south", "east", "west", "up", "down", "n", "s", "e", "w", "u", "d"].includes(action)) {
+      // Convert shortcuts to full directions
+      const directionMap = {
+        'n': 'north',
+        's': 'south',
+        'e': 'east',
+        'w': 'west',
+        'u': 'up',
+        'd': 'down'
+      };
+      const direction = directionMap[action] || action;
+      handleGo(direction);
+      return;
+    }
+
     switch (action) {
       case "go":
         handleGo(target);
@@ -410,7 +426,8 @@ function GameInterface() {
       "> help",
       "Available commands:",
       "- look (l): Look around the current room",
-      "- go [direction]: Move in a direction (north, south, east, west)",
+      "- go [direction]: Move in a direction (north, south, east, west, up, down)",
+      "- north (n), south (s), east (e), west (w), up (u), down (d): Move in that direction",
       "- take/get [item]: Pick up an item",
       "- drop [item]: Drop an item from your inventory",
       "- inventory (i): Check your inventory",
