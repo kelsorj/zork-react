@@ -76,7 +76,7 @@
             "items": []
         },
         "living room": {
-            "description": "You are in the living room of the white house. A beautiful oriental rug lies in the center. A wooden door leads east into the kitchen, while stairs lead up to the attic.",
+            "description": "You are in the living room of the white house. A beautiful oriental rug lies in the center. A wooden door leads east into the kitchen, while stairs lead up to the attic. A trophy case stands against one wall, and a gleaming sword lies nearby.",
             "actions": {
                 "go east": "kitchen",
                 "go down": "cellar",
@@ -166,7 +166,7 @@
         "gallery": {
             "description": "This appears to be an art gallery. The walls are lined with paintings and there is a beautiful portrait prominently displayed.",
             "actions": {
-                "go west": "studio",
+                "go north": "studio",
                 "go east": "east of chasm"
             },
             "items": ["portrait"]

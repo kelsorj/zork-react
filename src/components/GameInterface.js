@@ -46,7 +46,7 @@ function GameInterface() {
 
     let description = room.description;
     
-    // If in living room and rug is moved, add trapdoor to description
+    // If in living room and rug is moved, update description
     if (roomId === "living room" && gameState.rugMoved) {
       description = description.replace("A beautiful oriental rug lies in the center.", "A trapdoor is visible in the floor.");
     }
@@ -558,10 +558,14 @@ function GameInterface() {
 
   const handleTake = (item) => {
     // Debug logging
-    console.log('Current room:', gameState.currentRoom);
-    console.log('Looking for item:', item);
-    console.log('Item location:', gameState.itemsInWorld[item]);
-    console.log('Room items:', gameData.rooms[gameState.currentRoom].items);
+    console.log('Take command debug:');
+    console.log('- Current room:', gameState.currentRoom);
+    console.log('- Trying to take:', item);
+    console.log('- Item location:', gameState.itemsInWorld[item]);
+    console.log('- Room items:', gameData.rooms[gameState.currentRoom].items);
+    console.log('- All items in current room:', Object.entries(gameState.itemsInWorld)
+      .filter(([_, location]) => location === gameState.currentRoom)
+      .map(([item]) => item));
 
     // Check for deadly skeleton interaction
     if (item === "skeleton" && gameState.currentRoom === "adventurers remains") {
