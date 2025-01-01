@@ -80,7 +80,7 @@
             "actions": {
                 "go east": "kitchen",
                 "go down": "cellar",
-                "move rug": "You discover a trap door under the rug leading to the cellar!",
+                "move rug": "You discover a trapdoor under the rug leading to the cellar!",
                 "open trapdoor": "cellar"
             },
             "items": ["case", "lamp", "sword", "rug"]

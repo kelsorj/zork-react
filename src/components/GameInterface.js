@@ -466,6 +466,10 @@ function GameInterface() {
           ]);
         }
         break;
+      case "help":
+      case "?":
+        handleHelp();
+        break;
       default:
         // Check for profanity
         if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
