@@ -384,53 +384,24 @@
         "mirror room north": {
             "description": "This mirror room looks almost identical to the one you were just in, but something feels different.",
             "actions": {
-                "go north": "maze exit",
-                "go west": "twisty passage"
-            },
-            "items": []
-        },
-        "maze exit": {
-            "description": "You are at the exit of the maze. Passages lead in several directions.",
-            "actions": {
-                "go south": "mirror room north",
-                "go west": "narrow room",
-                "go north": "round room"
-            },
-            "items": []
-        },
-        "narrow room": {
-            "description": "This is a narrow room with passages leading east and west.",
-            "actions": {
-                "go east": "maze exit",
-                "go west": "squeaky room",
-                "go north": "bat room"
+                "go north": "bat room",
+                "go west": "squeaky room"
             },
             "items": []
         },
         "squeaky room": {
             "description": "The floor boards squeak loudly with every step. A strong draft blows from the north.",
             "actions": {
-                "go east": "narrow room",
-                "go north": "bat room"
+                "go east": "bat room"
             },
             "items": []
         },
         "bat room": {
             "description": "This room is filled with sleeping bats hanging from the ceiling. You'd better not wake them!",
             "actions": {
-                "go south": "squeaky room",
+                "go west": "squeaky room",
                 "go east": "shaft room",
-                "go west": "slide room"
-            },
-            "items": []
-        },
-        "slide room": {
-            "description": "This is a small room with smooth walls. The most notable feature is a steep metal slide that descends into darkness.",
-            "actions": {
-                "go east": "bat room",
-                "slide": "cellar",
-                "slide down": "cellar",
-                "go down": "cellar"
+                "go south": "mirror room north"
             },
             "items": []
         },
@@ -477,33 +448,33 @@
             "description": "You are in a coal mine. The walls are covered in coal dust and old mining equipment lies scattered about.",
             "actions": {
                 "go west": "gas room",
-                "go northeast": "mine passage 1",
-                "go southeast": "mine passage 2",
-                "go southwest": "mine passage 3",
+                "go northeast": "mine 1",
+                "go southeast": "mine 2",
+                "go southwest": "mine 3",
                 "go down": "ladder top"
             },
             "items": []
         },
-        "mine passage 1": {
+        "mine 1": {
             "description": "This is a narrow mine passage. The walls are rough and uneven.",
             "actions": {
                 "go southwest": "coal mine",
-                "go southeast": "mine passage 2"
+                "go southeast": "mine 2"
             },
             "items": []
         },
-        "mine passage 2": {
+        "mine 2": {
             "description": "This is a narrow mine passage. Coal dust covers everything.",
             "actions": {
-                "go northwest": "mine passage 1",
-                "go southwest": "mine passage 3"
+                "go northwest": "mine 1",
+                "go southwest": "mine 3"
             },
             "items": []
         },
-        "mine passage 3": {
+        "mine 3": {
             "description": "This is a narrow mine passage. Old mining equipment is scattered about.",
             "actions": {
-                "go northeast": "mine passage 2",
+                "go northeast": "mine 2",
                 "go down": "ladder top"
             },
             "items": []
@@ -511,26 +482,16 @@
         "ladder top": {
             "description": "You are at the top of a rickety wooden ladder that descends into darkness.",
             "actions": {
-                "go up": "coal mine",
-                "go down": "ladder bottom",
-                "go north": "mine passage 4",
-                "go east": "mine passage 5",
-                "go south": "dead end"
+                "go up": "mine 3",
+                "go down": "ladder bottom"
             },
             "items": []
         },
-        "dead end": {
-            "description": "This is a dead end in the mine. There's a pile of coal here.",
-            "actions": {
-                "go north": "ladder top"
-            },
-            "items": ["coal"]
-        },
         "ladder bottom": {
-            "description": "You are at the bottom of a rickety wooden ladder. A passage leads south.",
+            "description": "You are at the bottom of a rickety wooden ladder. A passage leads west.",
             "actions": {
                 "go up": "ladder top",
-                "go south": "dead end"
+                "go west": "timber room"
             },
             "items": []
         },
