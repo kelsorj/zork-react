@@ -300,8 +300,8 @@
         "temple": {
             "description": "This is the temple. A passage leads south and massive wooden doors lead west. The doors are locked.",
             "actions": {
-                "go south": "torch room",
-                "go west": "altar",
+                "go south": "altar",
+                "go north": "torch room",
                 "go east": "egyptian room",
                 "pray": "A voice whispers: 'The doors are now unlocked.'",
                 "open doors": "The doors are locked."
@@ -318,7 +318,7 @@
         "altar": {
             "description": "This is the altar. A huge mirror fills the north wall. A small window can be seen in the east wall.",
             "actions": {
-                "go east": "temple",
+                "go north": "temple",
                 "go down": "cave"
             },
             "items": ["book", "candles"]
