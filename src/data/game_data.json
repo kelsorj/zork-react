@@ -132,24 +132,25 @@
             "items": ["leaflet"]
         },
         "cellar": {
-            "description": "You are in a dark and damp cellar with a narrow passageway leading north, and a crawlway to the south.",
+            "description": "You are in a dark and damp cellar with a narrow passageway leading north, and a crawlway to the south. A rickety wooden staircase leads up.",
             "actions": {
                 "go up": "living room",
                 "go north": "troll room",
                 "go south": "east of chasm"
             },
-            "items": ["bottle"]
+            "items": []
         },
         "east of chasm": {
-            "description": "You are on the east edge of a deep chasm. The ground here is littered with loose rocks, and you can hear water rushing far below. A narrow passage leads north, and a dark tunnel heads east.",
+            "description": "You are on the east edge of a chasm, the bottom of which cannot be seen. A narrow passage leads north, and the path you are on continues to the east. The path from below ends here, blocked by a massive fallen boulder.",
             "actions": {
                 "go north": "cellar",
-                "go east": "gallery"
+                "go east": "gallery",
+                "jump": "In a moment of insanity, you jump into the chasm. You hit the bottom... eventually."
             },
             "items": []
         },
         "gallery": {
-            "description": "This appears to be an art gallery. Beautiful paintings and sculptures line the walls, though they are covered in dust and cobwebs. A passage leads west, and there is a doorway to the north.",
+            "description": "This appears to be an art gallery. Most of the paintings have been stolen by vandals through the years. The vandals have shown good taste, as the remaining paintings are of exceptionally poor quality. The gallery continues to the north.",
             "actions": {
                 "go west": "east of chasm",
                 "go north": "studio"
@@ -157,20 +158,26 @@
             "items": ["painting"]
         },
         "studio": {
-            "description": "You are in what appears to be an artist's studio. Easels and half-finished paintings are scattered about, and the air smells of old paint and turpentine. A steep stairway leads up, and a doorway leads south.",
+            "description": "This appears to be the studio of a painter, but it has been neglected for years. Paint drippings cover everything, and several early attempts at painting have been left on easels to gather dust. A dark and narrow chimney leads up. A doorway leads south.",
             "actions": {
                 "go south": "gallery",
-                "go up": "kitchen"
+                "go up": "kitchen",
+                "climb chimney": "kitchen"
             },
             "items": ["easel", "paintbrush"]
         },
         "troll room": {
-            "description": "This is a small room with passages to the east and south. Bloodstains and deep scratches mar the walls.",
+            "description": "This is a small room with passages to the east and south. Bloodstains and deep scratches mar the walls. A menacing troll brandishing a bloody axe blocks all passages out of the room.",
             "actions": {
                 "go south": "cellar",
-                "go east": "maze1"
+                "go east": "maze1",
+                "attack troll with sword": "The troll, disarmed by your skilled swordplay, takes flight. The troll, defeated, disappears into the gloom.",
+                "throw garlic at troll": "The troll catches the garlic and runs away in disgust. The troll, defeated, disappears into the gloom."
             },
-            "items": ["sword"]
+            "items": ["axe"],
+            "state": {
+                "trollDefeated": false
+            }
         },
         "maze1": {
             "description": "This is part of a maze of twisty little passages, all alike.",
@@ -457,86 +464,122 @@
             "items": []
         },
         "deep canyon": {
-            "description": "You are on the west edge of a deep canyon. A narrow passage leads north, and a path leads south.",
+            "description": "You are on the west edge of a deep canyon. Passages lead north and south, and the canyon is to the east. The walls of the canyon come together from below and there is no way down. The rushing sound is quite loud here.",
             "actions": {
-                "go west": "round room",
-                "go north": "dam room",
-                "go south": "reservoir"
+                "go west": "loud room",
+                "go north": "reservoir south",
+                "go south": "mirror room"
             },
             "items": []
         },
-        "mine": {
-            "description": "You are in an abandoned mine. Old mining equipment lies scattered about.",
-            "actions": {
-                "go west": "smelly room",
-                "go east": "machine room"
-            },
-            "items": ["pick"]
-        },
-        "machine room": {
-            "description": "This room contains ancient mining machinery. A rusty control panel stands against one wall.",
-            "actions": {
-                "go west": "mine",
-                "go east": "machine room 2"
-            },
-            "items": ["machine parts"]
-        },
-        "machine room 2": {
-            "description": "More mining machinery fills this room. The air is thick with coal dust.",
-            "actions": {
-                "go west": "machine room",
-                "go east": "slide room"
-            },
-            "items": []
-        },
-        "slide room": {
-            "description": "There is a steep slide here that leads down into darkness.",
-            "actions": {
-                "go west": "machine room2",
-                "go down": "cellar",
-                "slide": "cellar"
-            },
-            "items": []
-        },
-        "grating room": {
-            "description": "You are in a small room beneath the grating. A ladder leads up through the grating, and a tunnel heads north.",
-            "actions": {
-                "go up": "grating clearing",
-                "go north": "cellar"
-            },
-            "items": []
-        },
-        "dam room": {
-            "description": "You are at the dam. Water rushes by below you.",
+        "reservoir south": {
+            "description": "You are in a long room on the south shore of a large reservoir. A low dam forms the north wall of the room. Dark passages lead south and west.",
             "actions": {
                 "go south": "deep canyon",
-                "go north": "maintenance room"
-            },
-            "items": ["wrench"]
-        },
-        "maintenance room": {
-            "description": "This is the maintenance room. Tools and equipment are scattered about.",
-            "actions": {
-                "go south": "dam room"
-            },
-            "items": ["screwdriver"]
-        },
-        "forest3": {
-            "description": "You are in a forest. The trees are less dense here.",
-            "actions": {
-                "go north": "south of house",
-                "go east": "canyon view",
-                "go west": "clearing"
+                "go west": "chasm room",
+                "go north": "reservoir"
             },
             "items": []
         },
-        "tree": {
-            "description": "You are up in the branches of a large tree. Among the branches is a small bird's nest.",
+        "reservoir": {
+            "description": "You are on the reservoir. The water is chilly, but swimmable. The reservoir extends north and south. Beaches lie to the north and south.",
             "actions": {
-                "go down": "path",
-                "down": "path"
+                "go north": "reservoir north",
+                "go south": "reservoir south",
+                "swim": "You swim in the chilly water."
             },
-            "items": ["nest", "egg"]
+            "items": []
+        },
+        "reservoir north": {
+            "description": "You are in a long room on the north shore of a large reservoir. A low dam forms the south wall of the room. A western dam blocks the flow from this room. Dark passages lead north and east.",
+            "actions": {
+                "go south": "reservoir",
+                "go north": "atlantis room",
+                "go east": "cave"
+            },
+            "items": []
+        },
+        "atlantis room": {
+            "description": "This is an ancient room, long under water but now high and dry. The room is tall and circular, with a high domed roof. A large bronze bell hangs from the center of the room. A passage leads south.",
+            "actions": {
+                "go south": "reservoir north",
+                "ring bell": "The bell tolls deeply. The sound echoes throughout the cavern."
+            },
+            "items": ["bell"]
+        },
+        "mirror room": {
+            "description": "You are in a large square room with tall ceilings. Huge mirrors line the walls, making it difficult to tell which are doors and which are mirrors.",
+            "actions": {
+                "go north": "deep canyon",
+                "go south": "cave",
+                "go east": "cold passage"
+            },
+            "items": []
+        },
+        "cold passage": {
+            "description": "This is a cold and damp corridor where a long east-west passageway intersects a north-south one.",
+            "actions": {
+                "go west": "mirror room",
+                "go east": "slide room",
+                "go north": "round room",
+                "go south": "mine entrance"
+            },
+            "items": []
+        },
+        "engravings cave": {
+            "description": "You have entered a low cave with passages leading northwest and east. There are old engravings on the walls here.",
+            "actions": {
+                "go northwest": "round room",
+                "go east": "dome room",
+                "read engravings": "The engravings were incised in the living rock of the cave wall by an unknown hand. They depict, in symbolic form, the beliefs of the ancient peoples of Zork. Skillfully interwoven with the bas reliefs are excerpts illustrating the major religious tenets of that time."
+            },
+            "items": []
+        },
+        "dome room": {
+            "description": "You are at the periphery of a large dome, which forms the ceiling of another room below. Protecting you from a precipitous drop is a wooden railing which circles the dome.",
+            "actions": {
+                "go west": "engravings cave",
+                "go down": "torch room",
+                "jump": "In a moment of insanity, you jump from the edge of the dome. You hit the floor below with a sickening crash."
+            },
+            "items": ["rope"]
+        },
+        "torch room": {
+            "description": "This is a large room with a prominent doorway leading to a down staircase. Above you is a large dome. A passage leads north.",
+            "actions": {
+                "go north": "temple",
+                "go down": "altar"
+            },
+            "items": ["torch"]
+        },
+        "temple": {
+            "description": "This is the temple. A passage leads south and massive wooden doors lead west. The doors are locked.",
+            "actions": {
+                "go south": "torch room",
+                "go west": "altar",
+                "pray": "A voice whispers: 'The doors are now unlocked.'",
+                "open doors": "The doors are locked."
+            },
+            "items": []
+        },
+        "altar": {
+            "description": "This is the altar. A huge mirror fills the north wall. A small window can be seen in the east wall.",
+            "actions": {
+                "go east": "temple",
+                "ring bell": "A deep resonant sound fills the room.",
+                "light candles": "The candles are now lit.",
+                "read book": "The book is in Latin, but you can make out a few phrases:\n'...with these objects of power...\n...the bell of truth...\n...the book of knowledge...\n...and the candles of light...\nshall the wise reveal the secret way...'"
+            },
+            "items": ["bell", "book", "candles"]
+        },
+        "loud room": {
+            "description": "This is a large room with a ceiling which cannot be detected from the ground. There is a narrow passage from east to west and a stone stairway leading upward. The room is deafeningly loud with an undetermined rushing sound. The sound seems to reverberate from all of the walls, making it difficult even to think.",
+            "actions": {
+                "go west": "round room",
+                "go east": "deep canyon",
+                "go up": "engravings cave"
+            },
+            "items": ["platinum bar"]
         }
     },
     "inventory": [],
@@ -581,7 +624,14 @@
             "easel": "studio",
             "paintbrush": "studio",
             "nest": "tree",
-            "egg": "nest"
+            "egg": "nest",
+            "axe": "troll room",
+            "platinum bar": "loud room",
+            "bell": "atlantis room",
+            "torch": "torch room",
+            "rope": "dome room",
+            "book": "altar",
+            "candles": "altar"
         },
         "lockedDoors": [
             "house-door",
@@ -596,11 +646,24 @@
             "bottle": "The bottle contains water.",
             "lunch": "A tasty-looking lunch.",
             "garlic": "A pungent clove of garlic.",
-            "nest": "A small bird's nest."
+            "nest": "A small bird's nest.",
+            "axe": "This is a bloody axe, evidence of its owner's violent tendencies.",
+            "platinum bar": "This is a large and very heavy platinum bar.",
+            "bell": "This is a beautiful brass bell.",
+            "torch": "This is an old torch, still burning brightly.",
+            "rope": "This is a sturdy rope, suitable for climbing.",
+            "book": "This appears to be a prayer book of some sort.",
+            "candles": "These are ceremonial candles."
         },
         "containerContents": {
             "sack": ["lunch", "garlic"],
-            "bottle": ["water"]
+            "bottle": ["water"],
+            "case": []
+        },
+        "roomStates": {
+            "troll room": {
+                "trollDefeated": false
+            }
         }
     },
     "commands": {

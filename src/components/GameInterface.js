@@ -289,6 +289,17 @@ function GameInterface() {
     const currentRoom = gameData.rooms[gameState.currentRoom];
     const nextRoom = currentRoom.actions[`go ${direction}`];
 
+    // Check if troll is blocking the way
+    if (gameState.currentRoom === "troll room" && 
+        !gameState.roomStates?.["troll room"]?.trollDefeated) {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> go ${direction}`,
+        "The troll blocks your way!"
+      ]);
+      return;
+    }
+
     if (nextRoom && gameData.rooms[nextRoom]) {
       setGameState((prevState) => ({
         ...prevState,
@@ -675,11 +686,57 @@ function GameInterface() {
       ]);
       return;
     }
-    setGameLog((prevLog) => [
-      ...prevLog,
-      `> put ${item} in ${container}`,
-      `You can't put the ${item} in the ${container}.`
-    ]);
+
+    if (container === "case" && gameState.currentRoom === "living room") {
+      // List of trophy items that can go in the case
+      const trophyItems = ["platinum bar", "jewels", "chalice", "egg"];
+      
+      if (trophyItems.includes(item)) {
+        setGameState(prevState => ({
+          ...prevState,
+          inventory: prevState.inventory.filter(i => i !== item),
+          itemsInWorld: { ...prevState.itemsInWorld, [item]: "case" }
+        }));
+
+        let message = `You put the ${item} in the trophy case.`;
+        
+        // Check if this was the last trophy
+        const itemsInCase = Object.entries(gameState.itemsInWorld)
+          .filter(([item, location]) => location === "case")
+          .map(([item]) => item);
+          
+        if (itemsInCase.length === trophyItems.length - 1) {
+          message += "\n\nCongratulations! You have collected all the treasures and won the game!\n" +
+                    "Your score is 350 points out of 350, in 330 moves.\n" +
+                    "This gives you the rank of Master Adventurer.\n\n" +
+                    "Would you like to continue exploring the Great Underground Empire?";
+        }
+
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> put ${item} in ${container}`,
+          message
+        ]);
+        
+        // Update score
+        setGameSettings(prev => ({
+          ...prev,
+          score: prev.score + 10
+        }));
+      } else {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> put ${item} in ${container}`,
+          `The ${item} isn't valuable enough to go in the trophy case.`
+        ]);
+      }
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> put ${item} in ${container}`,
+        `You can't put the ${item} in the ${container}.`
+      ]);
+    }
   };
 
   const handleOut = () => {
@@ -780,6 +837,72 @@ function GameInterface() {
         ...prevLog,
         "> g",
         "No command to repeat."
+      ]);
+    }
+  };
+
+  const handleAttack = (creature, weapon) => {
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    
+    if (creature === "troll" && gameState.currentRoom === "troll room") {
+      if (weapon === "sword" && gameState.inventory.includes("sword")) {
+        setGameState(prevState => ({
+          ...prevState,
+          roomStates: {
+            ...prevState.roomStates,
+            "troll room": { trollDefeated: true }
+          }
+        }));
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> attack troll with sword`,
+          "The troll, disarmed by your skilled swordplay, takes flight. The troll, defeated, disappears into the gloom."
+        ]);
+      } else {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> attack troll with ${weapon}`,
+          "The troll laughs at your puny attempt to attack him."
+        ]);
+      }
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> attack ${creature} with ${weapon}`,
+        "There is nothing here to attack."
+      ]);
+    }
+  };
+
+  const handleThrow = (item, target) => {
+    if (!gameState.inventory.includes(item)) {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> throw ${item} at ${target}`,
+        `You don't have the ${item}.`
+      ]);
+      return;
+    }
+
+    if (item === "garlic" && target === "troll" && gameState.currentRoom === "troll room") {
+      setGameState(prevState => ({
+        ...prevState,
+        inventory: prevState.inventory.filter(i => i !== "garlic"),
+        roomStates: {
+          ...prevState.roomStates,
+          "troll room": { trollDefeated: true }
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> throw garlic at troll`,
+        "The troll catches the garlic and runs away in disgust. The troll, defeated, disappears into the gloom."
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> throw ${item} at ${target}`,
+        `Throwing the ${item} doesn't accomplish anything.`
       ]);
     }
   };
