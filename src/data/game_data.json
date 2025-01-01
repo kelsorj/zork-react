@@ -78,7 +78,7 @@
             "items": []
         },
         "living room": {
-            "description": "You are in the living room of the white house. A beautiful oriental rug lies in the center. A wooden door leads east into the kitchen, while stairs lead up to the attic. A trophy case stands against one wall.",
+            "description": "You are in the living room of the white house. A beautiful oriental rug lies in the center. A wooden door leads east into the kitchen. A trophy case stands against one wall.",
             "actions": {
                 "go east": "kitchen",
                 "go down": "cellar",
@@ -110,8 +110,7 @@
         "attic": {
             "description": "This is the attic. The only exit is a stairway leading down, though there appears to be a tunnel leading north into darkness.",
             "actions": {
-                "go down": "kitchen",
-                "go north": "dam lobby"
+                "go down": "kitchen"
             },
             "items": ["rope", "knife"]
         },
@@ -207,6 +206,7 @@
                 "go south": "east west passage",
                 "go northeast": "dam",
                 "go up": "dam",
+                "go down": "loud room",
                 "inflate plastic": {
                     "requires": ["air pump"],
                     "message": "The plastic pile inflates into a sturdy rubber boat!"
@@ -329,7 +329,8 @@
             "description": "This is a dark and damp cave. A stairway leads up to the temple, and another stairway leads down.",
             "actions": {
                 "go up": "altar",
-                "go down": "entrance to hades"
+                "go down": "entrance to hades",
+                "go north": "mirror room south"
             },
             "items": []
         },
@@ -433,10 +434,15 @@
                 "put torch in basket": {
                     "requires": ["torch"],
                     "message": "You place the torch in the basket."
+                },
+                "put coal in basket": {
+                    "requires": ["coal"],
+                    "message": "You put the coal in the basket with the torch."
                 }
             },
             "state": {
-                "torchInBasket": false
+                "torchInBasket": false,
+                "coalInBasket": false
             },
             "items": ["basket"]
         },
@@ -505,7 +511,7 @@
                 "go up": "ladder top",
                 "go west": "timber room"
             },
-            "items": ["coal"]
+            "items": []
         },
         "dead end": {
             "description": "This is a dead end in the mine. There's a pile of coal here.",
@@ -800,7 +806,7 @@
             "jewels": "treasure room",
             "chalice": "treasure room",
             "platinum bar": "loud room",
-            "wrench": "dam room",
+            "wrench": "maintenance room",
             "torch": "torch room",
             "bell": "temple",
             "candles": "altar",

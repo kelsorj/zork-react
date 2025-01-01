@@ -97,6 +97,7 @@ function GameInterface() {
       return;
     }
 
+    // Split the command into words
     const words = command.toLowerCase().split(" ");
     const action = words[0];
     const target = words.slice(1).join(" ");
@@ -258,12 +259,20 @@ function GameInterface() {
         break;
       case "turn":
         if (target.includes(" with ")) {
-          const [item, _, tool] = target.split(" with ");
+          const parts = target.split(" with ");
+          const item = parts[0].trim();
+          const tool = parts[1].trim();
           handleTurn(item, tool);
         } else if (target.startsWith("on ")) {
           handleTurnOn(target.substring(3));
         } else if (target.startsWith("off ")) {
           handleTurnOff(target.substring(4));
+        } else {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> turn ${target}`,
+            "What do you want to turn it with?"
+          ]);
         }
         break;
       case "light":
@@ -567,40 +576,15 @@ function GameInterface() {
   };
 
   const handleTake = (item) => {
-    // Debug logging
-    console.log('Take command debug:');
-    console.log('- Current room:', gameState.currentRoom);
-    console.log('- Trying to take:', item);
-    console.log('- Item location:', gameState.itemsInWorld[item]);
-    console.log('- Room items:', gameData.rooms[gameState.currentRoom].items);
-    console.log('- All items in current room:', Object.entries(gameState.itemsInWorld)
-      .filter(([_, location]) => location === gameState.currentRoom)
-      .map(([item]) => item));
-
-    // Check for deadly skeleton interaction
-    if (item === "skeleton" && gameState.currentRoom === "adventurers remains") {
-      handleDeath("skeleton");
-      return;
-    }
-
     // Check if the item exists in the current room
     const itemLocation = gameState.itemsInWorld[item];
     if (itemLocation === gameState.currentRoom) {
+      // Add item to inventory and remove from room
       setGameState((prevState) => ({
         ...prevState,
         inventory: [...prevState.inventory, item],
         itemsInWorld: { ...prevState.itemsInWorld, [item]: null }
       }));
-
-      // Award points if it's a treasure
-      if (gameData.state.trophyItems.includes(item)) {
-        const points = gameData.state.treasurePoints[item].take;
-        setGameSettings(prev => ({
-          ...prev,
-          score: prev.score + points
-        }));
-      }
-
       setGameLog((prevLog) => [
         ...prevLog,
         `> take ${item}`,
@@ -610,7 +594,7 @@ function GameInterface() {
       setGameLog((prevLog) => [
         ...prevLog,
         `> take ${item}`,
-        `You can't see any ${item} here.`
+        `You don't see that here.`
       ]);
     }
   };
@@ -1257,63 +1241,32 @@ function GameInterface() {
   };
 
   const handleTurn = (item, tool) => {
-    if (item === "switch" && tool === "screwdriver" && 
-        gameState.currentRoom === "machine room") {
-      if (!gameState.roomStates?.["machine room"]?.coalInMachine) {
-        setGameLog((prevLog) => [
-          ...prevLog,
-          `> turn switch with screwdriver`,
-          "The machine needs coal to operate."
-        ]);
-        return;
-      }
-      
-      if (gameState.roomStates?.["machine room"]?.lidOpen) {
-        setGameLog((prevLog) => [
-          ...prevLog,
-          `> turn switch with screwdriver`,
-          "You should close the lid first."
-        ]);
-        return;
-      }
-
-      setGameState(prevState => ({
-        ...prevState,
-        roomStates: {
-          ...prevState.roomStates,
-          "machine room": {
-            ...prevState.roomStates?.["machine room"],
-            machineRun: true,
-            coalInMachine: false
-          }
-        },
-        itemsInWorld: {
-          ...prevState.itemsInWorld,
-          diamond: "machine room"
-        }
-      }));
-      setGameLog((prevLog) => [
-        ...prevLog,
-        `> turn switch with screwdriver`,
-        "The machine rumbles to life, processing the coal. After a moment, it stops."
-      ]);
-      return;
-    }
-    const currentRoom = gameData.rooms[gameState.currentRoom];
-    const turnAction = currentRoom.actions[`turn ${item} with ${tool}`];
-    
-    if (turnAction && turnAction.requires && gameState.inventory.includes(turnAction.requires[0])) {
-      setGameState(prevState => ({
-        ...prevState,
-        roomStates: {
-          ...prevState.roomStates,
-          "dam": { damOpened: true }
-        }
-      }));
+    if (!gameState.inventory.includes(tool)) {
       setGameLog((prevLog) => [
         ...prevLog,
         `> turn ${item} with ${tool}`,
-        turnAction.message
+        `You don't have the ${tool}.`
+      ]);
+      return;
+    }
+
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    const turnAction = currentRoom.actions[`turn ${item} with ${tool}`];
+
+    if (turnAction) {
+      if (gameState.currentRoom === "dam" && item === "bolt" && tool === "wrench") {
+        setGameState(prevState => ({
+          ...prevState,
+          roomStates: {
+            ...prevState.roomStates,
+            dam: { damOpened: true }
+          }
+        }));
+      }
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> turn ${item} with ${tool}`,
+        turnAction.message || turnAction
       ]);
     } else {
       setGameLog((prevLog) => [
