@@ -362,10 +362,18 @@
         "mirror room south": {
             "description": "You are in a large square room with tall ceilings. Huge mirrors line the walls, making it difficult to tell which are doors and which are mirrors.",
             "actions": {
-                "go north": "deep canyon",
                 "go south": "cave",
-                "rub mirror": "As you rub the mirror, your surroundings shimmer and shift. You find yourself in a different mirror room!",
-                "put out candles": "You extinguish the candles."
+                "rub mirror": {
+                    "message": "As you rub the mirror, your surroundings shimmer and shift. You find yourself in a different mirror room!",
+                    "destination": "mirror room north",
+                    "requires": ["candlesOut"]
+                },
+                "put out candles": {
+                    "message": "You extinguish the candles.",
+                    "sets": {
+                        "candlesOut": true
+                    }
+                }
             },
             "state": {
                 "candlesOut": false,
@@ -414,7 +422,7 @@
                 "go east": "shaft room",
                 "go west": "slide room"
             },
-            "items": ["jade figurine"]
+            "items": []
         },
         "slide room": {
             "description": "This is a small room with smooth walls. The most notable feature is a steep metal slide that descends into darkness.",
@@ -438,13 +446,16 @@
                 "put coal in basket": {
                     "requires": ["coal"],
                     "message": "You put the coal in the basket with the torch."
-                }
+                },
+                "send basket": "You send the basket down the shaft.",
+                "lower basket": "You lower the basket down the shaft."
             },
             "state": {
                 "torchInBasket": false,
-                "coalInBasket": false
+                "coalInBasket": false,
+                "basketLowered": false
             },
-            "items": ["basket"]
+            "items": []
         },
         "smelly room": {
             "description": "This room has a peculiar odor, different from the gas room.",
@@ -460,7 +471,7 @@
                 "go up": "smelly room",
                 "go east": "coal mine"
             },
-            "items": ["gas mask"]
+            "items": []
         },
         "coal mine": {
             "description": "You are in a coal mine. The walls are covered in coal dust and old mining equipment lies scattered about.",
@@ -476,21 +487,24 @@
         "mine passage 1": {
             "description": "This is a narrow mine passage. The walls are rough and uneven.",
             "actions": {
-                "go southwest": "coal mine"
+                "go southwest": "coal mine",
+                "go southeast": "mine passage 2"
             },
             "items": []
         },
         "mine passage 2": {
             "description": "This is a narrow mine passage. Coal dust covers everything.",
             "actions": {
-                "go northwest": "coal mine"
+                "go northwest": "mine passage 1",
+                "go southwest": "mine passage 3"
             },
             "items": []
         },
         "mine passage 3": {
             "description": "This is a narrow mine passage. Old mining equipment is scattered about.",
             "actions": {
-                "go northeast": "coal mine"
+                "go northeast": "mine passage 2",
+                "go down": "ladder top"
             },
             "items": []
         },
@@ -505,6 +519,13 @@
             },
             "items": []
         },
+        "dead end": {
+            "description": "This is a dead end in the mine. There's a pile of coal here.",
+            "actions": {
+                "go north": "ladder top"
+            },
+            "items": ["coal"]
+        },
         "ladder bottom": {
             "description": "You are at the bottom of a rickety wooden ladder. A passage leads west.",
             "actions": {
@@ -513,18 +534,10 @@
             },
             "items": []
         },
-        "dead end": {
-            "description": "This is a dead end in the mine. There's a pile of coal here.",
-            "actions": {
-                "go north": "ladder top"
-            },
-            "items": ["coal"]
-        },
         "timber room": {
             "description": "This is a room filled with old mining timbers. A narrow crack in the west wall looks just barely wide enough to squeeze through.",
             "actions": {
                 "go east": "ladder bottom",
-                "go west": "drafty room",
                 "squeeze west": "drafty room"
             },
             "items": ["timber"]
@@ -543,7 +556,7 @@
                     "message": "You take the coal from the basket."
                 }
             },
-            "items": ["basket"]
+            "items": []
         },
         "machine room": {
             "description": "This is a room filled with machinery. A large coal-burning machine dominates the center of the room. A passage leads north.",

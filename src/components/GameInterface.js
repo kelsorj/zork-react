@@ -423,6 +423,21 @@ function GameInterface() {
       case "load":
         handleLoad();
         break;
+      case "tie":
+        if (target.includes(" to ")) {
+          const [item, destination] = target.split(" to ");
+          handleTie(item.trim(), destination.trim());
+        } else {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> tie ${target}`,
+            "What do you want to tie it to?"
+          ]);
+        }
+        break;
+      case "rub":
+        handleRub(target);
+        break;
       default:
         // Check for profanity
         if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
@@ -1294,9 +1309,12 @@ function GameInterface() {
   };
 
   const handleRub = (item) => {
+    // Remove "the " from the beginning of the item if it exists
+    const cleanItem = item.replace(/^the /, "");
+    
     const currentRoom = gameData.rooms[gameState.currentRoom];
     
-    if (item === "mirror" && gameState.currentRoom === "mirror room south") {
+    if (cleanItem === "mirror" && gameState.currentRoom === "mirror room south") {
       if (!gameState.roomStates?.["mirror room south"]?.candlesOut) {
         setGameLog((prevLog) => [
           ...prevLog,
