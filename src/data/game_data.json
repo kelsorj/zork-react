@@ -1218,7 +1218,7 @@
             "paintbrush": "studio",
             "axe": "troll room",
             "coffin": "egyptian room",
-            "sceptre": "egyptian room",
+            "sceptre": null,
             "crystal skull": "hades",
             "diamond": "machine room",
             "bracelet": "gas room",
@@ -1298,7 +1298,8 @@
             "case": [],
             "basket": [],
             "machine": [],
-            "buoy": ["emerald"]
+            "buoy": ["emerald"],
+            "coffin": ["sceptre"]
         },
         "roomStates": {
             "troll room": {
