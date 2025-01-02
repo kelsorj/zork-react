@@ -192,11 +192,13 @@ function GameInterface() {
     const userCommand = input.trim().toLowerCase();
 
     if (userCommand) {
-      // Increment moves counter for any valid command
-      setGameState(prevState => ({
-        ...prevState,
-        moves: (prevState.moves || 0) + 1
-      }));
+      // Only increment moves if it's a valid command
+      if (validCommands.includes(userCommand.split(' ')[0])) {
+        setGameState(prevState => ({
+          ...prevState,
+          moves: (prevState.moves || 0) + 1
+        }));
+      }
 
       setGameSettings(prev => ({
         ...prev,
