@@ -33,11 +33,21 @@ function GameInterface() {
     // Special handling for cellar when lamp is lit/unlit
     if (roomId === "cellar") {
       const isLampLit = roomStates.lampLit;
-      console.log('Lamp state:', isLampLit); // Debug log
       return isLampLit ? room.litDescription : room.description;
     }
     
-    return room.description;
+    // Get base description
+    let description = room.description;
+
+    // Modify description based on window state in east of house
+    if (roomId === "east of house" && roomStates.windowOpen) {
+      description = description.replace(
+        "There is a small window here which is slightly ajar.",
+        "There is a small window here which is open wide enough to allow entry."
+      );
+    }
+    
+    return description;
   };
 
   const getRoomDescriptionWithItems = (roomId) => {
@@ -76,6 +86,14 @@ function GameInterface() {
       description = description.replace(
         "A rainbow arcs across the chasm, its colors shimmering in the sunlight.",
         "A solid rainbow bridge spans the chasm, its colors shimmering in the sunlight."
+      );
+    }
+
+    // Modify description based on window state in east of house
+    if (roomId === "east of house" && roomStates.windowOpen) {
+      description = description.replace(
+        "There is a small window here which is slightly ajar.",
+        "There is a small window here which is open wide enough to allow entry."
       );
     }
     
@@ -225,13 +243,13 @@ function GameInterface() {
           ]);
         } else {
           // Check if the item exists in the current room
-          const itemLocation = gameState.itemsInWorld[item];
+          const itemLocation = gameState.itemsInWorld[target];
           
           // Check if item is in an open container in the room
           const coffin = gameState.roomStates?.coffin || {};
           const coffinContents = gameState.containerContents?.coffin || [];
           const isInOpenCoffin = coffin.isOpen && 
-                                coffinContents.includes(item) &&
+                                coffinContents.includes(target) &&
                                 (gameState.itemsInWorld["coffin"] === gameState.currentRoom || 
                                  gameState.inventory.includes("coffin"));
 
@@ -239,7 +257,7 @@ function GameInterface() {
           const sack = gameState.roomStates?.sack || {};
           const sackContents = gameState.containerContents?.sack || [];
           const isInOpenSack = sack.isOpen && 
-                              sackContents.includes(item) &&
+                              sackContents.includes(target) &&
                               (gameState.itemsInWorld["sack"] === gameState.currentRoom || 
                                gameState.inventory.includes("sack"));
 
@@ -247,48 +265,48 @@ function GameInterface() {
             // Add item to inventory and remove from room
             setGameState((prevState) => ({
               ...prevState,
-              inventory: [...prevState.inventory, item],
-              itemsInWorld: { ...prevState.itemsInWorld, [item]: null }
+              inventory: [...prevState.inventory, target],
+              itemsInWorld: { ...prevState.itemsInWorld, [target]: null }
             }));
             setGameLog((prevLog) => [
               ...prevLog,
-              `> take ${item}`,
+              `> take ${target}`,
               `Taken.`
             ]);
           } else if (isInOpenCoffin) {
             // Take item from coffin
             setGameState((prevState) => ({
               ...prevState,
-              inventory: [...prevState.inventory, item],
+              inventory: [...prevState.inventory, target],
               containerContents: {
                 ...prevState.containerContents,
-                coffin: (prevState.containerContents?.coffin || []).filter(i => i !== item)
+                coffin: (prevState.containerContents?.coffin || []).filter(i => i !== target)
               }
             }));
             setGameLog((prevLog) => [
               ...prevLog,
-              `> take ${item}`,
+              `> take ${target}`,
               `Taken.`
             ]);
           } else if (isInOpenSack) {
             // Take item from sack
             setGameState((prevState) => ({
               ...prevState,
-              inventory: [...prevState.inventory, item],
+              inventory: [...prevState.inventory, target],
               containerContents: {
                 ...prevState.containerContents,
-                sack: (prevState.containerContents?.sack || []).filter(i => i !== item)
+                sack: (prevState.containerContents?.sack || []).filter(i => i !== target)
               }
             }));
             setGameLog((prevLog) => [
               ...prevLog,
-              `> take ${item}`,
+              `> take ${target}`,
               `Taken.`
             ]);
           } else {
             setGameLog((prevLog) => [
               ...prevLog,
-              `> take ${item}`,
+              `> take ${target}`,
               `You don't see that here.`
             ]);
           }
@@ -622,13 +640,13 @@ function GameInterface() {
             `> open buoy`,
             "The buoy opens, revealing an emerald inside!"
           ]);
-        } else if (target === "window" && gameState.currentRoom === "behind house") {
+        } else if ((target === "window" || target.includes("window")) && gameState.currentRoom === "east of house") {
           setGameState(prevState => ({
             ...prevState,
             roomStates: {
               ...prevState.roomStates,
-              "behind house": {
-                ...prevState.roomStates?.["behind house"],
+              "east of house": {
+                ...prevState.roomStates?.["east of house"],
                 windowOpen: true
               }
             }
@@ -636,7 +654,25 @@ function GameInterface() {
           setGameLog((prevLog) => [
             ...prevLog,
             `> open window`,
-            "With great effort, you open the window far enough to allow entry."
+            "With great effort, you open the window far enough to allow entry.",
+            "",
+            getRoomDescriptionWithItems(gameState.currentRoom)
+          ]);
+        } else if (target === "trapdoor" && gameState.currentRoom === "living room") {
+          setGameState(prevState => ({
+            ...prevState,
+            roomStates: {
+              ...prevState.roomStates,
+              "living room": {
+                ...prevState.roomStates?.["living room"],
+                trapdoorOpen: true
+              }
+            }
+          }));
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> open trapdoor`,
+            "The door reluctantly opens to reveal a rickety staircase descending into darkness."
           ]);
         } else {
           setGameLog((prevLog) => [
