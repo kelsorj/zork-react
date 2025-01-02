@@ -28,13 +28,37 @@ function GameInterface() {
   // Constants for command validation
   const profanityList = ["damn", "hell", "shit", "fuck", "bastard", "ass"];
   const validCommands = [
+    // Direction commands
     "n", "s", "e", "w", "u", "d",
     "north", "south", "east", "west", "up", "down",
+    "ne", "nw", "se", "sw",
+    "northeast", "northwest", "southeast", "southwest",
+    
+    // Basic actions
     "look", "l", "inventory", "i", "take", "get",
     "drop", "examine", "x", "read", "open", "close",
     "move", "enter", "in", "out", "put", "turn",
     "push", "pull", "press", "light", "score",
-    "restart", "save", "restore", "load", "help", "?"
+    
+    // Game commands
+    "restart", "save", "restore", "load", "help", "?",
+    "quit", "version", "verbose", "brief", "superbrief",
+    
+    // Combat and interaction
+    "kill", "attack", "hit", "strike", "fight",
+    "throw", "give", "show", "tell", "say", "ask",
+    "wave", "point", "touch", "rub", "tie", "untie",
+    "knock", "drink", "eat", "break", "wake", "kiss",
+    
+    // Special actions
+    "climb", "jump", "dig", "cut", "fill", "inflate",
+    "deflate", "ring", "unlock", "lock", "pick", "pray",
+    "swim", "pour", "oil", "sleep", "wear", "remove",
+    "burn", "extinguish", "shake", "polish", "wind",
+    
+    // Multi-word command first words
+    "turn", "pick", "put", "take", "throw", "knock",
+    "look", "push", "move", "attack", "kill", "show"
   ];
 
   // Add helper functions to get room descriptions
@@ -1033,14 +1057,53 @@ function GameInterface() {
           break;
         case "attack":
         case "kill":
-          if (target.includes(" with ")) {
-            const [creature, weapon] = target.split(" with ");
-            handleAttack(creature.trim(), weapon.trim());
+          if (target.startsWith("troll with ")) {
+            const weapon = target.replace("troll with ", "");
+            if (weapon === "sword" && gameState.inventory.includes("sword")) {
+              // Random chance to kill troll
+              if (Math.random() < 0.5) {
+                setGameState(prevState => ({
+                  ...prevState,
+                  roomStates: {
+                    ...prevState.roomStates,
+                    [gameState.currentRoom]: {
+                      ...prevState.roomStates?.[gameState.currentRoom],
+                      trollDead: true
+                    }
+                  }
+                }));
+                setGameLog((prevLog) => [
+                  ...prevLog,
+                  `> ${action} ${target}`,
+                  "The troll, caught off-guard, is struck by your mighty blow! He dies.",
+                  "",
+                  getRoomDescriptionWithItems(gameState.currentRoom)
+                ]);
+              } else {
+                setGameLog((prevLog) => [
+                  ...prevLog,
+                  `> ${action} ${target}`,
+                  "You miss the troll with your sword. He appears unimpressed."
+                ]);
+              }
+            } else if (!gameState.inventory.includes("sword")) {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> ${action} ${target}`,
+                "You don't have a sword!"
+              ]);
+            } else {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> ${action} ${target}`,
+                "Trying to kill a troll with that would be suicidal."
+              ]);
+            }
           } else {
             setGameLog((prevLog) => [
               ...prevLog,
               `> ${action} ${target}`,
-              "What do you want to kill it with?"
+              "I don't see that here."
             ]);
           }
           break;
