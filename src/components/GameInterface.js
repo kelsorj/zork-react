@@ -64,11 +64,17 @@ function GameInterface() {
   // Add helper functions to get room descriptions
   const getBasicRoomDescription = (roomId) => {
     const room = gameData.rooms[roomId];
-    const roomStates = gameState.roomStates?.[roomId] || {};
+    console.log("Room data:", room);
+    console.log("Current room:", roomId);
+    console.log("Lamp lit:", gameState.lampLit);
     
     // Special handling for dark rooms when lamp is lit/unlit
-    if (room.dark) {  // Check if room is dark
-      const isLampLit = gameState.lampLit;  // Use global lamp state
+    if (room.dark) {
+      console.log("Room is dark!");
+      const isLampLit = gameState.lampLit;
+      console.log("Is lamp lit?", isLampLit);
+      console.log("Lit description:", room.litDescription);
+      console.log("Dark description:", room.description);
       return isLampLit ? room.litDescription : room.description;
     }
     
@@ -96,7 +102,9 @@ function GameInterface() {
 
   const getRoomDescriptionWithItems = (roomId) => {
     const room = gameData.rooms[roomId];
-    const roomStates = gameState.roomStates?.[roomId] || {};
+    console.log("Getting room description with items for:", roomId);
+    console.log("Room data:", room);
+    console.log("Lamp state:", gameState.lampLit);
     
     // Filter items based on room conditions
     const roomItems = Object.entries(gameState.itemsInWorld)
@@ -118,8 +126,12 @@ function GameInterface() {
 
     // Get the base description based on lamp state for dark rooms
     let description;
-    if (room.dark) {  // Check if room is dark
-      const isLampLit = gameState.lampLit;  // Use global lamp state
+    if (room.dark) {
+      console.log("Room is dark!");
+      const isLampLit = gameState.lampLit;
+      console.log("Is lamp lit?", isLampLit);
+      console.log("Lit description:", room.litDescription);
+      console.log("Dark description:", room.description);
       description = isLampLit ? room.litDescription : room.description;
     } else {
       description = room.description;
