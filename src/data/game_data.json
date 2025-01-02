@@ -200,7 +200,7 @@
                 "go southwest": {
                     "requires": ["platinumBarInCase"],
                     "destination": "stone barrow",
-                    "message": "You enter the ancient stone barrow..."
+                    "message": "You enter the ancient stone barrow...\n\n            *    *    *\n     .  *  .  *  .  *  .\n   *   CONGRATULATIONS   *\n     .  *  .  *  .  *  .\n            *    *    *\n\nYou have completed ZORK I: The Great Underground Empire!"
                 },
                 "open mailbox": "Opening the mailbox reveals a leaflet."
             },
