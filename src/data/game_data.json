@@ -55,6 +55,7 @@
             "actions": {
                 "go south": "path",
                 "go west": "forest1",
+                "go east": "forest2",
                 "go down": {
                     "requires": ["gratingRevealed", "gratingUnlocked", "gratingOpen"],
                     "destination": "grating room",
