@@ -256,7 +256,25 @@
             "actions": {
                 "go west": "troll room",
                 "go east": "round room",
-                "go north": "dam base"
+                "go north": "chasm"
+            },
+            "items": []
+        },
+        "chasm": {
+            "description": "You are at the bottom of a chasm. The walls are smooth and the floor is covered with a thick layer of dust. There are exits to the south and northeast.  ",
+            "actions": {
+                "go south": "north south passage",
+                "go northeast": "reservoir south",
+                "go up": "east west passage"
+            },
+            "items": []
+        },
+        "north south passage": {
+            "description": "You are in a long passage with exits to the north and south.",
+            "actions": {
+                "go north": "chasm",
+                "go south": "round room",
+                "go east": "deep canyon"
             },
             "items": []
         },
@@ -287,10 +305,11 @@
             "items": ["plastic boat"]
         },
         "dam": {
-            "description": "You are standing on top of the Flood Control Dam #3. The dam's control panel has a large bolt and several indicator lights, including a green bubble. Paths lead north and south.",
+            "description": "You are standing on top of the Flood Control Dam #3. The dam's control panel has a large bolt and several indicator lights, including a green bubble. Paths lead north and south and down to the dam base.",
             "actions": {
                 "go north": "dam lobby",
-                "go south": "dam base",
+                "go south": "deep canyon",
+                "go west": "reservoir south",
                 "go down": "dam base",
                 "turn bolt with wrench": {
                     "requires": ["wrench"],
@@ -309,7 +328,7 @@
                 "go east": "maintenance room",
                 "go south": "dam"
             },
-            "items": ["matches"]
+            "items": ["matches","guidebooks"]
         },
         "maintenance room": {
             "description": "This is what appears to have been the maintenance room for the dam. Rusty tools and broken machinery lie everywhere. There is a prominent yellow button on one wall.",
@@ -319,16 +338,50 @@
                 "push yellow button": "Click.",
                 "press yellow button": "Click."
             },
-            "items": ["wrench", "screwdriver"]
+            "items": ["wrench", "screwdriver","buttons","tube"]
         },
         "loud room": {
             "description": "This is a large room with a ceiling which cannot be detected from the ground. There is a narrow passage from east to west and a stone stairway leading upward. The room is deafeningly loud with an undetermined rushing sound. The sound seems to reverberate from all of the walls, making it difficult even to think.",
             "actions": {
                 "go west": "round room",
-                "go east": "deep canyon",
+                "go up": "deep canyon",
+                "go east": "damp cave",
                 "echo": "The acoustics of the room cause your voice to echo and reverberate. As the sound dies away, you notice a platinum bar has appeared!"
             },
             "items": ["platinum bar"]
+        },
+        "damp cave": {
+            "description": "You are in a damp cave. The walls are wet and the floor is covered with a thick layer of dust. There are exits to the west and east.",
+            "actions": {
+                "go east": "white cliffs north",
+                "go west": "loud room"
+            },
+            "items": []
+        },
+        "white cliffs north": {
+            "description": "You are on the north side of the White Cliffs. There are exits to the south and east.",
+            "actions": {
+                "go south": "white cliffs south",
+                "go west": "damp cave"
+            },
+            "items": []
+        },
+        "white cliffs south": {
+            "description": "You are on the south side of the White Cliffs. There are exits to the north and west.",
+            "actions": {
+                "go north": "white cliffs north"
+            },
+            "items": []
+        },
+        "deep canyon": {
+            "description": "You are in a deep canyon. The walls are smooth and the floor is covered with a thick layer of dust. There are exits to the north, west, east, and down.",
+            "actions": {
+                "go east": "dam",
+                "go north": "reservoir south",
+                "go west": "north south passage",
+                "go down": "loud room"
+            },
+            "items": []
         },
         "round room": {
             "description": "This is a circular room with passages in all directions. The walls are made of stone and are inscribed with strange runes.",
@@ -645,8 +698,8 @@
                     "destination": "reservoir",
                     "message": "You proceed north through the open sluice gates."
                 },
-                "go northeast": "deep canyon",
-                "go southwest": "east west passage"
+                "go east": "dam",
+                "go southeast": "deep canyon"
             },
             "items": []
         },
