@@ -178,12 +178,27 @@ function GameInterface() {
 
       // Check for cheat code
       if (command === "show me the money") {
-        // Put all treasures in the trophy case
+        // All items that give points when in trophy case
         const treasures = [
-          "jeweled egg", "sceptre", "chalice", "diamond", 
-          "ruby", "emerald", "pot of gold", "platinum bar",
-          "crystal trident", "jade figurine", "sapphire bracelet",
-          "brass bauble", "crystal skull", "scarab"
+          "jeweled egg",      // 10 points
+          "canary",           // 10 points
+          "platinum bar",     // 10 points
+          "torch",            // 14 points
+          "coffin",           // 15 points
+          "sceptre",          // 10 points
+          "trunk of jewels",  // 15 points
+          "crystal trident",  // 11 points
+          "jade",             // 10 points
+          "bracelet",         // 10 points
+          "diamond",          // 15 points
+          "bag of coins",     // 10 points
+          "crystal skull",    // 15 points
+          "scarab",           // 10 points
+          "emerald",          // 10 points
+          "chalice",          // 10 points
+          "pot of gold",      // 15 points
+          "bauble",           // 5 points
+          "portrait"          // 10 points
         ];
 
         // Put tools in inventory but treasures in trophy case
@@ -196,7 +211,7 @@ function GameInterface() {
           inventory: [
             // Tools and useful items only
             "lamp", "sword", "rope", "knife", "matches",
-            "shovel", "key", "screwdriver", "wrench", "torch",
+            "shovel", "key", "screwdriver", "wrench",
             "air pump", "garlic", "lunch", "water", "coal",
             "timber", "bell", "book", "candles", "bottle",
             "lantern", "bag", "sack", "bucket", "axe",
@@ -536,16 +551,18 @@ function GameInterface() {
               ...prevState,
               roomStates: {
                 ...prevState.roomStates,
-                [gameState.currentRoom]: {
-                  ...prevState.roomStates?.[gameState.currentRoom],
+                cellar: {  // Update cellar state specifically
+                  ...prevState.roomStates?.cellar,
                   lampLit: true
                 }
-              }
+              },
+              lampLit: true  // Add global lamp state
             }));
             setGameLog((prevLog) => [
               ...prevLog,
               `> turn on lamp`,
               "The brass lamp is now on.",
+              "",
               getRoomDescriptionWithItems(gameState.currentRoom)
             ]);
           } else {
@@ -562,16 +579,18 @@ function GameInterface() {
               ...prevState,
               roomStates: {
                 ...prevState.roomStates,
-                [gameState.currentRoom]: {
-                  ...prevState.roomStates?.[gameState.currentRoom],
+                cellar: {  // Update cellar state specifically
+                  ...prevState.roomStates?.cellar,
                   lampLit: true
                 }
-              }
+              },
+              lampLit: true  // Add global lamp state
             }));
             setGameLog((prevLog) => [
               ...prevLog,
               `> light lamp`,
               "The brass lamp is now on.",
+              "",
               getRoomDescriptionWithItems(gameState.currentRoom)
             ]);
           } else {
