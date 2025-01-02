@@ -7,22 +7,24 @@ body {
   -moz-osx-font-smoothing: none;
   background-color: #000;
   color: #33ff33;
-  font-size: 24px;
+  font-size: 32px;
 }
 
 .game-interface {
-  padding: 20px;
-  line-height: 1.3;
+  padding: 30px;
+  line-height: 1.4;
   white-space: pre-wrap;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .input-line {
   display: flex;
-  margin-top: 20px;
+  margin-top: 30px;
 }
 
 .prompt {
-  margin-right: 8px;
+  margin-right: 12px;
 }
 
 .command-input {
@@ -31,6 +33,6 @@ body {
   border: none;
   color: #33ff33;
   font-family: 'VT323', 'Courier New', Courier, monospace;
-  font-size: 24px;
+  font-size: 32px;
   outline: none;
 }

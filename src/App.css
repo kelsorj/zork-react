@@ -1,0 +1,21 @@
+.App {
+  text-align: left;
+  min-height: 100vh;
+  font-family: 'VT323', 'Courier New', Courier, monospace;
+  background-color: #000;
+  color: #33ff33;
+  font-size: 32px !important; /* Force size */
+}
+
+.game-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-size: 32px !important; /* Force size */
+}
+
+/* Debug - add a border to see container sizes */
+.game-interface {
+  border: 1px solid #33ff33;
+  font-size: 32px !important; /* Force size */
+} 
