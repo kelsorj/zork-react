@@ -739,6 +739,22 @@
             },
             "items": []
         },
+        "aragain falls": {
+            "description": "You are at the base of Aragain Falls. A beautiful rainbow arcs across the falls.",
+            "actions": {
+                "go north": "shore",
+                "cross rainbow": "canyon view"
+            },
+            "items": []
+        },
+        "shore": {
+            "description": "You are on the shore of the river near Aragain Falls. The thundering sound of the falls fills the air. The river is too dangerous to cross here.",
+            "actions": {
+                "go north": "sandy beach",
+                "go south": "aragain falls"
+            },
+            "items": []
+        },
         "sandy beach": {
             "description": "You are on a sandy beach at the edge of the river. The water is too rough to swim.",
             "actions": {
@@ -759,14 +775,6 @@
             "state": {
                 "digCount": 0,
                 "scarabRevealed": false
-            },
-            "items": []
-        },
-        "aragain falls": {
-            "description": "You are at the base of Aragain Falls. A beautiful rainbow arcs across the falls.",
-            "actions": {
-                "go north": "sandy beach",
-                "cross rainbow": "canyon view"
             },
             "items": []
         },
