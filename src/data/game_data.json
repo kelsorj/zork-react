@@ -1234,7 +1234,7 @@
                 "exit boat": "sandy beach",
                 "wait": "The current drags you rapidly southward..."
             },
-            "items": []
+            "items": ["bouy"]
         },
         "river5": {
             "description": "You are in the rubber boat on the river. The thundering of Aragain Falls fills your ears. You are about to go over the falls! This is your last chance to escape!",
