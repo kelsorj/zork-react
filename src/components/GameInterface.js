@@ -1061,7 +1061,7 @@ function GameInterface() {
             const weapon = target.replace("troll with ", "");
             if (weapon === "sword" && gameState.inventory.includes("sword")) {
               // Random chance to kill troll
-              if (Math.random() < 0.5) {
+              if (Math.random() < 0.9) {
                 setGameState(prevState => ({
                   ...prevState,
                   roomStates: {
