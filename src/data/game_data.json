@@ -215,9 +215,7 @@
             "litDescription": "You are in a dark and damp cellar with a narrow passageway leading north, and a crawlway to the south. A rickety wooden staircase leads up.",
             "actions": {
                 "go up": {
-                    "requires": ["lampLit"],
-                    "destination": "living room",
-                    "message": "You climb the rickety stairs."
+                    "destination": "living room"
                 },
                 "go north": {
                     "requires": ["lampLit"],
@@ -229,25 +227,11 @@
                     "destination": "east of chasm",
                     "message": "You crawl southward."
                 },
-                "turn on lamp": {
-                    "requires": ["lamp"],
-                    "message": "The brass lamp is now on, illuminating the cellar.",
-                    "sets": {
-                        "lampLit": true
-                    }
-                },
                 "light lamp": {
                     "requires": ["lamp"],
                     "message": "The brass lamp is now on, illuminating the cellar.",
                     "sets": {
                         "lampLit": true
-                    }
-                },
-                "turn off lamp": {
-                    "requires": ["lamp"],
-                    "message": "The brass lamp is now off. It is pitch black.",
-                    "sets": {
-                        "lampLit": false
                     }
                 }
             },

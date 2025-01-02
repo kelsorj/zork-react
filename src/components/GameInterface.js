@@ -470,6 +470,31 @@ function GameInterface() {
       case "unlock":
         handleUnlock(target);
         break;
+      case "light":
+        if (target === "lamp" && gameState.inventory.includes("lamp")) {
+          setGameState(prevState => ({
+            ...prevState,
+            roomStates: {
+              ...prevState.roomStates,
+              [gameState.currentRoom]: {
+                ...prevState.roomStates?.[gameState.currentRoom],
+                lampLit: true
+              }
+            }
+          }));
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> light lamp`,
+            "The brass lamp is now on, illuminating the cellar."
+          ]);
+        } else {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> light ${target}`,
+            "You can't light that."
+          ]);
+        }
+        break;
       default:
         // Check for profanity
         if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
