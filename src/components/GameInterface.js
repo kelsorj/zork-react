@@ -219,25 +219,7 @@ function GameInterface() {
         }
         break;
       case "climb":
-        const currentRoom = gameData.rooms[gameState.currentRoom];
-        if (target === "tree" && currentRoom.actions["climb tree"]) {
-          const nextRoom = currentRoom.actions["climb tree"];
-          setGameState(prevState => ({
-            ...prevState,
-            currentRoom: nextRoom
-          }));
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> climb tree`,
-            getBasicRoomDescription(nextRoom)
-          ]);
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> climb ${target}`,
-            "You can't climb that."
-          ]);
-        }
+        handleClimb(target);
         break;
       case "open":
         if (target === "case" || target === "trophy case") {
@@ -434,7 +416,7 @@ function GameInterface() {
                 ...prevState.roomStates,
                 "dome room": {
                   ...prevState.roomStates?.["dome room"],
-                  ropeAttached: true
+                  ropeTied: true
                 }
               }
             }));
@@ -484,121 +466,110 @@ function GameInterface() {
   };
 
   const handleGo = (direction) => {
-    const currentRoom = gameData.rooms[gameState.currentRoom];
-    const nextAction = currentRoom.actions[`go ${direction}`];
+    const room = gameData.rooms[gameState.currentRoom];
+    const action = room.actions[`go ${direction}`] || room.actions[direction];
 
-    // Special handling for dome room descent
-    if (gameState.currentRoom === "dome room" && direction === "down") {
-      if (!gameState.roomStates?.["dome room"]?.ropeAttached) {
-        setGameLog((prevLog) => [
-          ...prevLog,
-          `> go ${direction}`,
-          "You can't go down without using the rope - that would be certain death!"
-        ]);
-        return;
-      }
-    }
-
-    // Special handling for trapdoor descent
-    if (gameState.currentRoom === "living room" && direction === "down") {
-      if (!gameState.rugMoved) {
-        setGameLog((prevLog) => [
-          ...prevLog,
-          `> go ${direction}`,
-          "You can't go that way."
-        ]);
-        return;
-      }
-      if (!gameState.trapdoorOpen) {
-        setGameLog((prevLog) => [
-          ...prevLog,
-          `> go ${direction}`,
-          "The trapdoor is closed."
-        ]);
-        return;
-      }
-    }
-
-    // Special handling for grating descent
-    if (gameState.currentRoom === "grating clearing" && direction === "down") {
-      const roomStates = gameState.roomStates?.["grating clearing"] || {};
-      if (!roomStates.gratingRevealed) {
-        setGameLog((prevLog) => [
-          ...prevLog,
-          `> go ${direction}`,
-          "You can't go that way."
-        ]);
-        return;
-      }
-      if (!roomStates.gratingUnlocked) {
-        setGameLog((prevLog) => [
-          ...prevLog,
-          `> go ${direction}`,
-          "The grating is locked."
-        ]);
-        return;
-      }
-      if (!roomStates.gratingOpen) {
-        setGameLog((prevLog) => [
-          ...prevLog,
-          `> go ${direction}`,
-          "The grating is closed."
-        ]);
-        return;
-      }
-    }
-
-    // Check if troll is blocking the way
-    if (gameState.currentRoom === "troll room" && 
-        !gameState.roomStates?.["troll room"]?.trollDefeated) {
-      setGameLog((prevLog) => [
-        ...prevLog,
-        `> go ${direction}`,
-        "The troll blocks your way!"
-      ]);
-      return;
-    }
-
-    if (typeof nextAction === 'string' && gameData.rooms[nextAction]) {
-      setGameState((prevState) => ({
-        ...prevState,
-        currentRoom: nextAction
-      }));
-      setGameLog((prevLog) => [
-        ...prevLog,
-        `> go ${direction}`,
-        getBasicRoomDescription(nextAction)
-      ]);
-    } else if (typeof nextAction === 'object' && nextAction.destination) {
-      // Check if all requirements are met
-      if (nextAction.requires) {
-        const roomStates = gameState.roomStates?.[gameState.currentRoom] || {};
-        const missingRequirements = nextAction.requires.filter(req => !roomStates[req]);
-        if (missingRequirements.length > 0) {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> go ${direction}`,
-            "You can't go that way."
-          ]);
-          return;
-        }
-      }
-
-      setGameState((prevState) => ({
-        ...prevState,
-        currentRoom: nextAction.destination
-      }));
-      setGameLog((prevLog) => [
-        ...prevLog,
-        `> go ${direction}`,
-        nextAction.message || getBasicRoomDescription(nextAction.destination)
-      ]);
-    } else {
+    if (!action) {
       setGameLog((prevLog) => [
         ...prevLog,
         `> go ${direction}`,
         "You can't go that way."
       ]);
+      return;
+    }
+
+    // Handle action objects with requirements
+    if (typeof action === 'object') {
+      // Check if all required items/states are met
+      if (action.requires) {
+        const requirements = Array.isArray(action.requires) ? action.requires : [action.requires];
+        const meetsRequirements = requirements.every(req => {
+          if (gameState.inventory.includes(req)) return true;
+          if (gameState.roomStates?.[gameState.currentRoom]?.[req]) return true;
+          return false;
+        });
+
+        if (!meetsRequirements) {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> go ${direction}`,
+            action.failMessage || "You can't go that way."
+          ]);
+          return;
+        }
+
+        // If requirements met, handle destination and message
+        setGameState(prevState => ({
+          ...prevState,
+          currentRoom: action.destination
+        }));
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> go ${direction}`,
+          action.message || `You move ${direction}.`,
+          getBasicRoomDescription(action.destination)
+        ]);
+        return;
+      }
+    }
+
+    // Handle simple string destinations
+    setGameState(prevState => ({
+      ...prevState,
+      currentRoom: typeof action === 'string' ? action : action.destination
+    }));
+    setGameLog((prevLog) => [
+      ...prevLog,
+      `> go ${direction}`,
+      `You move ${direction}.`,
+      getBasicRoomDescription(typeof action === 'string' ? action : action.destination)
+    ]);
+  };
+
+  const handleClimb = (direction) => {
+    const room = gameData.rooms[gameState.currentRoom];
+    const action = room.actions[`climb ${direction}`];
+
+    if (!action) {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> climb ${direction}`,
+        "You can't climb that."
+      ]);
+      return;
+    }
+
+    // Handle action objects with requirements
+    if (typeof action === 'object') {
+      if (action.requires) {
+        const requirements = Array.isArray(action.requires) ? action.requires : [action.requires];
+        const meetsRequirements = requirements.every(req => {
+          if (gameState.inventory.includes(req)) return true;
+          if (gameState.roomStates?.[gameState.currentRoom]?.[req]) return true;
+          return false;
+        });
+
+        if (!meetsRequirements) {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> climb ${direction}`,
+            action.failMessage || "You can't climb that way."
+          ]);
+          return;
+        }
+
+        setGameState(prevState => ({
+          ...prevState,
+          currentRoom: action.destination
+        }));
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> climb ${direction}`,
+          action.message || `You climb ${direction}.`,
+          getBasicRoomDescription(action.destination)
+        ]);
+        return;
+      }
     }
   };
 
@@ -1942,23 +1913,7 @@ function GameInterface() {
   };
 
   const handlePray = () => {
-    const currentRoom = gameData.rooms[gameState.currentRoom];
-    const prayAction = currentRoom.actions["pray"];
-    
-    if (currentRoom === "temple") {
-      setGameState(prevState => ({
-        ...prevState,
-        roomStates: {
-          ...prevState.roomStates,
-          temple: { doorsUnlocked: true }
-        }
-      }));
-      setGameLog((prevLog) => [
-        ...prevLog,
-        "> pray",
-        "A voice whispers: 'The doors are now unlocked.'"
-      ]);
-    } else if (gameState.currentRoom === "altar" && gameState.inventory.includes("coffin")) {
+    if (gameState.currentRoom === "altar") {
       setGameState(prevState => ({
         ...prevState,
         currentRoom: "forest2"
@@ -1970,11 +1925,18 @@ function GameInterface() {
         "",
         getBasicRoomDescription("forest2")
       ]);
-    } else if (prayAction) {
+    } else if (gameState.currentRoom === "temple") {
+      setGameState(prevState => ({
+        ...prevState,
+        roomStates: {
+          ...prevState.roomStates,
+          temple: { doorsUnlocked: true }
+        }
+      }));
       setGameLog((prevLog) => [
         ...prevLog,
         "> pray",
-        prayAction
+        "A voice whispers: 'The doors are now unlocked.'"
       ]);
     } else {
       setGameLog((prevLog) => [
@@ -2086,36 +2048,6 @@ function GameInterface() {
         ...prevLog,
         `> kill ${target} with ${weapon}`,
         "Violence isn't the answer to this one."
-      ]);
-    }
-  };
-
-  const handleClimb = () => {
-    const currentRoom = gameData.rooms[gameState.currentRoom];
-    if (gameState.currentRoom === "canyon bottom") {
-      setGameState(prevState => ({
-        ...prevState,
-        currentRoom: "canyon_view"
-      }));
-      setGameLog((prevLog) => [
-        ...prevLog,
-        "> climb",
-        "You climb back up to Canyon View.",
-        "",
-        getBasicRoomDescription("canyon_view")
-      ]);
-      return;
-    }
-    
-    if (currentRoom.actions["climb tree"]) {
-      handleGo("up");
-    } else if (currentRoom.actions["climb down"]) {
-      handleGo("down");
-    } else {
-      setGameLog((prevLog) => [
-        ...prevLog,
-        "> climb",
-        "There's nothing here to climb."
       ]);
     }
   };
