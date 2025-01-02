@@ -4,28 +4,31 @@
         "actions": {
             "go west": "living room",
             "go up": "attic",
-            "go down": "cellar",
             "go east": {
                 "message": "You climb out the window.",
                 "destination": "behind house"
             },
             "west": "living room",
             "up": "attic",
-            "down": "cellar",
             "east": {
                 "message": "You climb out the window.",
                 "destination": "behind house"
             },
             "w": "living room",
             "u": "attic",
-            "d": "cellar",
             "examine table": "There's nothing special about the kitchen table.",
             "take sack": {
                 "message": "Taken.",
-                "adds": ["brown sack"]
+                "adds": ["sack"],
+                "sets": {
+                    "sackContents": ["bottle", "garlic"]
+                }
             }
         },
-        "items": ["brown sack", "bottle", "table"]
+        "items": ["sack", "bottle", "garlic"],
+        "containerContents": {
+            "sack": ["bottle", "garlic"]
+        }
     },
     "living room": {
         "description": "You are in the living room. There is a doorway to the east. To the west is a wooden door with strange gothic lettering, which appears to be nailed shut. There is a trophy case here, and a large oriental rug in the center of the room.",

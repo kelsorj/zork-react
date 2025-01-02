@@ -23,7 +23,7 @@
         "takeable": true,
         "container": true
     },
-    "brown sack": {
+    "sack": {
         "description": "A brown sack",
         "takeable": true,
         "container": true
