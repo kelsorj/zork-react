@@ -643,7 +643,49 @@ function GameInterface() {
           }
           break;
         case "open":
-          if (target === "case" || target === "trophy case") {
+          if (target === "grating" && gameState.currentRoom === "grating clearing") {
+            const gratingState = gameState.roomStates?.["grating clearing"] || {};
+            
+            // Check if grating is revealed
+            if (!gratingState.gratingRevealed) {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> open ${target}`,
+                "You don't see any grating here."
+              ]);
+              return;
+            }
+
+            // Check if grating is unlocked
+            if (!gratingState.gratingUnlocked) {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> open ${target}`,
+                "The grating is locked."
+              ]);
+              return;
+            }
+
+            // Open the grating and allow movement down
+            setGameState(prevState => ({
+              ...prevState,
+              roomStates: {
+                ...prevState.roomStates,
+                "grating clearing": {
+                  ...prevState.roomStates?.["grating clearing"],
+                  gratingRevealed: true,
+                  gratingUnlocked: true,
+                  gratingOpen: true
+                }
+              }
+            }));
+
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> open ${target}`,
+              "The grating opens to reveal a dark passage leading down into the earth."
+            ]);
+          } else if (target === "case" || target === "trophy case") {
             setGameLog((prevLog) => [
               ...prevLog,
               `> open ${target}`,
@@ -1974,8 +2016,9 @@ function GameInterface() {
       roomStates: {
         ...prevState.roomStates,
         "grating clearing": {
-          ...(prevState.roomStates?.["grating clearing"] || {}),
-          gratingUnlocked: true
+          ...prevState.roomStates?.["grating clearing"],
+          gratingUnlocked: true,
+          gratingRevealed: true  // Ensure revealed state is preserved
         }
       }
     }));
@@ -1983,7 +2026,7 @@ function GameInterface() {
     setGameLog((prevLog) => [
       ...prevLog,
       `> unlock ${target}`,
-      unlockAction.message
+      unlockAction.message || "You unlock the grating with the key."
     ]);
   };
 
@@ -3459,11 +3502,17 @@ function GameInterface() {
   };
 
   const handleOpen = (target) => {
-    const currentRoom = gameData.rooms[gameState.currentRoom];
-
     // Special case for grating
     if (target === "grating" && gameState.currentRoom === "grating clearing") {
+      // Get the current room state or initialize it
       const gratingState = gameState.roomStates?.["grating clearing"] || {};
+      
+      // Debug logging
+      console.log("Current room:", gameState.currentRoom);
+      console.log("Room states:", gameState.roomStates);
+      console.log("Grating state:", gratingState);
+      console.log("Grating revealed:", Boolean(gratingState.gratingRevealed));
+      console.log("Grating unlocked:", Boolean(gratingState.gratingUnlocked));
       
       // Check if grating is revealed
       if (!gratingState.gratingRevealed) {
@@ -3485,17 +3534,24 @@ function GameInterface() {
         return;
       }
 
+      console.log("Opening grating...");
       // Open the grating and allow movement down
-      setGameState(prevState => ({
-        ...prevState,
-        roomStates: {
-          ...prevState.roomStates,
-          "grating clearing": {
-            ...prevState.roomStates?.["grating clearing"],
-            gratingOpen: true
+      setGameState(prevState => {
+        const newState = {
+          ...prevState,
+          roomStates: {
+            ...prevState.roomStates,
+            "grating clearing": {
+              ...prevState.roomStates?.["grating clearing"],
+              gratingRevealed: true,
+              gratingUnlocked: true,
+              gratingOpen: true
+            }
           }
-        }
-      }));
+        };
+        console.log("New state:", newState);
+        return newState;
+      });
 
       setGameLog((prevLog) => [
         ...prevLog,
@@ -3506,7 +3562,8 @@ function GameInterface() {
     }
 
     // Handle other cases
-    const openAction = currentRoom.actions[`open ${target}`];
+    const room = gameData.rooms[gameState.currentRoom];
+    const openAction = room?.actions?.[`open ${target}`];
     if (openAction) {
       if (typeof openAction === 'string') {
         setGameLog((prevLog) => [
