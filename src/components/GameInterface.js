@@ -1075,33 +1075,64 @@ function GameInterface() {
           if (target.startsWith("troll with ")) {
             const weapon = target.replace("troll with ", "");
             if (weapon === "sword" && gameState.inventory.includes("sword")) {
+              // Check if troll is already dead
+              const roomState = gameState.roomStates?.[gameState.currentRoom] || {};
+              console.log("Current room state:", roomState);
+              
+              if (roomState.trollDead) {
+                setGameLog((prevLog) => [
+                  ...prevLog,
+                  `> ${action} ${target}`,
+                  "The troll is already dead!"
+                ]);
+                return;
+              }
+              
               // Random chance to kill troll
-              if (Math.random() < 0.9) {
-                setGameState(prevState => {
-                  const newState = {
-                    ...prevState,
-                    roomStates: {
-                      ...prevState.roomStates,
-                      [gameState.currentRoom]: {
-                        ...prevState.roomStates?.[gameState.currentRoom],
-                        trollDead: true
-                      }
-                    }
-                  };
-                  
-                  // Get updated description after state change
-                  const newDescription = getRoomDescriptionWithItems(gameState.currentRoom);
-                  
-                  setGameLog((prevLog) => [
-                    ...prevLog,
-                    `> ${action} ${target}`,
-                    "The troll, caught off-guard, is struck by your mighty blow! He dies.",
-                    "",
-                    newDescription
-                  ]);
-                  
-                  return newState;
-                });
+              if (Math.random() < 0.5) {
+                console.log("Killing troll...");
+                
+                // Create new state with dead troll
+                const newRoomState = {
+                  ...roomState,
+                  trollDead: true
+                };
+                
+                // Update game state with dead troll
+                setGameState(prevState => ({
+                  ...prevState,
+                  roomStates: {
+                    ...prevState.roomStates,
+                    [gameState.currentRoom]: newRoomState
+                  }
+                }));
+                
+                // Get the room data
+                const room = gameData.rooms[gameState.currentRoom];
+                
+                // Create new description with dead troll
+                let newDescription = room.description.replace(
+                  "A menacing troll brandishing a bloody axe blocks all passages out of the room.",
+                  "A dead troll lies on the ground near the passageways."
+                );
+                
+                // Add items to description
+                const roomItems = Object.entries(gameState.itemsInWorld)
+                  .filter(([item, location]) => location === gameState.currentRoom)
+                  .map(([item]) => item);
+                
+                if (roomItems.length > 0) {
+                  newDescription += "\n\n" + formatItemList(roomItems);
+                }
+                
+                setGameLog((prevLog) => [
+                  ...prevLog,
+                  `> ${action} ${target}`,
+                  "The troll, caught off-guard, is struck by your mighty blow! He dies.",
+                  "",
+                  newDescription
+                ]);
+                
               } else {
                 setGameLog((prevLog) => [
                   ...prevLog,
