@@ -68,7 +68,7 @@ function GameInterface() {
     
     // Special handling for cellar when lamp is lit/unlit
     if (roomId === "cellar") {
-      const isLampLit = roomStates.lampLit;
+      const isLampLit = gameState.lampLit;  // Use global lamp state
       return isLampLit ? room.litDescription : room.description;
     }
     
@@ -111,7 +111,7 @@ function GameInterface() {
     // Get the base description based on lamp state for cellar
     let description;
     if (roomId === "cellar") {
-      const isLampLit = roomStates.lampLit;
+      const isLampLit = gameState.lampLit;  // Use global lamp state
       description = isLampLit ? room.litDescription : room.description;
     } else {
       description = room.description;
