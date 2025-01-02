@@ -1190,7 +1190,13 @@
             "jeweled egg": "tree top",
             "bag of coins": "adventurers remains",
             "key": "adventurers remains",
-            "bauble": null
+            "bauble": null,
+            "buttons": "maintenance room",
+            "tube": "maintenance room",
+            "guidebooks": "dam lobby",
+            "stolen items": "treasure room",
+            "pot of gold": "canyon bottom",
+            "water": null
         },
         "lockedDoors": [
             "house-door",
@@ -1238,7 +1244,14 @@
             "key": "This is an ornate brass key.",
             "chalice": "This is an exquisite silver chalice.",
             "bauble": "This is a beautiful golden bauble dropped by the mechanical canary.",
-            "portrait": "This is a beautiful portrait prominently displayed."
+            "portrait": "This is a beautiful portrait prominently displayed.",
+            "buttons": "These appear to be spare control panel buttons.",
+            "tube": "This appears to be some kind of maintenance tube.",
+            "guidebooks": "These are tourist guidebooks for the dam.",
+            "stolen items": "These are various valuable items the thief has collected.",
+            "pot of gold": "This is a heavy pot filled with gold coins.",
+            "water": "Clear, refreshing water.",
+            "leaves": "These are ordinary fallen leaves."
         },
         "containerContents": {
             "sack": ["lunch", "garlic"],
