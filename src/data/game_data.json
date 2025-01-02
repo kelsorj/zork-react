@@ -539,16 +539,42 @@
         "mirror room 1": {
             "description": "This mirror room looks almost identical to the one you were just in, but something feels different.",
             "actions": {
-                "go north": "bat room",
+                "go north": "cold passage",
                 "go west": "twisting passage",
                 "go east": "small cave"
+            },
+            "items": []
+        },
+        "cold passage": {
+            "description": "This is a narrow passage with passages leading west and south.",
+            "actions": {
+                "go west": "slide room",
+                "go south": "mirror room 1"
+            },
+            "items": []
+        },
+        "slide room": {
+            "description": "This is a room with a large slide. A passage leads north and another leads east.",
+            "actions": {
+                "go east": "cold passage",
+                "go down": "cellar",
+                "go north": "mine entrance"
+            },
+            "items": []
+        },
+        "mine entrance": {
+            "description": "You are at the entrance to a mine. A passage leads south.",
+            "actions": {
+                "go south": "slide room",
+                "go west": "squeaky room"
             },
             "items": []
         },
         "squeaky room": {
             "description": "The floor boards squeak loudly with every step. A strong draft blows from the north.",
             "actions": {
-                "go east": "bat room"
+                "go east": "mine entrance",
+                "go north": "bat room"
             },
             "items": []
         },
@@ -558,7 +584,7 @@
                 "go south": "squeaky room",
                 "go east": "shaft room"
             },
-            "items": []
+            "items": ["bat","jade"]
         },
         "shaft room": {
             "description": "You are in a room with a deep shaft. A basket on a chain hangs here.",
@@ -595,41 +621,38 @@
             "description": "This is a gas-filled room. A strong chemical smell permeates the air. A passage leads east into what appears to be a coal mine.",
             "actions": {
                 "go up": "smelly room",
-                "go east": "coal mine"
+                "go east": "mine 1"
             },
-            "items": []
-        },
-        "coal mine": {
-            "description": "You are in a coal mine. The walls are covered in coal dust and old mining equipment lies scattered about.",
-            "actions": {
-                "go west": "gas room",
-                "go northeast": "mine 1",
-                "go southeast": "mine 2",
-                "go southwest": "mine 3",
-                "go down": "ladder top"
-            },
-            "items": []
+            "items": ["bracelet","gas"]
         },
         "mine 1": {
-            "description": "This is a narrow mine passage. The walls are rough and uneven.",
+            "description": "You're at the beginning of a mine. A passage leads north and another leads east.",
             "actions": {
-                "go southwest": "coal mine",
-                "go southeast": "mine 2"
+                "go north": "gas room",
+                "go east": "mine 2"
             },
             "items": []
         },
         "mine 2": {
             "description": "This is a narrow mine passage. Coal dust covers everything.",
             "actions": {
-                "go northwest": "mine 1",
-                "go southwest": "mine 3"
+                "go west": "mine 1",
+                "go east": "mine 3"
             },
             "items": []
         },
         "mine 3": {
             "description": "This is a narrow mine passage. Old mining equipment is scattered about.",
             "actions": {
-                "go northeast": "mine 2",
+                "go west": "mine 2",
+                "go south": "mine 4"
+            },
+            "items": []
+        },
+        "mine 4": {
+            "description": "You're in a narrow mine passage. A passage leads north and near a hole in the floor there is a ladder.",
+            "actions": {
+                "go north": "mine 3",
                 "go down": "ladder top"
             },
             "items": []
@@ -637,7 +660,7 @@
         "ladder top": {
             "description": "You are at the top of a rickety wooden ladder that descends into darkness.",
             "actions": {
-                "go up": "mine 3",
+                "go up": "mine 4",
                 "go down": "ladder bottom"
             },
             "items": []
@@ -646,9 +669,17 @@
             "description": "You are at the bottom of a rickety wooden ladder. A passage leads west.",
             "actions": {
                 "go up": "ladder top",
-                "go west": "timber room"
+                "go west": "timber room",
+                "go south": "coal room"
             },
             "items": []
+        },
+        "coal room": {
+            "description": "This is a dusty room filled with piles of coal. The air is thick with coal dust. A passage leads north.",
+            "actions": {
+                "go north": "ladder bottom"
+            },
+            "items": ["coal"]
         },
         "timber room": {
             "description": "This is a room filled with old mining timbers. A narrow crack in the west wall looks just barely wide enough to squeeze through.",
