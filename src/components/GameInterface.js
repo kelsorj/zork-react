@@ -622,6 +622,22 @@ function GameInterface() {
             `> open buoy`,
             "The buoy opens, revealing an emerald inside!"
           ]);
+        } else if (target === "window" && gameState.currentRoom === "behind house") {
+          setGameState(prevState => ({
+            ...prevState,
+            roomStates: {
+              ...prevState.roomStates,
+              "behind house": {
+                ...prevState.roomStates?.["behind house"],
+                windowOpen: true
+              }
+            }
+          }));
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> open window`,
+            "With great effort, you open the window far enough to allow entry."
+          ]);
         } else {
           setGameLog((prevLog) => [
             ...prevLog,
