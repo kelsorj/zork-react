@@ -25,6 +25,18 @@ function GameInterface() {
     lastCommand: ""
   });
 
+  // Constants for command validation
+  const profanityList = ["damn", "hell", "shit", "fuck", "bastard", "ass"];
+  const validCommands = [
+    "n", "s", "e", "w", "u", "d",
+    "north", "south", "east", "west", "up", "down",
+    "look", "l", "inventory", "i", "take", "get",
+    "drop", "examine", "x", "read", "open", "close",
+    "move", "enter", "in", "out", "put", "turn",
+    "push", "pull", "press", "light", "score",
+    "restart", "save", "restore", "load", "help", "?"
+  ];
+
   // Add helper functions to get room descriptions
   const getBasicRoomDescription = (roomId) => {
     const room = gameData.rooms[roomId];
@@ -134,14 +146,20 @@ function GameInterface() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const command = input.trim().toLowerCase();
+    const userCommand = input.trim().toLowerCase();
 
-    if (command) {
+    if (userCommand) {
+      // Increment moves counter for any valid command
+      setGameState(prevState => ({
+        ...prevState,
+        moves: (prevState.moves || 0) + 1
+      }));
+
       setGameSettings(prev => ({
         ...prev,
-        lastCommand: command
+        lastCommand: userCommand
       }));
-      processCommand(command);
+      processCommand(userCommand);
       setInput("");
     }
   };
@@ -651,7 +669,7 @@ function GameInterface() {
             `> open buoy`,
             "The buoy opens, revealing an emerald inside!"
           ]);
-        } else if ((target === "window" || target.includes("window")) && gameState.currentRoom === "east of house") {
+        } else if (target === "window" && gameState.currentRoom === "east of house") {
           setGameState(prevState => ({
             ...prevState,
             roomStates: {
@@ -719,19 +737,33 @@ function GameInterface() {
         }
         break;
       case "enter":
-      case "in":
-        if (gameState.currentRoom === "east of house") {
-          setGameState((prevState) => ({
+        if (target === "window" && gameState.currentRoom === "east of house") {
+          const windowOpen = gameState.roomStates?.["east of house"]?.windowOpen;
+          if (!windowOpen) {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> enter window`,
+              "The window is not open wide enough to allow entry."
+            ]);
+            return;
+          }
+          setGameState(prevState => ({
             ...prevState,
             currentRoom: "kitchen"
           }));
           setGameLog((prevLog) => [
             ...prevLog,
-            `> ${command}`,
+            `> enter window`,
+            "You climb through the window and into the house.",
+            "",
             getBasicRoomDescription("kitchen")
           ]);
         } else {
-          handleEnter(target);
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> enter ${target}`,
+            "You can't enter that."
+          ]);
         }
         break;
       case "out":
