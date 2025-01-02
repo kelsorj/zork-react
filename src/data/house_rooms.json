@@ -8,14 +8,6 @@
                 "message": "You climb out the window.",
                 "destination": "behind house"
             },
-            "west": "living room",
-            "up": "attic",
-            "east": {
-                "message": "You climb out the window.",
-                "destination": "behind house"
-            },
-            "w": "living room",
-            "u": "attic",
             "examine table": "There's nothing special about the kitchen table.",
             "take sack": {
                 "message": "Taken.",
@@ -34,8 +26,6 @@
         "description": "You are in the living room. There is a doorway to the east. To the west is a wooden door with strange gothic lettering, which appears to be nailed shut. There is a trophy case here, and a large oriental rug in the center of the room.",
         "actions": {
             "go east": "kitchen",
-            "east": "kitchen",
-            "e": "kitchen",
             "examine rug": "The rug is handwoven, and artistically done. There might be something under it.",
             "look under rug": {
                 "message": "Under the rug is a closed trap door.",
@@ -63,15 +53,13 @@
         "description": "This is the attic. The only exit is a stairway leading down.",
         "actions": {
             "go down": "kitchen",
-            "down": "kitchen",
-            "d": "kitchen",
             "take rope": {
                 "message": "Taken.",
                 "adds": ["rope"]
             },
             "take knife": {
                 "message": "Taken.",
-                "adds": ["nasty knife"]
+                "adds": ["knife"]
             }
         },
         "items": ["rope", "knife"]

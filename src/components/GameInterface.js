@@ -59,6 +59,7 @@ function GameInterface() {
     "north", "south", "east", "west", "up", "down",
     "ne", "nw", "se", "sw",
     "northeast", "northwest", "southeast", "southwest",
+    "go",  // Add this line
     
     // Basic actions
     "look", "l", "inventory", "i", "take", "get",
@@ -273,6 +274,35 @@ function GameInterface() {
         return;
       }
 
+      // Direction aliases
+      const directionAliases = {
+        'n': 'go north',
+        'north': 'go north',
+        's': 'go south',
+        'south': 'go south',
+        'e': 'go east',
+        'east': 'go east',
+        'w': 'go west',
+        'west': 'go west',
+        'u': 'go up',
+        'up': 'go up',
+        'd': 'go down',
+        'down': 'go down',
+        'ne': 'go northeast',
+        'northeast': 'go northeast',
+        'nw': 'go northwest',
+        'northwest': 'go northwest',
+        'se': 'go southeast',
+        'southeast': 'go southeast',
+        'sw': 'go southwest',
+        'southwest': 'go southwest'
+      };
+
+      // Check if the command is a direction alias
+      if (directionAliases[command]) {
+        command = directionAliases[command];
+      }
+
       // Try to process the command
       const [action, ...targetWords] = command.split(" ");
       const target = targetWords.join(" ");
@@ -289,46 +319,6 @@ function GameInterface() {
 
       // Process the command based on the action
       switch (action) {
-        case "n":
-        case "north":
-          handleGo("north");
-          break;
-        case "s":
-        case "south":
-          handleGo("south");
-          break;
-        case "e":
-        case "east":
-          handleGo("east");
-          break;
-        case "w":
-        case "west":
-          handleGo("west");
-          break;
-        case "ne":
-        case "northeast":
-          handleGo("northeast");
-          break;
-        case "nw":
-        case "northwest":
-          handleGo("northwest");
-          break;
-        case "se":
-        case "southeast":
-          handleGo("southeast");
-          break;
-        case "sw":
-        case "southwest":
-          handleGo("southwest");
-          break;
-        case "u":
-        case "up":
-          handleGo("up");
-          break;
-        case "d":
-        case "down":
-          handleGo("down");
-          break;
         case "go":
           handleGo(target);
           break;
