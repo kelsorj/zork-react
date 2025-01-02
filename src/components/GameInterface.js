@@ -66,9 +66,9 @@ function GameInterface() {
     const room = gameData.rooms[roomId];
     const roomStates = gameState.roomStates?.[roomId] || {};
     
-    // Special handling for cellar when lamp is lit/unlit
-    if (roomId === "cellar") {
-      const isLampLit = gameState.lampLit;
+    // Special handling for dark rooms when lamp is lit/unlit
+    if (room.dark) {  // Check if room is dark
+      const isLampLit = gameState.lampLit;  // Use global lamp state
       return isLampLit ? room.litDescription : room.description;
     }
     
@@ -116,10 +116,10 @@ function GameInterface() {
     const basketContents = roomId === "shaft room" ? 
       gameState.containerContents?.basket || [] : [];
 
-    // Get the base description based on lamp state for cellar
+    // Get the base description based on lamp state for dark rooms
     let description;
-    if (roomId === "cellar") {
-      const isLampLit = gameState.lampLit;
+    if (room.dark) {  // Check if room is dark
+      const isLampLit = gameState.lampLit;  // Use global lamp state
       description = isLampLit ? room.litDescription : room.description;
     } else {
       description = room.description;
