@@ -1540,6 +1540,38 @@ function GameInterface() {
       }
       return;
     }
+
+    // Add coffin case
+    if (container === "coffin" && gameState.currentRoom === "egypt room") {
+      if (item === "sceptre") {
+        setGameState(prevState => ({
+          ...prevState,
+          inventory: [...prevState.inventory, "sceptre"],
+          containerContents: {
+            ...prevState.containerContents,
+            coffin: (prevState.containerContents.coffin || []).filter(i => i !== "sceptre")
+          }
+        }));
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> take ${item} from ${container}`,
+          "Taken."
+        ]);
+      } else {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> take ${item} from ${container}`,
+          `There is no ${item} in the coffin.`
+        ]);
+      }
+      return;
+    }
+
+    setGameLog((prevLog) => [
+      ...prevLog,
+      `> take ${item} from ${container}`,
+      "You can't take anything from that."
+    ]);
   };
 
   const handlePutInMachine = (item) => {
