@@ -589,22 +589,20 @@ function GameInterface() {
 
             setGameState(prevState => ({
               ...prevState,
-              roomStates: {
-                ...prevState.roomStates,
-                cellar: {  // Update cellar state specifically
-                  ...prevState.roomStates?.cellar,
-                  lampLit: true
-                }
-              },
-              lampLit: true  // Add global lamp state
+              lampLit: true  // Set global lamp state
             }));
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> turn on lamp`,
-              "The brass lamp is now on.",
-              "",
-              getRoomDescriptionWithItems(gameState.currentRoom)
-            ]);
+
+            // Wait briefly for state to update before getting new description
+            setTimeout(() => {
+              const newDescription = getRoomDescriptionWithItems(gameState.currentRoom);
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> turn on lamp`,
+                "The brass lamp is now on.",
+                "",
+                newDescription
+              ]);
+            }, 0);
           } else {
             setGameLog((prevLog) => [
               ...prevLog,
@@ -615,24 +613,29 @@ function GameInterface() {
           break;
         case "light":
           if (target === "lamp" && gameState.inventory.includes("lamp")) {
-            setGameState(prevState => ({
-              ...prevState,
-              roomStates: {
-                ...prevState.roomStates,
-                cellar: {  // Update cellar state specifically
-                  ...prevState.roomStates?.cellar,
-                  lampLit: true
-                }
-              },
-              lampLit: true  // Add global lamp state
-            }));
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> light lamp`,
-              "The brass lamp is now on.",
-              "",
-              getRoomDescriptionWithItems(gameState.currentRoom)
-            ]);
+            console.log("Before lighting lamp:", gameState.lampLit);
+            
+            setGameState(prevState => {
+              console.log("Setting lamp state to true");
+              return {
+                ...prevState,
+                lampLit: true  // Set global lamp state
+              };
+            });
+
+            // Wait briefly for state to update before getting new description
+            setTimeout(() => {
+              const newDescription = getRoomDescriptionWithItems(gameState.currentRoom);
+              console.log("New description with lit lamp:", newDescription);
+              
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> light lamp`,
+                "The brass lamp is now on.",
+                "",
+                newDescription
+              ]);
+            }, 0);
           } else {
             setGameLog((prevLog) => [
               ...prevLog,
