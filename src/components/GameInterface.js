@@ -165,1293 +165,1300 @@ function GameInterface() {
   };
 
   const processCommand = (command) => {
-    // Check for profanity first
-    if (profanityList.some(word => command.includes(word))) {
-      setGameLog((prevLog) => [
-        ...prevLog,
-        `> ${command}`,
-        "Such language in a high-class establishment like this!"
-      ]);
-      return;
-    }
+    try {
+      // Check for profanity first
+      if (profanityList.some(word => command.includes(word))) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> ${command}`,
+          "Such language in a high-class establishment like this!"
+        ]);
+        return;
+      }
 
-    // Try to process the command
-    const [action, ...targetWords] = command.split(" ");
-    const target = targetWords.join(" ");
+      // Check for cheat code
+      if (command === "show me the money") {
+        setGameState(prevState => ({
+          ...prevState,
+          inventory: [
+            // Treasures
+            "jeweled egg", "sceptre", "chalice", "diamond", 
+            "ruby", "emerald", "pot of gold", "platinum bar",
+            "crystal trident", "jade figurine", "sapphire bracelet",
+            "brass bauble", "crystal skull", "scarab",
 
-    // If we don't understand the command
-    if (!validCommands.includes(action)) {
-      setGameLog((prevLog) => [
-        ...prevLog,
-        `> ${command}`,
-        "I don't understand that command."
-      ]);
-      return;
-    }
+            // Tools and useful items
+            "lamp", "sword", "rope", "knife", "matches",
+            "shovel", "key", "screwdriver", "wrench", "torch",
+            "air pump", "garlic", "lunch", "water", "coal",
+            "timber", "bell", "book", "candles", "bottle",
+            "lantern", "bag", "sack", "bucket", "axe",
+            "hammer", "nails", "oil", "wire", "batteries",
+            "flashlight", "map", "compass", "coins", "food",
+            "clove", "gunk", "leaves", "guidebook"
+          ]
+        }));
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> ${command}`,
+          "Cheat activated! Your inventory now contains every possible item."
+        ]);
+        return;
+      }
 
-    // Process the command based on the action
-    switch (action) {
-      case "n":
-      case "north":
-        handleGo("north");
-        break;
-      case "s":
-      case "south":
-        handleGo("south");
-        break;
-      case "e":
-      case "east":
-        handleGo("east");
-        break;
-      case "w":
-      case "west":
-        handleGo("west");
-        break;
-      case "ne":
-      case "northeast":
-        handleGo("northeast");
-        break;
-      case "nw":
-      case "northwest":
-        handleGo("northwest");
-        break;
-      case "se":
-      case "southeast":
-        handleGo("southeast");
-        break;
-      case "sw":
-      case "southwest":
-        handleGo("southwest");
-        break;
-      case "u":
-      case "up":
-        handleGo("up");
-        break;
-      case "d":
-      case "down":
-        handleGo("down");
-        break;
-      case "go":
-        handleGo(target);
-        break;
-      case "take":
-        if (target === "diamond" && gameState.currentRoom === "machine room") {
-          const machineState = gameState.roomStates?.["machine room"] || {};
-          if (!machineState.lidOpen) {
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> take diamond`,
-              "The machine's lid is closed."
-            ]);
-            return;
-          }
-          if (!machineState.hasDiamond) {
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> take diamond`,
-              "There is no diamond here."
-            ]);
-            return;
-          }
+      // Try to process the command
+      const [action, ...targetWords] = command.split(" ");
+      const target = targetWords.join(" ");
 
-          setGameState(prevState => ({
-            ...prevState,
-            inventory: [...prevState.inventory, "diamond"],
-            roomStates: {
-              ...prevState.roomStates,
-              "machine room": {
-                ...prevState.roomStates?.["machine room"],
-                hasDiamond: false
-              }
-            }
-          }));
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> take diamond`,
-            "You take the sparkling diamond from the machine!"
-          ]);
-        } else {
-          // Check if the item exists in the current room
-          const itemLocation = gameState.itemsInWorld[target];
-          
-          // Check if item is in an open container in the room
-          const coffin = gameState.roomStates?.coffin || {};
-          const coffinContents = gameState.containerContents?.coffin || [];
-          const isInOpenCoffin = coffin.isOpen && 
-                                coffinContents.includes(target) &&
-                                (gameState.itemsInWorld["coffin"] === gameState.currentRoom || 
-                                 gameState.inventory.includes("coffin"));
+      // If we don't understand the command
+      if (!validCommands.includes(action)) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> ${command}`,
+          "I don't understand that command."
+        ]);
+        return;
+      }
 
-          // Check if item is in an open sack
-          const sack = gameState.roomStates?.sack || {};
-          const sackContents = gameState.containerContents?.sack || [];
-          const isInOpenSack = sack.isOpen && 
-                              sackContents.includes(target) &&
-                              (gameState.itemsInWorld["sack"] === gameState.currentRoom || 
-                               gameState.inventory.includes("sack"));
-
-          if (itemLocation === gameState.currentRoom) {
-            // Add item to inventory and remove from room
-            setGameState((prevState) => ({
-              ...prevState,
-              inventory: [...prevState.inventory, target],
-              itemsInWorld: { ...prevState.itemsInWorld, [target]: null }
-            }));
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> take ${target}`,
-              `Taken.`
-            ]);
-          } else if (isInOpenCoffin) {
-            // Take item from coffin
-            setGameState((prevState) => ({
-              ...prevState,
-              inventory: [...prevState.inventory, target],
-              containerContents: {
-                ...prevState.containerContents,
-                coffin: (prevState.containerContents?.coffin || []).filter(i => i !== target)
-              }
-            }));
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> take ${target}`,
-              `Taken.`
-            ]);
-          } else if (isInOpenSack) {
-            // Take item from sack
-            setGameState((prevState) => ({
-              ...prevState,
-              inventory: [...prevState.inventory, target],
-              containerContents: {
-                ...prevState.containerContents,
-                sack: (prevState.containerContents?.sack || []).filter(i => i !== target)
-              }
-            }));
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> take ${target}`,
-              `Taken.`
-            ]);
-          } else {
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> take ${target}`,
-              `You don't see that here.`
-            ]);
-          }
-        }
-        break;
-      case "drop":
-        if (target === "all" || target === "everything") {
-          if (gameState.inventory.length === 0) {
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> drop ${target}`,
-              "You're not carrying anything!"
-            ]);
-            return;
-          }
-
-          const itemsToDrop = [...gameState.inventory];
-          setGameState((prevState) => ({
-            ...prevState,
-            inventory: [],
-            itemsInWorld: {
-              ...prevState.itemsInWorld,
-              ...Object.fromEntries(itemsToDrop.map(item => [item, gameState.currentRoom]))
-            }
-          }));
-
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> drop ${target}`,
-            ...itemsToDrop.map(item => `You have dropped the ${item}.`),
-          ]);
-        } else {
-          if (gameState.inventory.includes(target)) {
-            setGameState((prevState) => ({
-              ...prevState,
-              inventory: prevState.inventory.filter((invItem) => invItem !== target),
-              itemsInWorld: { ...prevState.itemsInWorld, [target]: gameState.currentRoom }
-            }));
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> drop ${target}`,
-              `You have dropped the ${target}.`
-            ]);
-          } else {
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> drop ${target}`,
-              `You don't have a ${target}.`
-            ]);
-          }
-        }
-        break;
-      case "inventory":
-      case "i":
-        handleInventory();
-        break;
-      case "look":
-      case "l":
-        handleLook();
-        break;
-      case "examine":
-      case "x":
-        handleExamine(target);
-        break;
-      case "read":
-        handleRead(target);
-        break;
-      case "turn":
-        if (target === "on lamp" || target === "lamp on") {
-          if (!gameState.inventory.includes("lamp")) {
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> turn on lamp`,
-              "You don't have the lamp."
-            ]);
-            return;
-          }
-
-          setGameState(prevState => ({
-            ...prevState,
-            roomStates: {
-              ...prevState.roomStates,
-              [gameState.currentRoom]: {
-                ...prevState.roomStates?.[gameState.currentRoom],
-                lampLit: true
-              }
-            }
-          }));
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> turn on lamp`,
-            "The brass lamp is now on.",
-            "",
-            getRoomDescriptionWithItems(gameState.currentRoom)
-          ]);
-        } else if (target.includes(" with ")) {
-          const [item, tool] = target.split(" with ");
-          if (item === "bolt" && tool === "wrench" && gameState.currentRoom === "dam") {
-            if (!gameState.inventory.includes("wrench")) {
+      // Process the command based on the action
+      switch (action) {
+        case "n":
+        case "north":
+          handleGo("north");
+          break;
+        case "s":
+        case "south":
+          handleGo("south");
+          break;
+        case "e":
+        case "east":
+          handleGo("east");
+          break;
+        case "w":
+        case "west":
+          handleGo("west");
+          break;
+        case "ne":
+        case "northeast":
+          handleGo("northeast");
+          break;
+        case "nw":
+        case "northwest":
+          handleGo("northwest");
+          break;
+        case "se":
+        case "southeast":
+          handleGo("southeast");
+          break;
+        case "sw":
+        case "southwest":
+          handleGo("southwest");
+          break;
+        case "u":
+        case "up":
+          handleGo("up");
+          break;
+        case "d":
+        case "down":
+          handleGo("down");
+          break;
+        case "go":
+          handleGo(target);
+          break;
+        case "take":
+          if (target === "diamond" && gameState.currentRoom === "machine room") {
+            const machineState = gameState.roomStates?.["machine room"] || {};
+            if (!machineState.lidOpen) {
               setGameLog((prevLog) => [
                 ...prevLog,
-                `> turn bolt with wrench`,
-                "You don't have the wrench."
+                `> take diamond`,
+                "The machine's lid is closed."
               ]);
               return;
             }
+            if (!machineState.hasDiamond) {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> take diamond`,
+                "There is no diamond here."
+              ]);
+              return;
+            }
+
+            setGameState(prevState => ({
+              ...prevState,
+              inventory: [...prevState.inventory, "diamond"],
+              roomStates: {
+                ...prevState.roomStates,
+                "machine room": {
+                  ...prevState.roomStates?.["machine room"],
+                  hasDiamond: false
+                }
+              }
+            }));
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> take diamond`,
+              "You take the sparkling diamond from the machine!"
+            ]);
+          } else {
+            // Check if the item exists in the current room
+            const itemLocation = gameState.itemsInWorld[target];
+            
+            // Check if item is in an open container in the room
+            const coffin = gameState.roomStates?.coffin || {};
+            const coffinContents = gameState.containerContents?.coffin || [];
+            const isInOpenCoffin = coffin.isOpen && 
+                                  coffinContents.includes(target) &&
+                                  (gameState.itemsInWorld["coffin"] === gameState.currentRoom || 
+                                   gameState.inventory.includes("coffin"));
+
+            // Check if item is in an open sack
+            const sack = gameState.roomStates?.sack || {};
+            const sackContents = gameState.containerContents?.sack || [];
+            const isInOpenSack = sack.isOpen && 
+                                sackContents.includes(target) &&
+                                (gameState.itemsInWorld["sack"] === gameState.currentRoom || 
+                                 gameState.inventory.includes("sack"));
+
+            if (itemLocation === gameState.currentRoom) {
+              // Add item to inventory and remove from room
+              setGameState((prevState) => ({
+                ...prevState,
+                inventory: [...prevState.inventory, target],
+                itemsInWorld: { ...prevState.itemsInWorld, [target]: null }
+              }));
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> take ${target}`,
+                `Taken.`
+              ]);
+            } else if (isInOpenCoffin) {
+              // Take item from coffin
+              setGameState((prevState) => ({
+                ...prevState,
+                inventory: [...prevState.inventory, target],
+                containerContents: {
+                  ...prevState.containerContents,
+                  coffin: (prevState.containerContents?.coffin || []).filter(i => i !== target)
+                }
+              }));
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> take ${target}`,
+                `Taken.`
+              ]);
+            } else if (isInOpenSack) {
+              // Take item from sack
+              setGameState((prevState) => ({
+                ...prevState,
+                inventory: [...prevState.inventory, target],
+                containerContents: {
+                  ...prevState.containerContents,
+                  sack: (prevState.containerContents?.sack || []).filter(i => i !== target)
+                }
+              }));
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> take ${target}`,
+                `Taken.`
+              ]);
+            } else {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> take ${target}`,
+                `You don't see that here.`
+              ]);
+            }
+          }
+          break;
+        case "drop":
+          if (target === "all" || target === "everything") {
+            if (gameState.inventory.length === 0) {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> drop ${target}`,
+                "You're not carrying anything!"
+              ]);
+              return;
+            }
+
+            const itemsToDrop = [...gameState.inventory];
+            setGameState((prevState) => ({
+              ...prevState,
+              inventory: [],
+              itemsInWorld: {
+                ...prevState.itemsInWorld,
+                ...Object.fromEntries(itemsToDrop.map(item => [item, gameState.currentRoom]))
+              }
+            }));
+
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> drop ${target}`,
+              ...itemsToDrop.map(item => `You have dropped the ${item}.`),
+            ]);
+          } else {
+            if (gameState.inventory.includes(target)) {
+              setGameState((prevState) => ({
+                ...prevState,
+                inventory: prevState.inventory.filter((invItem) => invItem !== target),
+                itemsInWorld: { ...prevState.itemsInWorld, [target]: gameState.currentRoom }
+              }));
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> drop ${target}`,
+                `You have dropped the ${target}.`
+              ]);
+            } else {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> drop ${target}`,
+                `You don't have a ${target}.`
+              ]);
+            }
+          }
+          break;
+        case "inventory":
+        case "i":
+          handleInventory();
+          break;
+        case "look":
+        case "l":
+          handleLook();
+          break;
+        case "examine":
+        case "x":
+          handleExamine(target);
+          break;
+        case "read":
+          handleRead(target);
+          break;
+        case "turn":
+          if (target.includes(" with ")) {
+            const [item, tool] = target.split(" with ");
+            if (item === "bolt" && tool === "wrench" && gameState.currentRoom === "dam") {
+              if (!gameState.inventory.includes("wrench")) {
+                setGameLog((prevLog) => [
+                  ...prevLog,
+                  `> turn bolt with wrench`,
+                  "You don't have the wrench."
+                ]);
+                return;
+              }
+              setGameState(prevState => ({
+                ...prevState,
+                roomStates: {
+                  ...prevState.roomStates,
+                  dam: {
+                    ...prevState.roomStates?.dam,
+                    gates: prevState.roomStates?.dam?.gates === "open" ? "closed" : "open"
+                  }
+                }
+              }));
+              const newState = gameState.roomStates?.dam?.gates === "open" ? "closed" : "open";
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> turn bolt with wrench`,
+                `The bolt turns with the wrench, and you hear rushing water. The gates are now ${newState}.`
+              ]);
+            } else if (item === "switch" && tool === "screwdriver" && gameState.currentRoom === "machine room") {
+              if (!gameState.inventory.includes("screwdriver")) {
+                setGameLog((prevLog) => [
+                  ...prevLog,
+                  `> turn switch with screwdriver`,
+                  "You don't have the screwdriver."
+                ]);
+                return;
+              }
+
+              const machineState = gameState.roomStates?.["machine room"] || {};
+              if (machineState.lidOpen) {
+                setGameLog((prevLog) => [
+                  ...prevLog,
+                  `> turn switch with screwdriver`,
+                  "The lid needs to be closed first."
+                ]);
+                return;
+              }
+
+              if (!machineState.hasCoal) {
+                setGameLog((prevLog) => [
+                  ...prevLog,
+                  `> turn switch with screwdriver`,
+                  "Nothing happens. The machine needs coal to work."
+                ]);
+                return;
+              }
+
+              // Create the diamond
+              setGameState(prevState => ({
+                ...prevState,
+                roomStates: {
+                  ...prevState.roomStates,
+                  "machine room": {
+                    ...prevState.roomStates?.["machine room"],
+                    hasDiamond: true,
+                    hasCoal: false
+                  }
+                }
+              }));
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> turn switch with screwdriver`,
+                "The machine hums to life! You hear grinding noises from within..."
+              ]);
+            } else {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> turn ${target}`,
+                "That wouldn't achieve anything."
+              ]);
+            }
+          } else if (target === "on lamp" || target === "lamp on") {
+            if (!gameState.inventory.includes("lamp")) {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> turn on lamp`,
+                "You don't have the lamp."
+              ]);
+              return;
+            }
+
+            setGameState(prevState => ({
+              ...prevState,
+              roomStates: {
+                ...prevState.roomStates,
+                [gameState.currentRoom]: {
+                  ...prevState.roomStates?.[gameState.currentRoom],
+                  lampLit: true
+                }
+              }
+            }));
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> turn on lamp`,
+              "The brass lamp is now on.",
+              getRoomDescriptionWithItems(gameState.currentRoom)
+            ]);
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> turn ${target}`,
+              "Turn it with what?"
+            ]);
+          }
+          break;
+        case "light":
+          if (target === "lamp" && gameState.inventory.includes("lamp")) {
+            setGameState(prevState => ({
+              ...prevState,
+              roomStates: {
+                ...prevState.roomStates,
+                [gameState.currentRoom]: {
+                  ...prevState.roomStates?.[gameState.currentRoom],
+                  lampLit: true
+                }
+              }
+            }));
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> light lamp`,
+              "The brass lamp is now on.",
+              getRoomDescriptionWithItems(gameState.currentRoom)
+            ]);
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> light ${target}`,
+              "You can't light that."
+            ]);
+          }
+          break;
+        case "climb":
+          handleClimb(target);
+          break;
+        case "open":
+          if (target === "case" || target === "trophy case") {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> open ${target}`,
+              "The trophy case is already open."
+            ]);
+          } else if (target === "coffin") {
+            // Check if coffin is in inventory OR in current room
+            const coffinInRoom = gameState.itemsInWorld["coffin"] === gameState.currentRoom;
+            if (!gameState.inventory.includes("coffin") && !coffinInRoom) {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> open ${target}`,
+                "You don't see any coffin here."
+              ]);
+              return;
+            }
+
+            // Initialize the coffin contents if they don't exist
+            const currentContents = gameState.containerContents?.coffin || [];
+            const newContents = currentContents.length === 0 ? ["sceptre"] : currentContents;
+
+            setGameState(prevState => ({
+              ...prevState,
+              roomStates: {
+                ...prevState.roomStates,
+                coffin: { 
+                  ...prevState.roomStates?.coffin,
+                  isOpen: true 
+                }
+              },
+              containerContents: {
+                ...prevState.containerContents,
+                coffin: newContents
+              }
+            }));
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> open ${target}`,
+              "The coffin creaks open, revealing a sceptre inside!"
+            ]);
+          } else if (target === "sack") {
+            // Check if sack is in inventory OR in current room
+            const sackInRoom = gameState.itemsInWorld["sack"] === gameState.currentRoom;
+            if (!gameState.inventory.includes("sack") && !sackInRoom) {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> open ${target}`,
+                "You don't see any sack here."
+              ]);
+              return;
+            }
+
+            // Initialize the sack contents if they don't exist
+            const currentContents = gameState.containerContents?.sack || [];
+            const newContents = currentContents.length === 0 ? ["garlic", "water"] : currentContents;
+
+            setGameState(prevState => ({
+              ...prevState,
+              roomStates: {
+                ...prevState.roomStates,
+                sack: { 
+                  ...prevState.roomStates?.sack,
+                  isOpen: true 
+                }
+              },
+              containerContents: {
+                ...prevState.containerContents,
+                sack: newContents
+              }
+            }));
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> open ${target}`,
+              "Opening the sack reveals garlic and a quantity of water!"
+            ]);
+          } else if (target === "lid" && gameState.currentRoom === "machine room") {
+            setGameState(prevState => ({
+              ...prevState,
+              roomStates: {
+                ...prevState.roomStates,
+                "machine room": {
+                  ...prevState.roomStates?.["machine room"],
+                  lidOpen: true
+                }
+              }
+            }));
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> open lid`,
+              "The machine's lid creaks open."
+            ]);
+          } else if (target === "buoy") {
+            if (!gameState.inventory.includes("buoy")) {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> open buoy`,
+                "You don't have the buoy."
+              ]);
+              return;
+            }
+
+            setGameState(prevState => ({
+              ...prevState,
+              containerContents: {
+                ...prevState.containerContents,
+                buoy: ["emerald"]
+              },
+              roomStates: {
+                ...prevState.roomStates,
+                buoy: {
+                  ...prevState.roomStates?.buoy,
+                  isOpen: true
+                }
+              }
+            }));
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> open buoy`,
+              "The buoy opens, revealing an emerald inside!"
+            ]);
+          } else if (target === "window" && gameState.currentRoom === "east of house") {
+            setGameState(prevState => ({
+              ...prevState,
+              roomStates: {
+                ...prevState.roomStates,
+                "east of house": {
+                  ...prevState.roomStates?.["east of house"],
+                  windowOpen: true
+                }
+              }
+            }));
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> open window`,
+              "With great effort, you open the window far enough to allow entry."
+            ]);
+          } else if (target === "trapdoor" && gameState.currentRoom === "living room") {
+            setGameState(prevState => ({
+              ...prevState,
+              roomStates: {
+                ...prevState.roomStates,
+                "living room": {
+                  ...prevState.roomStates?.["living room"],
+                  trapdoorOpen: true
+                }
+              }
+            }));
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> open trapdoor`,
+              "The door reluctantly opens to reveal a rickety staircase descending into darkness."
+            ]);
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> open ${target}`,
+              "You can't open that."
+            ]);
+          }
+          break;
+        case "close":
+          if (target === "lid" && gameState.currentRoom === "machine room") {
+            setGameState(prevState => ({
+              ...prevState,
+              roomStates: {
+                ...prevState.roomStates,
+                "machine room": {
+                  ...prevState.roomStates?.["machine room"],
+                  lidOpen: false
+                }
+              }
+            }));
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> close lid`,
+              "You close the machine's lid."
+            ]);
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> close ${target}`,
+              "You can't close that."
+            ]);
+          }
+          break;
+        case "enter":
+          if (target === "window" && gameState.currentRoom === "east of house") {
+            const windowOpen = gameState.roomStates?.["east of house"]?.windowOpen;
+            if (!windowOpen) {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> enter window`,
+                "The window is not open wide enough to allow entry."
+              ]);
+              return;
+            }
+            setGameState(prevState => ({
+              ...prevState,
+              currentRoom: "kitchen"
+            }));
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> enter window`,
+              "You climb through the window and into the house.",
+              "",
+              getBasicRoomDescription("kitchen")
+            ]);
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> enter ${target}`,
+              "You can't enter that."
+            ]);
+          }
+          break;
+        case "out":
+          handleOut();
+          break;
+        case "move":
+          handleMove(target);
+          break;
+        case "put":
+          if (target.includes(" in ")) {
+            const [item, container] = target.split(" in ");
+            if (container === "case" || container === "trophy case") {
+              if (!gameState.inventory.includes(item)) {
+                setGameLog((prevLog) => [
+                  ...prevLog,
+                  `> put ${item} in case`,
+                  `You don't have the ${item}.`
+                ]);
+              } else if (gameData.state.trophyItems.includes(item)) {
+                setGameState(prevState => ({
+                  ...prevState,
+                  inventory: prevState.inventory.filter(i => i !== item),
+                  itemsInWorld: { ...prevState.itemsInWorld, [item]: "trophy case" }
+                }));
+                setGameLog((prevLog) => [
+                  ...prevLog,
+                  `> put ${item} in case`,
+                  `You put the ${item} in the trophy case.`
+                ]);
+              } else {
+                setGameLog((prevLog) => [
+                  ...prevLog,
+                  `> put ${item} in case`,
+                  `The ${item} isn't valuable enough to go in the trophy case.`
+                ]);
+              }
+            } else if (container === "basket") {
+              if (!gameState.inventory.includes(item)) {
+                setGameLog((prevLog) => [
+                  ...prevLog,
+                  `> put ${item} in basket`,
+                  `You don't have the ${item}.`
+                ]);
+              } else {
+                setGameState(prevState => ({
+                  ...prevState,
+                  inventory: prevState.inventory.filter(i => i !== item),
+                  containerContents: {
+                    ...prevState.containerContents,
+                    basket: [...(prevState.containerContents?.basket || []), item]
+                  }
+                }));
+                setGameLog((prevLog) => [
+                  ...prevLog,
+                  `> put ${item} in basket`,
+                  `You put the ${item} in the basket.`
+                ]);
+              }
+            } else if (container === "machine" && gameState.currentRoom === "machine room") {
+              if (!gameState.inventory.includes("coal")) {
+                setGameLog((prevLog) => [
+                  ...prevLog,
+                  `> put coal in machine`,
+                  "You don't have any coal."
+                ]);
+                return;
+              }
+
+              const machineState = gameState.roomStates?.["machine room"] || {};
+              if (!machineState.lidOpen) {
+                setGameLog((prevLog) => [
+                  ...prevLog,
+                  `> put coal in machine`,
+                  "The machine's lid is closed."
+                ]);
+                return;
+              }
+
+              setGameState(prevState => ({
+                ...prevState,
+                inventory: prevState.inventory.filter(i => i !== "coal"),
+                roomStates: {
+                  ...prevState.roomStates,
+                  "machine room": {
+                    ...prevState.roomStates?.["machine room"],
+                    hasCoal: true
+                  }
+                }
+              }));
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> put coal in machine`,
+                "You put the coal in the machine."
+              ]);
+            } else {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> put ${item} in ${container}`,
+                "You can't put anything in that."
+              ]);
+            }
+          }
+          break;
+        case "squeeze":
+          handleSqueeze(target);
+          break;
+        case "slide":
+          handleSlide();
+          break;
+        case "inflate":
+          handleInflate(target);
+          break;
+        case "board":
+          handleBoard(target);
+          break;
+        case "launch":
+          handleLaunch();
+          break;
+        case "wait":
+          handleWait();
+          break;
+        case "dig":
+          if (gameState.currentRoom === "sandy cave") {
+            if (!gameState.inventory.includes("shovel")) {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> dig`,
+                "You need a shovel to dig here."
+              ]);
+              return;
+            }
+
+            const currentDigCount = gameState.roomStates?.["sandy cave"]?.digCount || 0;
+            
+            if (currentDigCount < 2) {
+              setGameState(prevState => ({
+                ...prevState,
+                roomStates: {
+                  ...prevState.roomStates,
+                  "sandy cave": {
+                    ...prevState.roomStates?.["sandy cave"],
+                    digCount: currentDigCount + 1
+                  }
+                }
+              }));
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> dig`,
+                "You dig deeper in the sand..."
+              ]);
+            } else if (!gameState.roomStates?.["sandy cave"]?.scarabRevealed) {
+              setGameState(prevState => ({
+                ...prevState,
+                roomStates: {
+                  ...prevState.roomStates,
+                  "sandy cave": {
+                    ...prevState.roomStates?.["sandy cave"],
+                    scarabRevealed: true
+                  }
+                },
+                itemsInWorld: {
+                  ...prevState.itemsInWorld,
+                  "scarab": "sandy cave"
+                }
+              }));
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> dig`,
+                "Your shovel hits something! You've uncovered an ancient scarab!"
+              ]);
+            } else {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> dig`,
+                "You find nothing else of interest here."
+              ]);
+            }
+          } else if (target === "sand" || target === "ground") {
+            if (!gameState.inventory.includes("shovel")) {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> dig ${target}`,
+                "You need a shovel to dig here."
+              ]);
+              return;
+            }
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> dig ${target}`,
+              "You find nothing of interest."
+            ]);
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> dig`,
+              "The ground is too hard to dig here."
+            ]);
+          }
+          break;
+        case "cross":
+          handleCross(target);
+          break;
+        case "touch":
+          handleTouch(target);
+          break;
+        case "wind":
+          handleWind(target);
+          break;
+        case "give":
+          const [giveItem, toWord, giveTarget] = target.split(" to ");
+          handleGive(giveItem, giveTarget);
+          break;
+        case "attack":
+        case "kill":
+          if (target.includes(" with ")) {
+            const [creature, weapon] = target.split(" with ");
+            handleAttack(creature.trim(), weapon.trim());
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> ${action} ${target}`,
+              "What do you want to kill it with?"
+            ]);
+          }
+          break;
+        case "ulysses":
+        case "odysseus":
+          if (gameState.currentRoom === "cyclops room") {
+            setGameState(prevState => ({
+              ...prevState,
+              roomStates: {
+                ...prevState.roomStates,
+                "cyclops room": { 
+                  ...prevState.roomStates?.["cyclops room"],
+                  cyclopsFled: true 
+                }
+              }
+            }));
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> ${action}`,
+              "At the sound of his ancient enemy's name, the cyclops flees in terror, smashing through the wall to the living room!"
+            ]);
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> ${action}`,
+              "Nothing happens."
+            ]);
+          }
+          break;
+        case "echo":
+          if (gameState.currentRoom === "loud room") {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              "> echo",
+              "The acoustics of the room cause your voice to echo and reverberate. As the sound dies away, you notice a platinum bar has appeared!"
+            ]);
+            setGameState(prevState => ({
+              ...prevState,
+              itemsInWorld: {
+                ...prevState.itemsInWorld,
+                "platinum bar": "loud room"
+              }
+            }));
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              "> echo",
+              "Your voice echoes slightly."
+            ]);
+          }
+          break;
+        case "help":
+        case "?":
+          handleHelp();
+          break;
+        case "restart":
+          setGameState({
+            currentRoom: "west of house",
+            inventory: [],
+            itemsInWorld: gameData.state.itemsInWorld,
+            containerContents: gameData.state.containerContents,
+            roomStates: {},
+            trophyItems: gameData.state.trophyItems,
+            moves: 0  // Reset moves on restart
+          });
+          setGameSettings(prev => ({
+            ...prev,
+            score: 0,
+            lastCommand: ""
+          }));
+          setGameLog([
+            "ZORK I: The Great Underground Empire",
+            "Copyright (c) 1981, 1982, 1983 Infocom, Inc.",
+            "All rights reserved.",
+            "",
+            getBasicRoomDescription("west of house")
+          ]);
+          break;
+        case "save":
+          handleSave();
+          break;
+        case "restore":
+        case "load":
+          handleLoad();
+          break;
+        case "tie":
+          if (target.includes(" to ")) {
+            const [item, destination] = target.split(" to ");
+            if (item === "rope" && destination === "railing" && 
+                gameState.currentRoom === "dome room" && 
+                gameState.inventory.includes("rope")) {
+              setGameState(prevState => ({
+                ...prevState,
+                inventory: prevState.inventory.filter(i => i !== "rope"),
+                roomStates: {
+                  ...prevState.roomStates,
+                  "dome room": {
+                    ...prevState.roomStates?.["dome room"],
+                    ropeTied: true
+                  }
+                }
+              }));
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> tie rope to railing`,
+                "The rope is now securely tied to the railing."
+              ]);
+            } else {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> tie ${item} to ${destination}`,
+                "You can't tie that."
+              ]);
+            }
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> tie ${target}`,
+              "What do you want to tie it to?"
+            ]);
+          }
+          break;
+        case "rub":
+          if (target === "mirror" && gameState.currentRoom === "mirror room 2") {
+            const candlesOut = gameState.roomStates?.["mirror room 2"]?.candlesOut;
+            
+            if (!candlesOut) {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> rub mirror`,
+                "The light from the candles is too bright. You need to extinguish them first."
+              ]);
+              return;
+            }
+
+            setGameState(prevState => ({
+              ...prevState,
+              currentRoom: "mirror room 1"
+            }));
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> rub mirror`,
+              "As you rub the mirror in the darkness, your surroundings shimmer and shift. You find yourself in a different mirror room!"
+            ]);
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> rub ${target}`,
+              "Rubbing that has no effect."
+            ]);
+          }
+          break;
+        case "unlock":
+          handleUnlock(target);
+          break;
+        case "pray":
+          handlePray();
+          break;
+        case "wave":
+          if (target === "sceptre" || target === "scepter") {
+            if (!gameState.inventory.includes("sceptre")) {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> wave ${target}`,
+                "You don't have the sceptre."
+              ]);
+              return;
+            }
+
+            if (gameState.currentRoom === "canyon bottom") {
+              setGameState(prevState => ({
+                ...prevState,
+                roomStates: {
+                  ...prevState.roomStates,
+                  "canyon bottom": {
+                    ...prevState.roomStates?.["canyon bottom"],
+                    rainbowSolid: true
+                  }
+                }
+              }));
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> wave ${target}`,
+                "As you wave the sceptre, the rainbow seems to become solid, forming a beautiful bridge across the canyon!"
+              ]);
+            } else {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> wave ${target}`,
+                "Nothing happens."
+              ]);
+            }
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> wave ${target}`,
+              "You wave it around, but nothing happens."
+            ]);
+          }
+          break;
+        case "push":
+          if (target === "yellow button" && gameState.currentRoom === "maintenance room") {
             setGameState(prevState => ({
               ...prevState,
               roomStates: {
                 ...prevState.roomStates,
                 dam: {
                   ...prevState.roomStates?.dam,
-                  gates: prevState.roomStates?.dam?.gates === "open" ? "closed" : "open"
+                  gates: "closed"
                 }
               }
             }));
-            const newState = gameState.roomStates?.dam?.gates === "open" ? "closed" : "open";
             setGameLog((prevLog) => [
               ...prevLog,
-              `> turn bolt with wrench`,
-              `The bolt turns with the wrench, and you hear rushing water. The gates are now ${newState}.`
+              `> push yellow button`,
+              "Click.",
+              "The gates close and water starts to collect behind the dam."
             ]);
-          } else if (item === "switch" && tool === "screwdriver" && gameState.currentRoom === "machine room") {
-            if (!gameState.inventory.includes("screwdriver")) {
-              setGameLog((prevLog) => [
-                ...prevLog,
-                `> turn switch with screwdriver`,
-                "You don't have the screwdriver."
-              ]);
-              return;
-            }
-
-            const machineState = gameState.roomStates?.["machine room"] || {};
-            if (machineState.lidOpen) {
-              setGameLog((prevLog) => [
-                ...prevLog,
-                `> turn switch with screwdriver`,
-                "The lid needs to be closed first."
-              ]);
-              return;
-            }
-
-            if (!machineState.hasCoal) {
-              setGameLog((prevLog) => [
-                ...prevLog,
-                `> turn switch with screwdriver`,
-                "Nothing happens. The machine needs coal to work."
-              ]);
-              return;
-            }
-
-            // Create the diamond
+          } else if (target === "brown button" && gameState.currentRoom === "maintenance room") {
             setGameState(prevState => ({
               ...prevState,
               roomStates: {
                 ...prevState.roomStates,
-                "machine room": {
-                  ...prevState.roomStates?.["machine room"],
-                  hasDiamond: true,
-                  hasCoal: false
+                dam: {
+                  ...prevState.roomStates?.dam,
+                  gates: "open"
                 }
               }
             }));
             setGameLog((prevLog) => [
               ...prevLog,
-              `> turn switch with screwdriver`,
-              "The machine hums to life! You hear grinding noises from within..."
+              `> push brown button`,
+              "Click.",
+              "The gates open and water pours through the dam."
             ]);
           } else {
             setGameLog((prevLog) => [
               ...prevLog,
-              `> turn ${target}`,
-              "That wouldn't achieve anything."
-            ]);
-          }
-        } else if (target === "on lamp" || target === "lamp on") {
-          if (!gameState.inventory.includes("lamp")) {
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> turn on lamp`,
-              "You don't have the lamp."
-            ]);
-            return;
-          }
-
-          setGameState(prevState => ({
-            ...prevState,
-            roomStates: {
-              ...prevState.roomStates,
-              [gameState.currentRoom]: {
-                ...prevState.roomStates?.[gameState.currentRoom],
-                lampLit: true
-              }
-            }
-          }));
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> turn on lamp`,
-            "The brass lamp is now on.",
-            "",
-            getRoomDescriptionWithItems(gameState.currentRoom)
-          ]);
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> turn ${target}`,
-            "Turn it with what?"
-          ]);
-        }
-        break;
-      case "light":
-        if (target === "lamp" && gameState.inventory.includes("lamp")) {
-          setGameState(prevState => ({
-            ...prevState,
-            roomStates: {
-              ...prevState.roomStates,
-              [gameState.currentRoom]: {
-                ...prevState.roomStates?.[gameState.currentRoom],
-                lampLit: true
-              }
-            }
-          }));
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> light lamp`,
-            "The brass lamp is now on.",
-            "",
-            getRoomDescriptionWithItems(gameState.currentRoom)
-          ]);
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> light ${target}`,
-            "You can't light that."
-          ]);
-        }
-        break;
-      case "climb":
-        handleClimb(target);
-        break;
-      case "open":
-        if (target === "case" || target === "trophy case") {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> open ${target}`,
-            "The trophy case is already open."
-          ]);
-        } else if (target === "coffin") {
-          // Check if coffin is in inventory OR in current room
-          const coffinInRoom = gameState.itemsInWorld["coffin"] === gameState.currentRoom;
-          if (!gameState.inventory.includes("coffin") && !coffinInRoom) {
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> open ${target}`,
-              "You don't see any coffin here."
-            ]);
-            return;
-          }
-
-          // Initialize the coffin contents if they don't exist
-          const currentContents = gameState.containerContents?.coffin || [];
-          const newContents = currentContents.length === 0 ? ["sceptre"] : currentContents;
-
-          setGameState(prevState => ({
-            ...prevState,
-            roomStates: {
-              ...prevState.roomStates,
-              coffin: { 
-                ...prevState.roomStates?.coffin,
-                isOpen: true 
-              }
-            },
-            containerContents: {
-              ...prevState.containerContents,
-              coffin: newContents
-            }
-          }));
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> open ${target}`,
-            "The coffin creaks open, revealing a sceptre inside!"
-          ]);
-        } else if (target === "sack") {
-          // Check if sack is in inventory OR in current room
-          const sackInRoom = gameState.itemsInWorld["sack"] === gameState.currentRoom;
-          if (!gameState.inventory.includes("sack") && !sackInRoom) {
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> open ${target}`,
-              "You don't see any sack here."
-            ]);
-            return;
-          }
-
-          // Initialize the sack contents if they don't exist
-          const currentContents = gameState.containerContents?.sack || [];
-          const newContents = currentContents.length === 0 ? ["garlic", "water"] : currentContents;
-
-          setGameState(prevState => ({
-            ...prevState,
-            roomStates: {
-              ...prevState.roomStates,
-              sack: { 
-                ...prevState.roomStates?.sack,
-                isOpen: true 
-              }
-            },
-            containerContents: {
-              ...prevState.containerContents,
-              sack: newContents
-            }
-          }));
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> open ${target}`,
-            "Opening the sack reveals garlic and a quantity of water!"
-          ]);
-        } else if (target === "lid" && gameState.currentRoom === "machine room") {
-          setGameState(prevState => ({
-            ...prevState,
-            roomStates: {
-              ...prevState.roomStates,
-              "machine room": {
-                ...prevState.roomStates?.["machine room"],
-                lidOpen: true
-              }
-            }
-          }));
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> open lid`,
-            "The machine's lid creaks open."
-          ]);
-        } else if (target === "buoy") {
-          if (!gameState.inventory.includes("buoy")) {
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> open buoy`,
-              "You don't have the buoy."
-            ]);
-            return;
-          }
-
-          setGameState(prevState => ({
-            ...prevState,
-            containerContents: {
-              ...prevState.containerContents,
-              buoy: ["emerald"]
-            },
-            roomStates: {
-              ...prevState.roomStates,
-              buoy: {
-                ...prevState.roomStates?.buoy,
-                isOpen: true
-              }
-            }
-          }));
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> open buoy`,
-            "The buoy opens, revealing an emerald inside!"
-          ]);
-        } else if (target === "window" && gameState.currentRoom === "east of house") {
-          setGameState(prevState => ({
-            ...prevState,
-            roomStates: {
-              ...prevState.roomStates,
-              "east of house": {
-                ...prevState.roomStates?.["east of house"],
-                windowOpen: true
-              }
-            }
-          }));
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> open window`,
-            "With great effort, you open the window far enough to allow entry."
-          ]);
-        } else if (target === "trapdoor" && gameState.currentRoom === "living room") {
-          setGameState(prevState => ({
-            ...prevState,
-            roomStates: {
-              ...prevState.roomStates,
-              "living room": {
-                ...prevState.roomStates?.["living room"],
-                trapdoorOpen: true
-              }
-            }
-          }));
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> open trapdoor`,
-            "The door reluctantly opens to reveal a rickety staircase descending into darkness."
-          ]);
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> open ${target}`,
-            "You can't open that."
-          ]);
-        }
-        break;
-      case "close":
-        if (target === "lid" && gameState.currentRoom === "machine room") {
-          setGameState(prevState => ({
-            ...prevState,
-            roomStates: {
-              ...prevState.roomStates,
-              "machine room": {
-                ...prevState.roomStates?.["machine room"],
-                lidOpen: false
-              }
-            }
-          }));
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> close lid`,
-            "You close the machine's lid."
-          ]);
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> close ${target}`,
-            "You can't close that."
-          ]);
-        }
-        break;
-      case "enter":
-        if (target === "window" && gameState.currentRoom === "east of house") {
-          const windowOpen = gameState.roomStates?.["east of house"]?.windowOpen;
-          if (!windowOpen) {
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> enter window`,
-              "The window is not open wide enough to allow entry."
-            ]);
-            return;
-          }
-          setGameState(prevState => ({
-            ...prevState,
-            currentRoom: "kitchen"
-          }));
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> enter window`,
-            "You climb through the window and into the house.",
-            "",
-            getBasicRoomDescription("kitchen")
-          ]);
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> enter ${target}`,
-            "You can't enter that."
-          ]);
-        }
-        break;
-      case "out":
-        handleOut();
-        break;
-      case "move":
-        handleMove(target);
-        break;
-      case "put":
-        if (target.includes(" in ")) {
-          const [item, container] = target.split(" in ");
-          if (container === "case" || container === "trophy case") {
-            if (!gameState.inventory.includes(item)) {
-              setGameLog((prevLog) => [
-                ...prevLog,
-                `> put ${item} in case`,
-                `You don't have the ${item}.`
-              ]);
-            } else if (gameData.state.trophyItems.includes(item)) {
-              setGameState(prevState => ({
-                ...prevState,
-                inventory: prevState.inventory.filter(i => i !== item),
-                itemsInWorld: { ...prevState.itemsInWorld, [item]: "trophy case" }
-              }));
-              setGameLog((prevLog) => [
-                ...prevLog,
-                `> put ${item} in case`,
-                `You put the ${item} in the trophy case.`
-              ]);
-            } else {
-              setGameLog((prevLog) => [
-                ...prevLog,
-                `> put ${item} in case`,
-                `The ${item} isn't valuable enough to go in the trophy case.`
-              ]);
-            }
-          } else if (container === "basket") {
-            if (!gameState.inventory.includes(item)) {
-              setGameLog((prevLog) => [
-                ...prevLog,
-                `> put ${item} in basket`,
-                `You don't have the ${item}.`
-              ]);
-            } else {
-              setGameState(prevState => ({
-                ...prevState,
-                inventory: prevState.inventory.filter(i => i !== item),
-                containerContents: {
-                  ...prevState.containerContents,
-                  basket: [...(prevState.containerContents?.basket || []), item]
-                }
-              }));
-              setGameLog((prevLog) => [
-                ...prevLog,
-                `> put ${item} in basket`,
-                `You put the ${item} in the basket.`
-              ]);
-            }
-          } else if (container === "machine" && gameState.currentRoom === "machine room") {
-            if (!gameState.inventory.includes("coal")) {
-              setGameLog((prevLog) => [
-                ...prevLog,
-                `> put coal in machine`,
-                "You don't have any coal."
-              ]);
-              return;
-            }
-
-            const machineState = gameState.roomStates?.["machine room"] || {};
-            if (!machineState.lidOpen) {
-              setGameLog((prevLog) => [
-                ...prevLog,
-                `> put coal in machine`,
-                "The machine's lid is closed."
-              ]);
-              return;
-            }
-
-            setGameState(prevState => ({
-              ...prevState,
-              inventory: prevState.inventory.filter(i => i !== "coal"),
-              roomStates: {
-                ...prevState.roomStates,
-                "machine room": {
-                  ...prevState.roomStates?.["machine room"],
-                  hasCoal: true
-                }
-              }
-            }));
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> put coal in machine`,
-              "You put the coal in the machine."
-            ]);
-          } else {
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> put ${item} in ${container}`,
-              "You can't put anything in that."
-            ]);
-          }
-        }
-        break;
-      case "squeeze":
-        handleSqueeze(target);
-        break;
-      case "slide":
-        handleSlide();
-        break;
-      case "inflate":
-        handleInflate(target);
-        break;
-      case "board":
-        handleBoard(target);
-        break;
-      case "launch":
-        handleLaunch();
-        break;
-      case "wait":
-        handleWait();
-        break;
-      case "dig":
-        if (gameState.currentRoom === "sandy cave") {
-          if (!gameState.inventory.includes("shovel")) {
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> dig`,
-              "You need a shovel to dig here."
-            ]);
-            return;
-          }
-
-          const currentDigCount = gameState.roomStates?.["sandy cave"]?.digCount || 0;
-          
-          if (currentDigCount < 2) {
-            setGameState(prevState => ({
-              ...prevState,
-              roomStates: {
-                ...prevState.roomStates,
-                "sandy cave": {
-                  ...prevState.roomStates?.["sandy cave"],
-                  digCount: currentDigCount + 1
-                }
-              }
-            }));
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> dig`,
-              "You dig deeper in the sand..."
-            ]);
-          } else if (!gameState.roomStates?.["sandy cave"]?.scarabRevealed) {
-            setGameState(prevState => ({
-              ...prevState,
-              roomStates: {
-                ...prevState.roomStates,
-                "sandy cave": {
-                  ...prevState.roomStates?.["sandy cave"],
-                  scarabRevealed: true
-                }
-              },
-              itemsInWorld: {
-                ...prevState.itemsInWorld,
-                "scarab": "sandy cave"
-              }
-            }));
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> dig`,
-              "Your shovel hits something! You've uncovered an ancient scarab!"
-            ]);
-          } else {
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> dig`,
-              "You find nothing else of interest here."
-            ]);
-          }
-        } else if (target === "sand" || target === "ground") {
-          if (!gameState.inventory.includes("shovel")) {
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> dig ${target}`,
-              "You need a shovel to dig here."
-            ]);
-            return;
-          }
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> dig ${target}`,
-            "You find nothing of interest."
-          ]);
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> dig`,
-            "The ground is too hard to dig here."
-          ]);
-        }
-        break;
-      case "cross":
-        handleCross(target);
-        break;
-      case "touch":
-        handleTouch(target);
-        break;
-      case "wind":
-        handleWind(target);
-        break;
-      case "give":
-        const [giveItem, toWord, giveTarget] = target.split(" to ");
-        handleGive(giveItem, giveTarget);
-        break;
-      case "attack":
-      case "kill":
-        if (target.includes(" with ")) {
-          const [creature, weapon] = target.split(" with ");
-          handleAttack(creature.trim(), weapon.trim());
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> ${action} ${target}`,
-            "What do you want to kill it with?"
-          ]);
-        }
-        break;
-      case "ulysses":
-      case "odysseus":
-        if (gameState.currentRoom === "cyclops room") {
-          setGameState(prevState => ({
-            ...prevState,
-            roomStates: {
-              ...prevState.roomStates,
-              "cyclops room": { 
-                ...prevState.roomStates?.["cyclops room"],
-                cyclopsFled: true 
-              }
-            }
-          }));
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> ${action}`,
-            "At the sound of his ancient enemy's name, the cyclops flees in terror, smashing through the wall to the living room!"
-          ]);
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> ${action}`,
-            "Nothing happens."
-          ]);
-        }
-        break;
-      case "echo":
-        if (gameState.currentRoom === "loud room") {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            "> echo",
-            "The acoustics of the room cause your voice to echo and reverberate. As the sound dies away, you notice a platinum bar has appeared!"
-          ]);
-          setGameState(prevState => ({
-            ...prevState,
-            itemsInWorld: {
-              ...prevState.itemsInWorld,
-              "platinum bar": "loud room"
-            }
-          }));
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            "> echo",
-            "Your voice echoes slightly."
-          ]);
-        }
-        break;
-      case "help":
-      case "?":
-        handleHelp();
-        break;
-      case "restart":
-        setGameState({
-          currentRoom: "west of house",
-          inventory: [],
-          itemsInWorld: gameData.state.itemsInWorld,
-          containerContents: gameData.state.containerContents,
-          roomStates: {},
-          trophyItems: gameData.state.trophyItems,
-          moves: 0  // Reset moves on restart
-        });
-        setGameSettings(prev => ({
-          ...prev,
-          score: 0,
-          lastCommand: ""
-        }));
-        setGameLog([
-          "ZORK I: The Great Underground Empire",
-          "Copyright (c) 1981, 1982, 1983 Infocom, Inc.",
-          "All rights reserved.",
-          "",
-          getBasicRoomDescription("west of house")
-        ]);
-        break;
-      case "save":
-        handleSave();
-        break;
-      case "restore":
-      case "load":
-        handleLoad();
-        break;
-      case "tie":
-        if (target.includes(" to ")) {
-          const [item, destination] = target.split(" to ");
-          if (item === "rope" && destination === "railing" && 
-              gameState.currentRoom === "dome room" && 
-              gameState.inventory.includes("rope")) {
-            setGameState(prevState => ({
-              ...prevState,
-              inventory: prevState.inventory.filter(i => i !== "rope"),
-              roomStates: {
-                ...prevState.roomStates,
-                "dome room": {
-                  ...prevState.roomStates?.["dome room"],
-                  ropeTied: true
-                }
-              }
-            }));
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> tie rope to railing`,
-              "The rope is now securely tied to the railing."
-            ]);
-          } else {
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> tie ${item} to ${destination}`,
-              "You can't tie that."
-            ]);
-          }
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> tie ${target}`,
-            "What do you want to tie it to?"
-          ]);
-        }
-        break;
-      case "rub":
-        if (target === "mirror" && gameState.currentRoom === "mirror room 2") {
-          const candlesOut = gameState.roomStates?.["mirror room 2"]?.candlesOut;
-          
-          if (!candlesOut) {
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> rub mirror`,
-              "The light from the candles is too bright. You need to extinguish them first."
-            ]);
-            return;
-          }
-
-          setGameState(prevState => ({
-            ...prevState,
-            currentRoom: "mirror room 1"
-          }));
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> rub mirror`,
-            "As you rub the mirror in the darkness, your surroundings shimmer and shift. You find yourself in a different mirror room!"
-          ]);
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> rub ${target}`,
-            "Rubbing that has no effect."
-          ]);
-        }
-        break;
-      case "unlock":
-        handleUnlock(target);
-        break;
-      case "pray":
-        handlePray();
-        break;
-      case "wave":
-        if (target === "sceptre" || target === "scepter") {
-          if (!gameState.inventory.includes("sceptre")) {
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> wave ${target}`,
-              "You don't have the sceptre."
-            ]);
-            return;
-          }
-
-          if (gameState.currentRoom === "canyon bottom") {
-            setGameState(prevState => ({
-              ...prevState,
-              roomStates: {
-                ...prevState.roomStates,
-                "canyon bottom": {
-                  ...prevState.roomStates?.["canyon bottom"],
-                  rainbowSolid: true
-                }
-              }
-            }));
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> wave ${target}`,
-              "As you wave the sceptre, the rainbow seems to become solid, forming a beautiful bridge across the canyon!"
-            ]);
-          } else {
-            setGameLog((prevLog) => [
-              ...prevLog,
-              `> wave ${target}`,
+              `> push ${target}`,
               "Nothing happens."
             ]);
           }
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> wave ${target}`,
-            "You wave it around, but nothing happens."
-          ]);
-        }
-        break;
-      case "push":
-        if (target === "yellow button" && gameState.currentRoom === "maintenance room") {
-          setGameState(prevState => ({
-            ...prevState,
-            roomStates: {
-              ...prevState.roomStates,
-              dam: {
-                ...prevState.roomStates?.dam,
-                gates: "closed"
-              }
+          break;
+        case "extinguish":
+        case "douse":
+        case "put":
+          if ((target === "candles" || target === "out candles") && gameState.currentRoom === "mirror room 2") {
+            if (!gameState.inventory.includes("candles")) {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> ${action} ${target}`,
+                "You don't have the candles."
+              ]);
+              return;
             }
-          }));
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> push yellow button`,
-            "Click.",
-            "The gates close and water starts to collect behind the dam."
-          ]);
-        } else if (target === "brown button" && gameState.currentRoom === "maintenance room") {
-          setGameState(prevState => ({
-            ...prevState,
-            roomStates: {
-              ...prevState.roomStates,
-              dam: {
-                ...prevState.roomStates?.dam,
-                gates: "open"
+
+            setGameState(prevState => ({
+              ...prevState,
+              roomStates: {
+                ...prevState.roomStates,
+                "mirror room 2": {
+                  ...prevState.roomStates?.["mirror room 2"],
+                  candlesOut: true
+                }
               }
-            }
-          }));
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> push brown button`,
-            "Click.",
-            "The gates open and water pours through the dam."
-          ]);
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> push ${target}`,
-            "Nothing happens."
-          ]);
-        }
-        break;
-      case "extinguish":
-      case "douse":
-      case "put":
-        if ((target === "candles" || target === "out candles") && gameState.currentRoom === "mirror room 2") {
-          if (!gameState.inventory.includes("candles")) {
+            }));
             setGameLog((prevLog) => [
               ...prevLog,
               `> ${action} ${target}`,
-              "You don't have the candles."
+              "You extinguish the candles. The room becomes noticeably darker."
             ]);
-            return;
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> ${action} ${target}`,
+              "You can't extinguish that."
+            ]);
           }
-
-          setGameState(prevState => ({
-            ...prevState,
-            roomStates: {
-              ...prevState.roomStates,
-              "mirror room 2": {
-                ...prevState.roomStates?.["mirror room 2"],
-                candlesOut: true
-              }
+          break;
+        case "lower":
+        case "send":
+          if ((target === "basket" || target === "basket down") && gameState.currentRoom === "shaft room") {
+            // Check if basket has contents
+            const basketContents = gameState.containerContents?.basket || [];
+            if (basketContents.length === 0) {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> ${action} basket`,
+                "You lower the empty basket down the shaft."
+              ]);
+              return;
             }
-          }));
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> ${action} ${target}`,
-            "You extinguish the candles. The room becomes noticeably darker."
-          ]);
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> ${action} ${target}`,
-            "You can't extinguish that."
-          ]);
-        }
-        break;
-      case "lower":
-      case "send":
-        if ((target === "basket" || target === "basket down") && gameState.currentRoom === "shaft room") {
-          // Check if basket has contents
-          const basketContents = gameState.containerContents?.basket || [];
-          if (basketContents.length === 0) {
+
+            // Move basket contents to drafty room
+            setGameState((prevState) => ({
+              ...prevState,
+              itemsInWorld: {
+                ...prevState.itemsInWorld,
+                ...Object.fromEntries(basketContents.map(item => [item, "drafty room"]))
+              },
+              containerContents: {
+                ...prevState.containerContents,
+                basket: [] // Empty the basket
+              }
+            }));
+
             setGameLog((prevLog) => [
               ...prevLog,
               `> ${action} basket`,
-              "You lower the empty basket down the shaft."
+              "The basket is lowered down into the darkness.",
+              `You hear the contents of the basket being removed at the bottom of the shaft.`
             ]);
-            return;
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> ${action} ${target}`,
+              "You can't lower that."
+            ]);
           }
-
-          // Move basket contents to drafty room
-          setGameState((prevState) => ({
-            ...prevState,
-            itemsInWorld: {
-              ...prevState.itemsInWorld,
-              ...Object.fromEntries(basketContents.map(item => [item, "drafty room"]))
-            },
-            containerContents: {
-              ...prevState.containerContents,
-              basket: [] // Empty the basket
+          break;
+        case "inflate":
+          if ((target === "plastic" || target === "plastic boat" || target === "boat") && gameState.currentRoom === "dam base") {
+            if (!gameState.inventory.includes("air pump")) {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> inflate ${target}`,
+                "You need an air pump to inflate that."
+              ]);
+              return;
             }
-          }));
 
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> ${action} basket`,
-            "The basket is lowered down into the darkness.",
-            `You hear the contents of the basket being removed at the bottom of the shaft.`
-          ]);
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> ${action} ${target}`,
-            "You can't lower that."
-          ]);
-        }
-        break;
-      case "inflate":
-        if ((target === "plastic" || target === "plastic boat" || target === "boat") && gameState.currentRoom === "dam base") {
-          if (!gameState.inventory.includes("air pump")) {
+            setGameState(prevState => ({
+              ...prevState,
+              roomStates: {
+                ...prevState.roomStates,
+                "dam base": {
+                  ...prevState.roomStates?.["dam base"],
+                  boatInflated: true
+                }
+              }
+            }));
             setGameLog((prevLog) => [
               ...prevLog,
               `> inflate ${target}`,
-              "You need an air pump to inflate that."
+              "The plastic pile inflates into a sturdy rubber boat!"
             ]);
-            return;
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> inflate ${target}`,
+              "You can't inflate that."
+            ]);
           }
+          break;
 
-          setGameState(prevState => ({
-            ...prevState,
-            roomStates: {
-              ...prevState.roomStates,
-              "dam base": {
-                ...prevState.roomStates?.["dam base"],
-                boatInflated: true
-              }
+        case "board":
+          if ((target === "boat" || target === "rubber boat") && gameState.currentRoom === "dam base") {
+            const boatState = gameState.roomStates?.["dam base"]?.boatInflated;
+            if (!boatState) {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> board boat`,
+                "The boat needs to be inflated first."
+              ]);
+              return;
             }
-          }));
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> inflate ${target}`,
-            "The plastic pile inflates into a sturdy rubber boat!"
-          ]);
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> inflate ${target}`,
-            "You can't inflate that."
-          ]);
-        }
-        break;
 
-      case "board":
-        if ((target === "boat" || target === "rubber boat") && gameState.currentRoom === "dam base") {
-          const boatState = gameState.roomStates?.["dam base"]?.boatInflated;
-          if (!boatState) {
+            setGameState(prevState => ({
+              ...prevState,
+              currentRoom: "in boat"
+            }));
             setGameLog((prevLog) => [
               ...prevLog,
               `> board boat`,
-              "The boat needs to be inflated first."
+              "You board the rubber boat.",
+              getBasicRoomDescription("in boat")
             ]);
-            return;
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> board ${target}`,
+              "You can't board that."
+            ]);
           }
+          break;
 
-          setGameState(prevState => ({
-            ...prevState,
-            currentRoom: "in boat"
-          }));
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> board boat`,
-            "You board the rubber boat.",
-            getBasicRoomDescription("in boat")
-          ]);
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> board ${target}`,
-            "You can't board that."
-          ]);
-        }
-        break;
-
-      case "launch":
-        if (gameState.currentRoom === "in boat") {
-          setGameState(prevState => ({
-            ...prevState,
-            roomStates: {
-              ...prevState.roomStates,
-              "in boat": {
-                ...prevState.roomStates?.["in boat"],
-                launched: true
+        case "launch":
+          if (gameState.currentRoom === "in boat") {
+            setGameState(prevState => ({
+              ...prevState,
+              roomStates: {
+                ...prevState.roomStates,
+                "in boat": {
+                  ...prevState.roomStates?.["in boat"],
+                  launched: true
+                }
               }
-            }
-          }));
+            }));
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> launch`,
+              "The boat begins to move with the current."
+            ]);
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> launch`,
+              "You're not in anything that can be launched."
+            ]);
+          }
+          break;
+        case "score":
+          const trophyItems = Object.entries(gameState.itemsInWorld)
+            .filter(([item, location]) => location === "trophy case")
+            .map(([item]) => item);
+          
+          const score = trophyItems.reduce((total, item) => 
+            total + (gameData.state.treasurePoints[item]?.case || 0), 0);
+          
+          const maxScore = Object.values(gameData.state.treasurePoints)
+            .reduce((total, points) => total + points.case, 0);
+          
           setGameLog((prevLog) => [
             ...prevLog,
-            `> launch`,
-            "The boat begins to move with the current."
+            `> score`,
+            `Your score is ${score} (out of a possible ${maxScore}), in ${gameState.moves || 0} moves.`,
+            `This gives you the rank of ${getPlayerRank(score)}.`
           ]);
-        } else {
+          break;
+        default:
           setGameLog((prevLog) => [
             ...prevLog,
-            `> launch`,
-            "You're not in anything that can be launched."
+            `> ${command}`,
+            "I don't understand that command."
           ]);
-        }
-        break;
-      case "score":
-        const trophyItems = Object.entries(gameState.itemsInWorld)
-          .filter(([item, location]) => location === "trophy case")
-          .map(([item]) => item);
-        
-        const score = trophyItems.reduce((total, item) => 
-          total + (gameData.state.treasurePoints[item]?.case || 0), 0);
-        
-        const maxScore = Object.values(gameData.state.treasurePoints)
-          .reduce((total, points) => total + points.case, 0);
-        
-        setGameLog((prevLog) => [
-          ...prevLog,
-          `> score`,
-          `Your score is ${score} (out of a possible ${maxScore}), in ${gameState.moves || 0} moves.`,
-          `This gives you the rank of ${getPlayerRank(score)}.`
-        ]);
-        break;
-      default:
-        // Increment moves counter first
-        setGameState(prevState => ({
-          ...prevState,
-          moves: ((prevState.moves || 0) + 1)
-        }));
-        // Then process the command
-        const command = input.toLowerCase();
-        processCommand(command);
-        break;
+          break;
+      }
+    } catch (error) {
+      console.error("Error processing command:", error);
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> ${command}`,
+        "I don't understand that command."
+      ]);
     }
   };
 
