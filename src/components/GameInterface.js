@@ -2107,33 +2107,52 @@ function GameInterface() {
       ...prevLog,
       "> help",
       "Available commands:",
-      "- look (l): Look around the current room",
-      "- go [direction]: Move in a direction (north, south, east, west, up, down)",
-      "- north (n), south (s), east (e), west (w), up (u), down (d): Move in that direction",
-      "- take/get [item]: Pick up an item",
+      "- attack/kill [target] with [weapon]: Attack something with a weapon",
+      "- board [object]: Board something like a boat",
+      "- climb [object]: Climb something",
+      "- down (d): Move downward",
       "- drop [item]: Drop an item from your inventory",
-      "- move [item]: Move an item to reveal what's underneath",
-      "- inventory (i): Check your inventory",
-      "- examine (x) [item]: Look at an item closely",
-      "- open [object]: Open something",
+      "- east (e): Move east",
       "- enter [object]: Enter something",
-      "- save: Save your current game",
+      "- examine (x) [item]: Look at an item closely",
+      "- go [direction]: Move in a direction (north, south, east, west, up, down)",
+      "- help: Show this help message",
+      "- inflate [object]: Inflate something",
+      "- inventory (i): Check your inventory",
+      "- light [object]: Light something",
       "- load/restore: Load your saved game",
+      "- look (l): Look around the current room",
+      "- move [item]: Move an item to reveal what's underneath",
+      "- north (n): Move north",
+      "- open [object]: Open something",
+      "- pray: Pray (in appropriate locations)",
+      "- put [item] in [container]: Put an item in a container",
+      "- read [object]: Read something",
       "- restart: Start a new game",
-      "- help: Show this help message"
+      "- ring [object]: Ring something",
+      "- save: Save your current game",
+      "- score: Check your score",
+      "- south (s): Move south",
+      "- take/get [item]: Pick up an item",
+      "- turn [item] with [tool]: Turn something with a tool",
+      "- unlock [object]: Unlock something",
+      "- up (u): Move upward",
+      "- wave [item]: Wave something",
+      "- west (w): Move west"
     ]);
   };
 
   const handleMove = (item) => {
     const currentRoom = gameData.rooms[gameState.currentRoom];
     
-    if (item === "leaves" && gameState.currentRoom === "forest clearing") {
+    // Special case for leaves in grating clearing
+    if (item === "leaves" && gameState.currentRoom === "grating clearing") {
       setGameState(prevState => ({
         ...prevState,
         roomStates: {
           ...prevState.roomStates,
-          "forest clearing": {
-            ...prevState.roomStates?.["forest clearing"],
+          "grating clearing": {
+            ...prevState.roomStates?.["grating clearing"],
             gratingRevealed: true
           }
         }
@@ -2141,11 +2160,12 @@ function GameInterface() {
       setGameLog((prevLog) => [
         ...prevLog,
         `> move ${item}`,
-        "Moving the leaves reveals a grating secured to the ground!"
+        "Moving aside the thick pile of leaves reveals a metal grating embedded in the ground!"
       ]);
       return;
     }
     
+    // Handle other move actions
     const moveAction = currentRoom.actions[`move ${item}`];
     if (moveAction) {
       // If it's the rug, update the room description to show the trapdoor
