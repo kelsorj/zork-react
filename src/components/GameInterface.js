@@ -43,18 +43,36 @@ function GameInterface() {
   const getRoomDescriptionWithItems = (roomId) => {
     const room = gameData.rooms[roomId];
     const roomStates = gameState.roomStates?.[roomId] || {};
+    
+    // Filter items based on room conditions
     const roomItems = Object.entries(gameState.itemsInWorld)
-      .filter(([item, location]) => location === roomId)
+      .filter(([item, location]) => {
+        if (location !== roomId) return false;
+        
+        // Special case for pot of gold - only visible when rainbow is solid
+        if (item === "pot of gold" && roomId === "canyon bottom") {
+          return roomStates.rainbowSolid === true;
+        }
+        
+        return true;
+      })
       .map(([item]) => item);
 
     // Get the base description based on lamp state for cellar
     let description;
     if (roomId === "cellar") {
       const isLampLit = roomStates.lampLit;
-      console.log('Lamp state in items:', isLampLit); // Debug log
       description = isLampLit ? room.litDescription : room.description;
     } else {
       description = room.description;
+    }
+    
+    // Modify description based on rainbow state
+    if (roomId === "canyon bottom" && roomStates.rainbowSolid) {
+      description = description.replace(
+        "A rainbow arcs across the chasm, its colors shimmering in the sunlight.",
+        "A solid rainbow bridge spans the chasm, its colors shimmering in the sunlight."
+      );
     }
     
     if (roomItems.length > 0) {
@@ -228,8 +246,47 @@ function GameInterface() {
             `> open ${target}`,
             "The trophy case is already open."
           ]);
+        } else if (target === "coffin") {
+          // Check if coffin is in inventory OR in current room
+          const coffinInRoom = gameState.itemsInWorld["coffin"] === gameState.currentRoom;
+          if (!gameState.inventory.includes("coffin") && !coffinInRoom) {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> open ${target}`,
+              "You don't see any coffin here."
+            ]);
+            return;
+          }
+
+          // Initialize the coffin contents if they don't exist
+          const currentContents = gameState.containerContents?.coffin || [];
+          const newContents = currentContents.length === 0 ? ["sceptre"] : currentContents;
+
+          setGameState(prevState => ({
+            ...prevState,
+            roomStates: {
+              ...prevState.roomStates,
+              coffin: { 
+                ...prevState.roomStates?.coffin,
+                isOpen: true 
+              }
+            },
+            containerContents: {
+              ...prevState.containerContents,
+              coffin: newContents
+            }
+          }));
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> open ${target}`,
+            "The coffin creaks open, revealing a sceptre inside!"
+          ]);
         } else {
-          // ... other open commands ...
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> open ${target}`,
+            "You can't open that."
+          ]);
         }
         break;
       case "close":
@@ -449,6 +506,48 @@ function GameInterface() {
       case "pray":
         handlePray();
         break;
+      case "wave":
+        if (target === "sceptre" || target === "scepter") {
+          if (!gameState.inventory.includes("sceptre")) {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> wave ${target}`,
+              "You don't have the sceptre."
+            ]);
+            return;
+          }
+
+          if (gameState.currentRoom === "canyon bottom") {
+            setGameState(prevState => ({
+              ...prevState,
+              roomStates: {
+                ...prevState.roomStates,
+                "canyon bottom": {
+                  ...prevState.roomStates?.["canyon bottom"],
+                  rainbowSolid: true
+                }
+              }
+            }));
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> wave ${target}`,
+              "As you wave the sceptre, the rainbow seems to become solid, forming a beautiful bridge across the canyon!"
+            ]);
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> wave ${target}`,
+              "Nothing happens."
+            ]);
+          }
+        } else {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> wave ${target}`,
+            "You wave it around, but nothing happens."
+          ]);
+        }
+        break;
       default:
         // Check for profanity
         if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
@@ -579,12 +678,36 @@ function GameInterface() {
   const handleTake = (item) => {
     // Check if the item exists in the current room
     const itemLocation = gameState.itemsInWorld[item];
+    
+    // Check if item is in an open container in the room
+    const coffin = gameState.roomStates?.coffin || {};
+    const coffinContents = gameState.containerContents?.coffin || [];
+    const isInOpenCoffin = coffin.isOpen && 
+                          coffinContents.includes(item) &&
+                          (gameState.itemsInWorld["coffin"] === gameState.currentRoom || 
+                           gameState.inventory.includes("coffin"));
+
     if (itemLocation === gameState.currentRoom) {
       // Add item to inventory and remove from room
       setGameState((prevState) => ({
         ...prevState,
         inventory: [...prevState.inventory, item],
         itemsInWorld: { ...prevState.itemsInWorld, [item]: null }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> take ${item}`,
+        `Taken.`
+      ]);
+    } else if (isInOpenCoffin) {
+      // Take item from coffin
+      setGameState((prevState) => ({
+        ...prevState,
+        inventory: [...prevState.inventory, item],
+        containerContents: {
+          ...prevState.containerContents,
+          coffin: (prevState.containerContents?.coffin || []).filter(i => i !== item)
+        }
       }));
       setGameLog((prevLog) => [
         ...prevLog,
