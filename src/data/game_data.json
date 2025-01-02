@@ -193,11 +193,15 @@
             "items": []
         },
         "west of house": {
-            "description": "You are at the west side of the white house. There is a small mailbox here.",
+            "description": "You are at the west side of the white house. There is a small mailbox here. {if state.platinumBarInCase}A mysterious stone barrow has appeared to the southwest.{/if}",
             "actions": {
                 "go north": "north of house",
                 "go south": "south of house",
-                "go southwest": "stone barrow",
+                "go southwest": {
+                    "requires": ["platinumBarInCase"],
+                    "destination": "stone barrow",
+                    "message": "You enter the ancient stone barrow..."
+                },
                 "open mailbox": "Opening the mailbox reveals a leaflet."
             },
             "items": ["leaflet"]
@@ -880,7 +884,13 @@
                 "down": "path",
                 "wind canary": {
                     "requires": ["jeweled egg"],
-                    "message": "You wind up the mechanical canary and carefully remove it from the jeweled egg. Now you have both a beautiful mechanical canary and an exquisite jeweled egg!"
+                    "message": "You wind up the mechanical canary and carefully remove it from the jeweled egg. Now you have both a beautiful mechanical canary and an exquisite jeweled egg!",
+                    "sets": {
+                        "canaryWound": true
+                    },
+                    "reveals": {
+                        "bauble": "path"
+                    }
                 }
             },
             "state": {
@@ -939,23 +949,35 @@
             }
         },
         "treasure room": {
-            "description": "This is a large room filled with treasures. A suspicious-looking thief lurks in the shadows.",
+            "description": "This is a large room filled with treasures. {if state.thiefAlive}A suspicious-looking thief lurks in the shadows.{else}The body of the thief lies on the ground.{/if}",
             "actions": {
                 "go down": "cyclops room",
                 "give egg to thief": {
                     "requires": ["jeweled egg"],
-                    "message": "The thief examines the egg carefully and pockets it with a grin."
+                    "message": "The thief examines the egg carefully and pockets it with a grin.",
+                    "sets": {
+                        "thiefHasEgg": true
+                    },
+                    "removes": ["jeweled egg"]
                 },
                 "kill thief with knife": {
                     "requires": ["knife"],
-                    "message": "You catch the thief off guard! After a brief struggle, he falls to the ground, dropping his loot."
+                    "message": "You catch the thief off guard! After a brief struggle, he falls to the ground, dropping his loot.",
+                    "sets": {
+                        "thiefAlive": false
+                    },
+                    "reveals": {
+                        "jeweled egg": "treasure room",
+                        "chalice": "treasure room",
+                        "stolen items": "treasure room"
+                    }
                 }
             },
             "state": {
                 "thiefAlive": true,
                 "thiefHasEgg": false
             },
-            "items": ["chalice", "stolen items"]
+            "items": []
         },
         "maze1": {
             "description": "This is part of a maze of twisty little passages, all 1 alike.",
@@ -1201,6 +1223,14 @@
         "falls death": {
             "description": "You went over Aragain Falls in the boat. Few have survived this.\n\n*** You have died ***",
             "actions": {},
+            "items": []
+        },
+        "stone barrow": {
+            "description": "You are in an ancient stone barrow. Strange runes are carved into the walls, and a dark passage leads downward. This appears to be the entrance to another great adventure...",
+            "actions": {
+                "go northeast": "west of house",
+                "go down": "You'll need Zork II to explore further in this direction!"
+            },
             "items": []
         }
     },
