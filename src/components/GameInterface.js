@@ -281,6 +281,41 @@ function GameInterface() {
             `> open ${target}`,
             "The coffin creaks open, revealing a sceptre inside!"
           ]);
+        } else if (target === "sack") {
+          // Check if sack is in inventory OR in current room
+          const sackInRoom = gameState.itemsInWorld["sack"] === gameState.currentRoom;
+          if (!gameState.inventory.includes("sack") && !sackInRoom) {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> open ${target}`,
+              "You don't see any sack here."
+            ]);
+            return;
+          }
+
+          // Initialize the sack contents if they don't exist
+          const currentContents = gameState.containerContents?.sack || [];
+          const newContents = currentContents.length === 0 ? ["garlic", "water"] : currentContents;
+
+          setGameState(prevState => ({
+            ...prevState,
+            roomStates: {
+              ...prevState.roomStates,
+              sack: { 
+                ...prevState.roomStates?.sack,
+                isOpen: true 
+              }
+            },
+            containerContents: {
+              ...prevState.containerContents,
+              sack: newContents
+            }
+          }));
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> open ${target}`,
+            "Opening the sack reveals garlic and a quantity of water!"
+          ]);
         } else {
           setGameLog((prevLog) => [
             ...prevLog,
@@ -548,6 +583,49 @@ function GameInterface() {
           ]);
         }
         break;
+      case "push":
+        if (target === "yellow button" && gameState.currentRoom === "maintenance room") {
+          setGameState(prevState => ({
+            ...prevState,
+            roomStates: {
+              ...prevState.roomStates,
+              dam: {
+                ...prevState.roomStates?.dam,
+                gates: "closed"
+              }
+            }
+          }));
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> push yellow button`,
+            "Click.",
+            "The gates close and water starts to collect behind the dam."
+          ]);
+        } else if (target === "brown button" && gameState.currentRoom === "maintenance room") {
+          setGameState(prevState => ({
+            ...prevState,
+            roomStates: {
+              ...prevState.roomStates,
+              dam: {
+                ...prevState.roomStates?.dam,
+                gates: "open"
+              }
+            }
+          }));
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> push brown button`,
+            "Click.",
+            "The gates open and water pours through the dam."
+          ]);
+        } else {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> push ${target}`,
+            "Nothing happens."
+          ]);
+        }
+        break;
       default:
         // Check for profanity
         if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
@@ -687,6 +765,14 @@ function GameInterface() {
                           (gameState.itemsInWorld["coffin"] === gameState.currentRoom || 
                            gameState.inventory.includes("coffin"));
 
+    // Check if item is in an open sack
+    const sack = gameState.roomStates?.sack || {};
+    const sackContents = gameState.containerContents?.sack || [];
+    const isInOpenSack = sack.isOpen && 
+                        sackContents.includes(item) &&
+                        (gameState.itemsInWorld["sack"] === gameState.currentRoom || 
+                         gameState.inventory.includes("sack"));
+
     if (itemLocation === gameState.currentRoom) {
       // Add item to inventory and remove from room
       setGameState((prevState) => ({
@@ -707,6 +793,21 @@ function GameInterface() {
         containerContents: {
           ...prevState.containerContents,
           coffin: (prevState.containerContents?.coffin || []).filter(i => i !== item)
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> take ${item}`,
+        `Taken.`
+      ]);
+    } else if (isInOpenSack) {
+      // Take item from sack
+      setGameState((prevState) => ({
+        ...prevState,
+        inventory: [...prevState.inventory, item],
+        containerContents: {
+          ...prevState.containerContents,
+          sack: (prevState.containerContents?.sack || []).filter(i => i !== item)
         }
       }));
       setGameLog((prevLog) => [
