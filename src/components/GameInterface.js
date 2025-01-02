@@ -1339,8 +1339,9 @@ function GameInterface() {
           .filter(([item, location]) => location === "trophy case")
           .map(([item]) => item);
         
-        const score = trophyItems.length * 10; // 10 points per trophy
-        const maxScore = gameData.state.trophyItems.length * 10;
+        const score = trophyItems.reduce((total, item) => 
+          total + (gameData.state.itemPoints[item] || 0), 0);
+        const maxScore = Object.values(gameData.state.itemPoints).reduce((a, b) => a + b, 0);
         
         setGameLog((prevLog) => [
           ...prevLog,
