@@ -178,16 +178,23 @@ function GameInterface() {
 
       // Check for cheat code
       if (command === "show me the money") {
+        // Put all treasures in the trophy case
+        const treasures = [
+          "jeweled egg", "sceptre", "chalice", "diamond", 
+          "ruby", "emerald", "pot of gold", "platinum bar",
+          "crystal trident", "jade figurine", "sapphire bracelet",
+          "brass bauble", "crystal skull", "scarab"
+        ];
+
+        // Put tools in inventory but treasures in trophy case
         setGameState(prevState => ({
           ...prevState,
+          itemsInWorld: {
+            ...prevState.itemsInWorld,
+            ...treasures.reduce((acc, item) => ({ ...acc, [item]: "trophy case" }), {})
+          },
           inventory: [
-            // Treasures
-            "jeweled egg", "sceptre", "chalice", "diamond", 
-            "ruby", "emerald", "pot of gold", "platinum bar",
-            "crystal trident", "jade figurine", "sapphire bracelet",
-            "brass bauble", "crystal skull", "scarab",
-
-            // Tools and useful items
+            // Tools and useful items only
             "lamp", "sword", "rope", "knife", "matches",
             "shovel", "key", "screwdriver", "wrench", "torch",
             "air pump", "garlic", "lunch", "water", "coal",
@@ -201,7 +208,7 @@ function GameInterface() {
         setGameLog((prevLog) => [
           ...prevLog,
           `> ${command}`,
-          "Cheat activated! Your inventory now contains every possible item."
+          "Cheat activated! All treasures are in the trophy case and all tools are in your inventory."
         ]);
         return;
       }
