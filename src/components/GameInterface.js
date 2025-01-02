@@ -1077,23 +1077,31 @@ function GameInterface() {
             if (weapon === "sword" && gameState.inventory.includes("sword")) {
               // Random chance to kill troll
               if (Math.random() < 0.9) {
-                setGameState(prevState => ({
-                  ...prevState,
-                  roomStates: {
-                    ...prevState.roomStates,
-                    [gameState.currentRoom]: {
-                      ...prevState.roomStates?.[gameState.currentRoom],
-                      trollDead: true
+                setGameState(prevState => {
+                  const newState = {
+                    ...prevState,
+                    roomStates: {
+                      ...prevState.roomStates,
+                      [gameState.currentRoom]: {
+                        ...prevState.roomStates?.[gameState.currentRoom],
+                        trollDead: true
+                      }
                     }
-                  }
-                }));
-                setGameLog((prevLog) => [
-                  ...prevLog,
-                  `> ${action} ${target}`,
-                  "The troll, caught off-guard, is struck by your mighty blow! He dies.",
-                  "",
-                  getRoomDescriptionWithItems(gameState.currentRoom)
-                ]);
+                  };
+                  
+                  // Get updated description after state change
+                  const newDescription = getRoomDescriptionWithItems(gameState.currentRoom);
+                  
+                  setGameLog((prevLog) => [
+                    ...prevLog,
+                    `> ${action} ${target}`,
+                    "The troll, caught off-guard, is struck by your mighty blow! He dies.",
+                    "",
+                    newDescription
+                  ]);
+                  
+                  return newState;
+                });
               } else {
                 setGameLog((prevLog) => [
                   ...prevLog,
