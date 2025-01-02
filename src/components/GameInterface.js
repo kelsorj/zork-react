@@ -295,7 +295,51 @@ function GameInterface() {
         }
         break;
       case "drop":
-        handleDrop(target);
+        if (target === "all" || target === "everything") {
+          if (gameState.inventory.length === 0) {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> drop ${target}`,
+              "You're not carrying anything!"
+            ]);
+            return;
+          }
+
+          const itemsToDrop = [...gameState.inventory];
+          setGameState((prevState) => ({
+            ...prevState,
+            inventory: [],
+            itemsInWorld: {
+              ...prevState.itemsInWorld,
+              ...Object.fromEntries(itemsToDrop.map(item => [item, gameState.currentRoom]))
+            }
+          }));
+
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> drop ${target}`,
+            ...itemsToDrop.map(item => `You have dropped the ${item}.`),
+          ]);
+        } else {
+          if (gameState.inventory.includes(target)) {
+            setGameState((prevState) => ({
+              ...prevState,
+              inventory: prevState.inventory.filter((invItem) => invItem !== target),
+              itemsInWorld: { ...prevState.itemsInWorld, [target]: gameState.currentRoom }
+            }));
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> drop ${target}`,
+              `You have dropped the ${target}.`
+            ]);
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> drop ${target}`,
+              `You don't have a ${target}.`
+            ]);
+          }
+        }
         break;
       case "inventory":
       case "i":
@@ -694,7 +738,7 @@ function GameInterface() {
             setGameLog((prevLog) => [
               ...prevLog,
               `> put ${item} in ${container}`,
-              "You can't put anything in the ${container}."
+              "You can't put anything in that."
             ]);
           }
         }
@@ -1040,6 +1084,97 @@ function GameInterface() {
             ...prevLog,
             `> ${action} ${target}`,
             "You can't lower that."
+          ]);
+        }
+        break;
+      case "inflate":
+        if ((target === "plastic" || target === "plastic boat" || target === "boat") && gameState.currentRoom === "dam base") {
+          if (!gameState.inventory.includes("air pump")) {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> inflate ${target}`,
+              "You need an air pump to inflate that."
+            ]);
+            return;
+          }
+
+          setGameState(prevState => ({
+            ...prevState,
+            roomStates: {
+              ...prevState.roomStates,
+              "dam base": {
+                ...prevState.roomStates?.["dam base"],
+                boatInflated: true
+              }
+            }
+          }));
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> inflate ${target}`,
+            "The plastic pile inflates into a sturdy rubber boat!"
+          ]);
+        } else {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> inflate ${target}`,
+            "You can't inflate that."
+          ]);
+        }
+        break;
+
+      case "board":
+        if ((target === "boat" || target === "rubber boat") && gameState.currentRoom === "dam base") {
+          const boatState = gameState.roomStates?.["dam base"]?.boatInflated;
+          if (!boatState) {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> board boat`,
+              "The boat needs to be inflated first."
+            ]);
+            return;
+          }
+
+          setGameState(prevState => ({
+            ...prevState,
+            currentRoom: "in boat"
+          }));
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> board boat`,
+            "You board the rubber boat.",
+            getBasicRoomDescription("in boat")
+          ]);
+        } else {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> board ${target}`,
+            "You can't board that."
+          ]);
+        }
+        break;
+
+      case "launch":
+        if (gameState.currentRoom === "in boat") {
+          setGameState(prevState => ({
+            ...prevState,
+            roomStates: {
+              ...prevState.roomStates,
+              "in boat": {
+                ...prevState.roomStates?.["in boat"],
+                launched: true
+              }
+            }
+          }));
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> launch`,
+            "The boat begins to move with the current."
+          ]);
+        } else {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> launch`,
+            "You're not in anything that can be launched."
           ]);
         }
         break;
