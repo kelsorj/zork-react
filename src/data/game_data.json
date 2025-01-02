@@ -211,11 +211,48 @@
             "items": ["leaflet"]
         },
         "cellar": {
-            "description": "You are in a dark and damp cellar with a narrow passageway leading north, and a crawlway to the south. A rickety wooden staircase leads up.",
+            "description": "It is pitch black. You are likely to be eaten by a grue.",
+            "litDescription": "You are in a dark and damp cellar with a narrow passageway leading north, and a crawlway to the south. A rickety wooden staircase leads up.",
             "actions": {
-                "go up": "living room",
-                "go north": "troll room",
-                "go south": "east of chasm"
+                "go up": {
+                    "requires": ["lampLit"],
+                    "destination": "living room",
+                    "message": "You climb the rickety stairs."
+                },
+                "go north": {
+                    "requires": ["lampLit"],
+                    "destination": "troll room",
+                    "message": "You carefully make your way north."
+                },
+                "go south": {
+                    "requires": ["lampLit"],
+                    "destination": "east of chasm",
+                    "message": "You crawl southward."
+                },
+                "turn on lamp": {
+                    "requires": ["lamp"],
+                    "message": "The brass lamp is now on, illuminating the cellar.",
+                    "sets": {
+                        "lampLit": true
+                    }
+                },
+                "light lamp": {
+                    "requires": ["lamp"],
+                    "message": "The brass lamp is now on, illuminating the cellar.",
+                    "sets": {
+                        "lampLit": true
+                    }
+                },
+                "turn off lamp": {
+                    "requires": ["lamp"],
+                    "message": "The brass lamp is now off. It is pitch black.",
+                    "sets": {
+                        "lampLit": false
+                    }
+                }
+            },
+            "state": {
+                "lampLit": false
             },
             "items": []
         },
