@@ -58,6 +58,10 @@ function GameInterface() {
       })
       .map(([item]) => item);
 
+    // Get items in basket if we're in shaft room
+    const basketContents = roomId === "shaft room" ? 
+      gameState.containerContents?.basket || [] : [];
+
     // Get the base description based on lamp state for cellar
     let description;
     if (roomId === "cellar") {
@@ -75,9 +79,16 @@ function GameInterface() {
       );
     }
     
+    // Add room items
     if (roomItems.length > 0) {
       description += "\n\nYou can see: " + roomItems.join(", ") + " here.";
     }
+
+    // Add basket contents if any
+    if (basketContents.length > 0) {
+      description += "\n\nThe basket contains: " + basketContents.join(", ") + ".";
+    }
+
     return description;
   };
 
@@ -204,28 +215,91 @@ function GameInterface() {
       case "read":
         handleRead(target);
         break;
-      case "light":
-        if (target === "lamp" && gameState.inventory.includes("lamp")) {
-          console.log('Setting lamp state to true'); // Debug log
-          setGameState(prevState => {
-            const newState = {
+      case "turn":
+        if (target.includes(" with ")) {
+          const [item, tool] = target.split(" with ");
+          if (item === "bolt" && tool === "wrench" && gameState.currentRoom === "dam") {
+            if (!gameState.inventory.includes("wrench")) {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> turn bolt with wrench`,
+                "You don't have the wrench."
+              ]);
+              return;
+            }
+            setGameState(prevState => ({
               ...prevState,
               roomStates: {
                 ...prevState.roomStates,
-                [gameState.currentRoom]: {
-                  ...prevState.roomStates?.[gameState.currentRoom],
-                  lampLit: true
+                dam: {
+                  ...prevState.roomStates?.dam,
+                  gates: prevState.roomStates?.dam?.gates === "open" ? "closed" : "open"
                 }
               }
-            };
-            console.log('New state:', newState); // Debug log
-            return newState;
-          });
-          
-          setGameLog(prevLog => [
+            }));
+            const newState = gameState.roomStates?.dam?.gates === "open" ? "closed" : "open";
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> turn bolt with wrench`,
+              `The bolt turns with the wrench, and you hear rushing water. The gates are now ${newState}.`
+            ]);
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> turn ${target}`,
+              "That wouldn't achieve anything."
+            ]);
+          }
+        } else if (target === "on lamp" || target === "lamp on") {
+          if (!gameState.inventory.includes("lamp")) {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> turn on lamp`,
+              "You don't have the lamp."
+            ]);
+            return;
+          }
+
+          setGameState(prevState => ({
+            ...prevState,
+            roomStates: {
+              ...prevState.roomStates,
+              [gameState.currentRoom]: {
+                ...prevState.roomStates?.[gameState.currentRoom],
+                lampLit: true
+              }
+            }
+          }));
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> turn on lamp`,
+            "The brass lamp is now on.",
+            getRoomDescriptionWithItems(gameState.currentRoom)
+          ]);
+        } else {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> turn ${target}`,
+            "Turn it with what?"
+          ]);
+        }
+        break;
+      case "light":
+        if (target === "lamp" && gameState.inventory.includes("lamp")) {
+          setGameState(prevState => ({
+            ...prevState,
+            roomStates: {
+              ...prevState.roomStates,
+              [gameState.currentRoom]: {
+                ...prevState.roomStates?.[gameState.currentRoom],
+                lampLit: true
+              }
+            }
+          }));
+          setGameLog((prevLog) => [
             ...prevLog,
             `> light lamp`,
-            "The brass lamp is now on, illuminating the cellar.",
+            "The brass lamp is now on.",
             getRoomDescriptionWithItems(gameState.currentRoom)
           ]);
         } else {
@@ -375,6 +449,28 @@ function GameInterface() {
                 ...prevLog,
                 `> put ${item} in case`,
                 `The ${item} isn't valuable enough to go in the trophy case.`
+              ]);
+            }
+          } else if (container === "basket") {
+            if (!gameState.inventory.includes(item)) {
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> put ${item} in basket`,
+                `You don't have the ${item}.`
+              ]);
+            } else {
+              setGameState(prevState => ({
+                ...prevState,
+                inventory: prevState.inventory.filter(i => i !== item),
+                containerContents: {
+                  ...prevState.containerContents,
+                  basket: [...(prevState.containerContents?.basket || []), item]
+                }
+              }));
+              setGameLog((prevLog) => [
+                ...prevLog,
+                `> put ${item} in basket`,
+                `You put the ${item} in the basket.`
               ]);
             }
           } else {
