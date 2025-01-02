@@ -778,6 +778,14 @@
             },
             "items": ["bag of coins", "key"]
         },
+        "strange passage": {
+            "description": "You are in a strange small room.",
+            "actions": {
+                "go east": "living room",
+                "gowest": "cyclops room"
+            },
+            "items": []
+        },
         "cyclops room": {
             "description": "This is the lair of the cyclops. The walls are decorated with human bones.",
             "actions": {
