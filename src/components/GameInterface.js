@@ -1614,13 +1614,30 @@ function GameInterface() {
     // Get available exits from the room actions
     const actions = currentRoom?.actions || {};
     const exitKey = `go ${direction}`;
-    const destination = actions[exitKey];
+    const exit = actions[exitKey];
     
-    console.log("Looking for exit:", exitKey);
-    console.log("Found destination:", destination);
+    console.log("Exit data:", exit);
     
-    // Check if we have a valid destination
-    if (destination && typeof destination === 'string') {
+    // Check if we have a valid exit
+    if (exit) {
+      // Check if this exit has requirements
+      if (exit.requires) {
+        // Check lamp requirement
+        if (exit.requires.includes('lampLit') && !lampLit) {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> ${direction}`,
+            "It's too dark to go that way. You might be eaten by a grue!"
+          ]);
+          return;
+        }
+        // Add other requirements here as needed
+      }
+      
+      // If we get here, all requirements are met
+      const destination = exit.destination || exit;
+      const message = exit.message || "";
+      
       console.log("Moving to:", destination);
       
       setGameState(prevState => ({
@@ -1631,6 +1648,7 @@ function GameInterface() {
       setGameLog((prevLog) => [
         ...prevLog,
         `> ${direction}`,
+        ...(message ? [message] : []),
         "",
         getRoomDescriptionWithItems(destination)
       ]);

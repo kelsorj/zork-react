@@ -1,8 +1,3 @@
-@font-face {
-    font-family: 'Apple2';
-    src: url('https://cdn.jsdelivr.net/npm/apple2-font/dist/Apple2.woff2') format('woff2');
-}
-
 body {
     margin: 0;
     padding: 0;
@@ -18,7 +13,7 @@ body {
     width: 800px;
     min-height: 100vh;
     margin: 0 auto;
-    font-family: 'Apple2', monospace;
+    font-family: 'VT323', 'Courier New', Courier, monospace;
     color: #33ff33;
     text-shadow: 0 0 5px #33ff33;
     display: flex;
