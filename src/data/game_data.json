@@ -1075,6 +1075,61 @@
                 "gratingOpen": false
             },
             "items": ["leaves"]
+        },
+        "river1": {
+            "description": "You are in the rubber boat on a calm section of the river. The current is gentle here, but grows stronger to the south.",
+            "actions": {
+                "go north": "dam base",
+                "go south": "river2",
+                "exit boat": "You'd better not leave the boat here - the banks are too steep to climb.",
+                "wait": "The current slowly carries you southward..."
+            },
+            "items": []
+        },
+        "river2": {
+            "description": "You are in the rubber boat on the river. The current is getting noticeably stronger, and you can hear the roar of falls in the distance.",
+            "actions": {
+                "go north": "river1",
+                "go south": "river3",
+                "exit boat": "You'd better not leave the boat here - the banks are too steep to climb.",
+                "wait": "The current carries you southward more quickly now..."
+            },
+            "items": []
+        },
+        "river3": {
+            "description": "You are in the rubber boat on the rapidly moving river. The roar of the falls is getting louder. The current is very strong here.",
+            "actions": {
+                "go north": "river2",
+                "go south": "river4",
+                "exit boat": "white cliffs north",
+                "wait": "The current pulls you swiftly southward..."
+            },
+            "items": []
+        },
+        "river4": {
+            "description": "You are in the rubber boat on the river. The roar of Aragain Falls is very loud here. The current is extremely strong. WARNING: The falls are very close now!",
+            "actions": {
+                "go north": "river3",
+                "go south": "river5",
+                "exit boat": "sandy beach",
+                "wait": "The current drags you rapidly southward..."
+            },
+            "items": []
+        },
+        "river5": {
+            "description": "You are in the rubber boat on the river. The thundering of Aragain Falls fills your ears. You are about to go over the falls! This is your last chance to escape!",
+            "actions": {
+                "go north": "river4",
+                "go south": "falls death",
+                "wait": "The boat goes over the falls, smashing on the rocks below. You don't survive the fall.\n\n*** You have died ***",
+                "exit boat": "shore"
+            },
+            "items": []
+        },
+        "falls death": {
+            "description": "You went over Aragain Falls in the boat. Few have survived this.\n\n*** You have died ***",
+            "actions": {},
+            "items": []
         }
     },
     "inventory": [],
