@@ -619,7 +619,28 @@ function GameInterface() {
           }
           break;
         case "climb":
-          handleClimb(target);
+          const currentRoom = gameData.rooms[gameState.currentRoom];
+          if (currentRoom?.actions?.climb || currentRoom?.actions?.[`climb ${target}`]) {
+            const destination = currentRoom.actions.climb || currentRoom.actions[`climb ${target}`];
+            
+            setGameState(prevState => ({
+              ...prevState,
+              currentRoom: destination
+            }));
+            
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> climb ${target}`,
+              "",
+              getRoomDescriptionWithItems(destination)
+            ]);
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> climb ${target}`,
+              "You can't climb that."
+            ]);
+          }
           break;
         case "open":
           if (target === "case" || target === "trophy case") {
