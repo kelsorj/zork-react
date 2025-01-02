@@ -424,7 +424,32 @@ function GameInterface() {
       case "tie":
         if (target.includes(" to ")) {
           const [item, destination] = target.split(" to ");
-          handleTie(item.trim(), destination.trim());
+          if (item === "rope" && destination === "railing" && 
+              gameState.currentRoom === "dome room" && 
+              gameState.inventory.includes("rope")) {
+            setGameState(prevState => ({
+              ...prevState,
+              inventory: prevState.inventory.filter(i => i !== "rope"),
+              roomStates: {
+                ...prevState.roomStates,
+                "dome room": {
+                  ...prevState.roomStates?.["dome room"],
+                  ropeAttached: true
+                }
+              }
+            }));
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> tie rope to railing`,
+              "The rope is now securely tied to the railing."
+            ]);
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> tie ${item} to ${destination}`,
+              "You can't tie that."
+            ]);
+          }
         } else {
           setGameLog((prevLog) => [
             ...prevLog,
