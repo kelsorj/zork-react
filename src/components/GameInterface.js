@@ -404,7 +404,34 @@ function GameInterface() {
         handleRead(target);
         break;
       case "turn":
-        if (target.includes(" with ")) {
+        if (target === "on lamp" || target === "lamp on") {
+          if (!gameState.inventory.includes("lamp")) {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> turn on lamp`,
+              "You don't have the lamp."
+            ]);
+            return;
+          }
+
+          setGameState(prevState => ({
+            ...prevState,
+            roomStates: {
+              ...prevState.roomStates,
+              [gameState.currentRoom]: {
+                ...prevState.roomStates?.[gameState.currentRoom],
+                lampLit: true
+              }
+            }
+          }));
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> turn on lamp`,
+            "The brass lamp is now on.",
+            "",
+            getRoomDescriptionWithItems(gameState.currentRoom)
+          ]);
+        } else if (target.includes(" with ")) {
           const [item, tool] = target.split(" with ");
           if (item === "bolt" && tool === "wrench" && gameState.currentRoom === "dam") {
             if (!gameState.inventory.includes("wrench")) {
@@ -508,6 +535,7 @@ function GameInterface() {
             ...prevLog,
             `> turn on lamp`,
             "The brass lamp is now on.",
+            "",
             getRoomDescriptionWithItems(gameState.currentRoom)
           ]);
         } else {
@@ -534,6 +562,7 @@ function GameInterface() {
             ...prevLog,
             `> light lamp`,
             "The brass lamp is now on.",
+            "",
             getRoomDescriptionWithItems(gameState.currentRoom)
           ]);
         } else {
@@ -683,9 +712,7 @@ function GameInterface() {
           setGameLog((prevLog) => [
             ...prevLog,
             `> open window`,
-            "With great effort, you open the window far enough to allow entry.",
-            "",
-            getRoomDescriptionWithItems(gameState.currentRoom)
+            "With great effort, you open the window far enough to allow entry."
           ]);
         } else if (target === "trapdoor" && gameState.currentRoom === "living room") {
           setGameState(prevState => ({
