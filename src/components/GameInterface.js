@@ -446,6 +446,9 @@ function GameInterface() {
       case "unlock":
         handleUnlock(target);
         break;
+      case "pray":
+        handlePray();
+        break;
       default:
         // Check for profanity
         if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {

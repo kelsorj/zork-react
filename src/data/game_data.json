@@ -503,7 +503,7 @@
         "altar": {
             "description": "This is the altar. A huge mirror fills the north wall. A small window can be seen in the east wall.",
             "actions": {
-                "go up": "temple",
+                "go north": "temple",
                 "go down": "cave"
             },
             "items": ["book", "candles"]
