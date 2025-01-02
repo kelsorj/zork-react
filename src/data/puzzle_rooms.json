@@ -1,0 +1,134 @@
+{
+    "mirror room": {
+        "description": "This is a large room whose walls are covered by mirrors. A wooden door leads north.",
+        "darkDescription": "It is pitch black. You are likely to be eaten by a grue.",
+        "actions": {
+            "go north": {
+                "requires": ["mirror puzzle solved"],
+                "destination": "treasure room"
+            },
+            "examine mirrors": "The mirrors seem to reflect infinitely into each other.",
+            "break mirror": "The mirror is unbreakable.",
+            "say xyzzy": {
+                "message": "One of the mirrors begins to shimmer!",
+                "sets": {
+                    "mirror activated": true
+                }
+            },
+            "enter mirror": {
+                "requires": ["mirror activated"],
+                "message": "You step through the shimmering mirror!",
+                "sets": {
+                    "mirror puzzle solved": true
+                },
+                "destination": "treasure room"
+            }
+        }
+    },
+    "riddle room": {
+        "description": "This circular room has a stone door with a face carved into it. The face appears to be speaking.",
+        "actions": {
+            "examine door": "The stone face asks: 'What walks on four legs in the morning, two legs in the afternoon, and three legs in the evening?'",
+            "say man": {
+                "message": "The face smiles and the door swings open!",
+                "sets": {
+                    "riddle solved": true
+                }
+            },
+            "go north": {
+                "requires": ["riddle solved"],
+                "destination": "jewel room"
+            }
+        }
+    },
+    "weight room": {
+        "description": "This room contains a large scale in the center. Various weights lie scattered about.",
+        "actions": {
+            "examine scale": "The scale seems to be waiting for something specific.",
+            "put gold": {
+                "requires": ["gold bars"],
+                "message": "The scale tips slightly but seems to want more.",
+                "sets": {
+                    "weight1": true
+                }
+            },
+            "put silver": {
+                "requires": ["weight1", "silver bars"],
+                "message": "The scale balances perfectly! A door opens in the wall!",
+                "sets": {
+                    "weight puzzle solved": true
+                }
+            },
+            "go east": {
+                "requires": ["weight puzzle solved"],
+                "destination": "vault room"
+            }
+        }
+    },
+    "musical room": {
+        "description": "This room contains various musical instruments mounted on the walls.",
+        "actions": {
+            "examine instruments": "You see a drum, a flute, and a harp.",
+            "play drum": {
+                "message": "A deep resonant tone fills the room.",
+                "sets": {
+                    "drum played": true
+                }
+            },
+            "play flute": {
+                "requires": ["drum played"],
+                "message": "A melodious tune joins the drum's rhythm.",
+                "sets": {
+                    "flute played": true
+                }
+            },
+            "play harp": {
+                "requires": ["flute played"],
+                "message": "As you complete the harmony, a hidden door opens!",
+                "sets": {
+                    "music puzzle solved": true
+                }
+            },
+            "go west": {
+                "requires": ["music puzzle solved"],
+                "destination": "crystal cave"
+            }
+        }
+    },
+    "color room": {
+        "description": "This room has buttons of different colors on each wall: red, blue, yellow, and green.",
+        "actions": {
+            "push red": {
+                "message": "The button glows briefly.",
+                "sets": {
+                    "red pushed": true
+                }
+            },
+            "push blue": {
+                "requires": ["red pushed"],
+                "message": "The button glows briefly.",
+                "sets": {
+                    "blue pushed": true
+                }
+            },
+            "push yellow": {
+                "requires": ["blue pushed"],
+                "message": "The button glows briefly.",
+                "sets": {
+                    "yellow pushed": true
+                }
+            },
+            "push green": {
+                "requires": ["yellow pushed"],
+                "message": "The correct sequence! A passage opens!",
+                "sets": {
+                    "color puzzle solved": true
+                }
+            },
+            "go south": {
+                "requires": ["color puzzle solved"],
+                "destination": "rainbow bridge"
+            }
+        }
+    }
+} 

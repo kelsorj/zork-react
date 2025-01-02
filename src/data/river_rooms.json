@@ -1,0 +1,117 @@
+{
+    "river bank": {
+        "description": "You are on the bank of the Frigid River. The river flows quietly here. The river bank extends north and south, and a path leads west.",
+        "actions": {
+            "go north": "dam base",
+            "go south": "sandy beach",
+            "go west": "forest path",
+            "north": "dam base",
+            "south": "sandy beach",
+            "west": "forest path",
+            "swim": {
+                "message": "The water is too cold and the current is too strong."
+            },
+            "cross river": {
+                "requires": ["boat"],
+                "message": "You'll need to be more specific about how to use the boat."
+            }
+        }
+    },
+    "sandy beach": {
+        "description": "You are on a sandy beach on the Frigid River. The beach extends north and south, and a path leads west into the forest.",
+        "actions": {
+            "go north": "river bank",
+            "go south": "rocky shore",
+            "go west": "forest3",
+            "north": "river bank",
+            "south": "rocky shore",
+            "west": "forest3",
+            "dig": {
+                "requires": ["shovel"],
+                "message": "You find a platinum bar buried in the sand!",
+                "adds": ["platinum bar"],
+                "score": 10
+            }
+        },
+        "items": ["shovel"]
+    },
+    "rocky shore": {
+        "description": "You are on a rocky shore beside the Frigid River. A steep cliff prevents further progress south.",
+        "actions": {
+            "go north": "sandy beach",
+            "north": "sandy beach",
+            "examine rocks": "The rocks are wet and slippery from the river spray."
+        }
+    },
+    "rainbow room": {
+        "description": "You are in a magnificent room with a view of a huge rainbow below you, which seems to dance in the mist rising from the waterfall.",
+        "actions": {
+            "go west": "aragain falls",
+            "go down": "on rainbow",
+            "west": "aragain falls",
+            "down": "on rainbow",
+            "examine rainbow": "The rainbow seems surprisingly solid."
+        }
+    },
+    "on rainbow": {
+        "description": "You are on top of a rainbow (I bet you never thought you would walk on a rainbow), with a magnificent view of the Falls. The rainbow travels east-west here.",
+        "actions": {
+            "go east": "end of rainbow",
+            "go west": "canyon view",
+            "go up": "rainbow room",
+            "east": "end of rainbow",
+            "west": "canyon view",
+            "up": "rainbow room"
+        }
+    },
+    "aragain falls": {
+        "description": "You are at the top of Aragain Falls, an enormous waterfall with a drop of about 450 feet. The river flows over the falls to the east and continues to the west. A rainbow usually spans the falls.",
+        "actions": {
+            "go east": "on rainbow",
+            "go west": "river bank",
+            "east": "on rainbow",
+            "west": "river bank",
+            "examine falls": "The falls are truly spectacular from this vantage point."
+        }
+    },
+    "deep canyon": {
+        "description": "You are in a deep canyon that extends north-south. Far above you can see the rim of the canyon.",
+        "actions": {
+            "go north": "loud room",
+            "go south": "reservoir north",
+            "north": "loud room",
+            "south": "reservoir north",
+            "climb up": {
+                "message": "The walls are too steep to climb."
+            }
+        }
+    },
+    "stream view": {
+        "description": "You are standing on a ledge beside a stream. The stream flows out from a nearby cave, and the path leads back to the west.",
+        "actions": {
+            "go west": "forest path",
+            "west": "forest path",
+            "drink water": "The water is cold and refreshing.",
+            "fill bottle": {
+                "requires": ["bottle"],
+                "message": "You fill the bottle with stream water.",
+                "sets": {
+                    "bottle filled": true
+                }
+            }
+        }
+    },
+    "reservoir": {
+        "description": "You are on the shore of a large reservoir. Paths lead north and east.",
+        "actions": {
+            "go north": "deep canyon",
+            "go east": "stream view",
+            "north": "deep canyon",
+            "east": "stream view",
+            "swim": {
+                "message": "The water is too cold for swimming."
+            }
+        },
+        "items": ["water bottle"]
+    }
+} 

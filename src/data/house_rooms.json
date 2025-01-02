@@ -1,0 +1,81 @@
+{
+    "kitchen": {
+        "description": "You are in the kitchen of the white house. A table seems to have been used recently for the preparation of food. A passage leads to the west and a dark staircase can be seen leading upward. A dark chimney leads down and to the east is a small window which is open.",
+        "actions": {
+            "go west": "living room",
+            "go up": "attic",
+            "go down": "cellar",
+            "go east": {
+                "destination": "east of house",
+                "message": "You climb back out through the window."
+            },
+            "west": "living room",
+            "up": "attic",
+            "down": "cellar",
+            "east": {
+                "destination": "east of house",
+                "message": "You climb back out through the window."
+            },
+            "w": "living room",
+            "u": "attic",
+            "d": "cellar",
+            "examine table": "There's nothing special about the kitchen table.",
+            "take sack": {
+                "message": "Taken.",
+                "adds": ["brown sack"]
+            }
+        },
+        "items": ["brown sack"]
+    },
+    "living room": {
+        "description": "You are in the living room. There is a doorway to the east, a wooden door with strange gothic lettering to the west, which appears to be nailed shut, and a large oriental rug in the center of the room.",
+        "actions": {
+            "go east": "kitchen",
+            "east": "kitchen",
+            "e": "kitchen",
+            "examine rug": "The rug is handwoven, and artistically done. There might be something under it.",
+            "look under rug": {
+                "message": "Under the rug is a closed trap door.",
+                "sets": {
+                    "trapdoorDiscovered": true
+                }
+            },
+            "move rug": {
+                "message": "Moving the rug reveals a trap door.",
+                "sets": {
+                    "trapdoorDiscovered": true
+                }
+            },
+            "open trapdoor": {
+                "requires": ["trapdoorDiscovered"],
+                "message": "The door reluctantly opens to reveal a rickety staircase descending into darkness.",
+                "sets": {
+                    "trapdoorOpen": true
+                }
+            },
+            "go down": {
+                "requires": ["trapdoorDiscovered", "trapdoorOpen"],
+                "destination": "cellar",
+                "message": "You descend the rickety staircase into darkness."
+            }
+        },
+        "items": ["trophy case", "sword"]
+    },
+    "attic": {
+        "description": "This is the attic. The only exit is a stairway leading down.",
+        "actions": {
+            "go down": "kitchen",
+            "down": "kitchen",
+            "d": "kitchen",
+            "take rope": {
+                "message": "Taken.",
+                "adds": ["rope"]
+            },
+            "take knife": {
+                "message": "Taken.",
+                "adds": ["nasty knife"]
+            }
+        },
+        "items": ["rope", "knife"]
+    }
+} 

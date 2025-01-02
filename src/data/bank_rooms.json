@@ -1,0 +1,104 @@
+{
+    "bank entrance": {
+        "description": "This is the south end of a large banking hall. The exit is to the south.",
+        "actions": {
+            "go north": "teller room",
+            "go south": "round room",
+            "north": "teller room",
+            "south": "round room",
+            "n": "teller room",
+            "s": "round room",
+            "examine walls": "The walls are covered with ornate carvings."
+        }
+    },
+    "teller room": {
+        "description": "This is the north end of a large banking hall. A door to the west leads to the vault. A passage exits to the north.",
+        "actions": {
+            "go north": "viewing room",
+            "go south": "bank entrance",
+            "go west": {
+                "requires": ["vault open"],
+                "destination": "vault",
+                "message": "You enter the massive vault."
+            },
+            "north": "viewing room",
+            "south": "bank entrance",
+            "west": {
+                "requires": ["vault open"],
+                "destination": "vault",
+                "message": "You enter the massive vault."
+            }
+        }
+    },
+    "viewing room": {
+        "description": "This is a small room with a large safety deposit box mounted on the wall. A passage leads south.",
+        "actions": {
+            "go south": "teller room",
+            "south": "teller room",
+            "open box": {
+                "requires": ["safety deposit key"],
+                "message": "The box opens, revealing a set of vault access cards!",
+                "adds": ["access cards"],
+                "sets": {
+                    "box opened": true
+                }
+            },
+            "examine box": "The safety deposit box has a small keyhole."
+        }
+    },
+    "vault": {
+        "description": "This is a large vault, with walls of solid steel. The only exit is east.",
+        "actions": {
+            "go east": "teller room",
+            "east": "teller room",
+            "examine walls": "The walls are made of extremely thick steel."
+        },
+        "items": ["gold bars", "silver bars", "certificates"]
+    },
+    "chairman office": {
+        "description": "This is the bank chairman's office, richly appointed with fine furniture. A private exit leads west.",
+        "actions": {
+            "go east": "teller room",
+            "go west": "secret passage",
+            "east": "teller room",
+            "west": "secret passage",
+            "examine desk": "The desk is made of fine mahogany.",
+            "open drawer": {
+                "message": "You find a small key in the drawer!",
+                "adds": ["safety deposit key"],
+                "sets": {
+                    "drawer opened": true
+                }
+            }
+        },
+        "items": ["portrait"]
+    },
+    "secret passage": {
+        "description": "This is a narrow secret passage, apparently used by the chairman for private exits. Passages lead east and west.",
+        "actions": {
+            "go east": "chairman office",
+            "go west": "small room",
+            "east": "chairman office",
+            "west": "small room"
+        }
+    },
+    "small room": {
+        "description": "This is a small room with a control panel on one wall. A passage leads east.",
+        "actions": {
+            "go east": "secret passage",
+            "east": "secret passage",
+            "examine panel": "The panel has several buttons and a card slot.",
+            "insert cards": {
+                "requires": ["access cards"],
+                "message": "The panel lights up and you hear massive gears turning!",
+                "sets": {
+                    "vault open": true
+                }
+            },
+            "push button": {
+                "requires": ["vault open"],
+                "message": "Nothing happens. The vault is already open."
+            }
+        }
+    }
+} 

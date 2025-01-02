@@ -1,0 +1,113 @@
+{
+    "mine entrance": {
+        "description": "You are standing at the entrance of a coal mine. The mine shaft enters the ground here and leads east. A path winds to the west.",
+        "actions": {
+            "go east": "mine1",
+            "go west": "clearing",
+            "east": "mine1",
+            "west": "clearing",
+            "e": "mine1",
+            "w": "clearing"
+        }
+    },
+    "mine1": {
+        "description": "This is a small room which appears to have been part of a coal mine. On the south wall of the room is a sign which reads: 'Danger! Shaft floods during rainy season. Proceed at your own risk!'",
+        "actions": {
+            "go east": "mine2",
+            "go west": "mine entrance",
+            "east": "mine2",
+            "west": "mine entrance",
+            "read sign": "Danger! Shaft floods during rainy season. Proceed at your own risk!",
+            "examine sign": "The sign appears to be quite old but still legible."
+        }
+    },
+    "mine2": {
+        "description": "This is a wide tunnel heading east-west. There are deep wheel ruts in the ground.",
+        "actions": {
+            "go east": "mine3",
+            "go west": "mine1",
+            "east": "mine3",
+            "west": "mine1",
+            "examine ruts": "The ruts appear to have been made by heavy mining carts."
+        }
+    },
+    "mine3": {
+        "description": "You have entered a large cavernous area. The walls are covered with coal dust. A passage leads west. A rickety wooden ladder leads down into darkness.",
+        "actions": {
+            "go west": "mine2",
+            "go down": {
+                "requires": ["lampLit"],
+                "destination": "lower shaft",
+                "message": "You carefully descend the ladder."
+            },
+            "west": "mine2",
+            "down": {
+                "requires": ["lampLit"],
+                "destination": "lower shaft",
+                "message": "You carefully descend the ladder."
+            }
+        }
+    },
+    "lower shaft": {
+        "description": "This is the bottom of a deep shaft. The walls are damp and covered with coal dust. A ladder leads up, and a narrow passage leads north.",
+        "darkMessage": "It is pitch black. You are likely to be eaten by a grue.",
+        "actions": {
+            "go up": "mine3",
+            "go north": "gas room",
+            "up": "mine3",
+            "north": "gas room"
+        }
+    },
+    "gas room": {
+        "description": "This is a small room which smells of coal gas. A corridor leads south, and a steep metal slide leads downward.",
+        "darkMessage": "It is pitch black. You are likely to be eaten by a grue.",
+        "actions": {
+            "go south": "lower shaft",
+            "go down": "slide room",
+            "south": "lower shaft",
+            "down": "slide room",
+            "examine slide": "The slide appears to be quite steep and smooth."
+        }
+    },
+    "slide room": {
+        "description": "This is a small room at the bottom of a steep metal slide which leads upward. The room is cold and damp. The walls are covered with moss.",
+        "darkMessage": "It is pitch black. You are likely to be eaten by a grue.",
+        "actions": {
+            "go up": {
+                "message": "The slide is too slippery to climb."
+            },
+            "examine moss": "The moss appears to be quite old and well-established.",
+            "take moss": "The moss is firmly attached to the walls."
+        },
+        "items": ["coal"]
+    },
+    "machine room": {
+        "description": "This is the machine room, filled with pumping machinery, now long since dormant. A passage leads east, and a door leads north.",
+        "darkMessage": "It is pitch black. You are likely to be eaten by a grue.",
+        "actions": {
+            "go east": "gas room",
+            "go north": {
+                "requires": ["key"],
+                "destination": "timber room",
+                "message": "The door unlocks with a click."
+            },
+            "east": "gas room",
+            "north": {
+                "requires": ["key"],
+                "destination": "timber room",
+                "message": "The door unlocks with a click."
+            },
+            "examine machinery": "The machinery appears to be for pumping water out of the mine shafts."
+        }
+    },
+    "timber room": {
+        "description": "This is a long room filled with rotting support timbers. The roof appears none too stable. A passage leads south.",
+        "darkMessage": "It is pitch black. You are likely to be eaten by a grue.",
+        "actions": {
+            "go south": "machine room",
+            "south": "machine room",
+            "examine timbers": "The timbers are in very poor condition and could collapse at any time."
+        },
+        "items": ["diamonds"]
+    }
+} 

@@ -1,0 +1,155 @@
+{
+    "behind waterfall": {
+        "description": "You are in a damp cave behind the waterfall. The roar of falling water nearly drowns out all other sounds.",
+        "darkDescription": "It is pitch black. You are likely to be eaten by a grue.",
+        "actions": {
+            "go east": {
+                "requires": ["lampLit"],
+                "destination": "aragain falls"
+            },
+            "go west": {
+                "requires": ["lampLit"],
+                "destination": "crystal grotto"
+            },
+            "east": {
+                "requires": ["lampLit"],
+                "destination": "aragain falls"
+            },
+            "west": {
+                "requires": ["lampLit"],
+                "destination": "crystal grotto"
+            }
+        }
+    },
+    "crystal grotto": {
+        "description": "This is a beautiful grotto filled with sparkling crystals. The walls shimmer with reflected light.",
+        "darkDescription": "It is pitch black. You are likely to be eaten by a grue.",
+        "actions": {
+            "go east": {
+                "requires": ["lampLit"],
+                "destination": "behind waterfall"
+            },
+            "go west": {
+                "requires": ["lampLit"],
+                "destination": "hidden cave"
+            },
+            "east": {
+                "requires": ["lampLit"],
+                "destination": "behind waterfall"
+            },
+            "west": {
+                "requires": ["lampLit"],
+                "destination": "hidden cave"
+            },
+            "examine crystals": "The crystals sparkle beautifully in your light.",
+            "take crystal": {
+                "message": "You carefully remove a perfect crystal.",
+                "adds": ["crystal"],
+                "score": 6
+            }
+        },
+        "items": ["crystal"]
+    },
+    "hidden cave": {
+        "description": "This is a small hidden cave with smooth walls. Ancient drawings cover the walls.",
+        "darkDescription": "It is pitch black. You are likely to be eaten by a grue.",
+        "actions": {
+            "go east": {
+                "requires": ["lampLit"],
+                "destination": "crystal grotto"
+            },
+            "east": {
+                "requires": ["lampLit"],
+                "destination": "crystal grotto"
+            },
+            "examine drawings": "The drawings appear to be a map of some kind.",
+            "study drawings": {
+                "message": "You notice a pattern in the drawings that suggests a hidden passage!",
+                "sets": {
+                    "secret passage found": true
+                }
+            },
+            "push wall": {
+                "requires": ["secret passage found"],
+                "message": "A section of wall slides away, revealing a passage!",
+                "sets": {
+                    "passage open": true
+                }
+            },
+            "go north": {
+                "requires": ["passage open"],
+                "destination": "treasure vault"
+            }
+        }
+    },
+    "treasure vault": {
+        "description": "This is an ancient treasure vault! The walls are lined with precious artifacts.",
+        "darkDescription": "It is pitch black. You are likely to be eaten by a grue.",
+        "actions": {
+            "go south": {
+                "requires": ["lampLit"],
+                "destination": "hidden cave"
+            },
+            "south": {
+                "requires": ["lampLit"],
+                "destination": "hidden cave"
+            },
+            "examine artifacts": "There are many valuable items here!",
+            "take sceptre": {
+                "message": "You take an ornate golden sceptre.",
+                "adds": ["golden sceptre"],
+                "score": 10
+            },
+            "take crown": {
+                "message": "You take a jewel-encrusted crown.",
+                "adds": ["crown"],
+                "score": 10
+            }
+        },
+        "items": ["golden sceptre", "crown"]
+    },
+    "secret tunnel": {
+        "description": "This is a narrow tunnel that seems to have been deliberately hidden. The walls are unnaturally smooth.",
+        "darkDescription": "It is pitch black. You are likely to be eaten by a grue.",
+        "actions": {
+            "go north": {
+                "requires": ["lampLit"],
+                "destination": "treasure vault"
+            },
+            "go south": {
+                "requires": ["lampLit"],
+                "destination": "maze15"
+            },
+            "north": {
+                "requires": ["lampLit"],
+                "destination": "treasure vault"
+            },
+            "south": {
+                "requires": ["lampLit"],
+                "destination": "maze15"
+            }
+        }
+    },
+    "maze15": {
+        "description": "This is another part of the maze. All passages look alike.",
+        "darkDescription": "It is pitch black. You are likely to be eaten by a grue.",
+        "actions": {
+            "go north": {
+                "requires": ["lampLit"],
+                "destination": "secret tunnel"
+            },
+            "go south": {
+                "requires": ["lampLit"],
+                "destination": "maze14"
+            },
+            "go east": {
+                "requires": ["lampLit"],
+                "destination": "maze16"
+            },
+            "go west": {
+                "requires": ["lampLit"],
+                "destination": "maze13"
+            }
+        }
+    }
+} 

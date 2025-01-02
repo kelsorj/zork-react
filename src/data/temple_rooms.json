@@ -1,0 +1,128 @@
+{
+    "temple entrance": {
+        "description": "You are standing at the entrance to an ancient temple. Stone pillars rise into darkness above you. A passage leads north into the temple, and a dark tunnel leads west.",
+        "actions": {
+            "go north": "temple",
+            "go west": "dark tunnel",
+            "north": "temple",
+            "west": "dark tunnel",
+            "n": "temple",
+            "w": "dark tunnel",
+            "examine pillars": "The pillars are covered in strange symbols."
+        }
+    },
+    "temple": {
+        "description": "This is the temple. The center of the room is occupied by a large altar which is covered with deep scratches. The temple entrance is to the south.",
+        "actions": {
+            "go south": "temple entrance",
+            "go north": "inner sanctum",
+            "go east": "priest quarters",
+            "go west": "sacrifice room",
+            "south": "temple entrance",
+            "north": "inner sanctum",
+            "east": "priest quarters",
+            "west": "sacrifice room",
+            "examine altar": "The altar is covered with deep scratches and ancient bloodstains.",
+            "pray": {
+                "message": "A hollow voice says 'Fool.'",
+                "score": 1
+            },
+            "ring bell": {
+                "requires": ["bell"],
+                "message": "The bell produces a deep resonant tone.",
+                "sets": {
+                    "bell rung": true
+                }
+            },
+            "light candles": {
+                "requires": ["candles", "matches"],
+                "message": "The candles cast eerie shadows on the walls.",
+                "sets": {
+                    "candles lit": true
+                }
+            },
+            "read book": {
+                "requires": ["book"],
+                "message": "The book contains ancient rituals and incantations.",
+                "sets": {
+                    "book read": true
+                }
+            }
+        },
+        "items": ["bell", "book", "candles"]
+    },
+    "inner sanctum": {
+        "description": "This is the inner sanctum of the temple. The walls are covered with elaborate murals depicting ancient rituals.",
+        "actions": {
+            "go south": "temple",
+            "south": "temple",
+            "examine murals": "The murals show priests performing complex ceremonies.",
+            "perform ritual": {
+                "requires": ["bell rung", "candles lit", "book read"],
+                "message": "As you complete the ritual, a secret door opens in the wall!",
+                "sets": {
+                    "sanctum door open": true
+                }
+            }
+        }
+    },
+    "priest quarters": {
+        "description": "These appear to be the living quarters of the temple priests. Ancient furniture lies rotting around the room.",
+        "actions": {
+            "go west": "temple",
+            "west": "temple",
+            "search furniture": {
+                "message": "You find some matches in a drawer!",
+                "adds": ["matches"]
+            }
+        },
+        "items": ["matches", "robes"]
+    },
+    "sacrifice room": {
+        "description": "This room appears to have been used for ritual sacrifices. A large stone slab dominates the center of the room.",
+        "actions": {
+            "go east": "temple",
+            "east": "temple",
+            "examine slab": "The slab is stained with the remnants of ancient sacrifices."
+        }
+    },
+    "echo room": {
+        "description": "This is a large circular room with smooth stone walls. Every sound echoes many times.",
+        "actions": {
+            "go north": "temple",
+            "north": "temple",
+            "say echo": {
+                "message": "Echo... echo... echo...",
+                "sets": {
+                    "echo heard": true
+                }
+            },
+            "sing": "Your voice echoes hauntingly through the chamber."
+        }
+    },
+    "ancient ruins": {
+        "description": "You are standing among the ruins of an ancient civilization. Stone blocks and fallen pillars lie scattered about.",
+        "actions": {
+            "go south": "temple entrance",
+            "go east": "burial chamber",
+            "south": "temple entrance",
+            "east": "burial chamber",
+            "examine ruins": "The ruins appear to be thousands of years old."
+        },
+        "items": ["ancient coin"]
+    },
+    "burial chamber": {
+        "description": "This appears to be an ancient burial chamber. Stone sarcophagi line the walls.",
+        "actions": {
+            "go west": "ancient ruins",
+            "west": "ancient ruins",
+            "examine sarcophagi": "The sarcophagi are carved with images of the deceased.",
+            "open sarcophagus": {
+                "message": "You find an ancient scarab inside!",
+                "adds": ["scarab"],
+                "score": 5
+            }
+        },
+        "items": ["scarab"]
+    }
+} 

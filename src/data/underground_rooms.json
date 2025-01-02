@@ -1,0 +1,90 @@
+{
+    "cellar": {
+        "description": "You are in a dark and damp cellar with a narrow passageway leading north, and a crawlway to the south. On the west is the bottom of a steep metal ramp which is unclimbable.",
+        "litDescription": "You are in a dark and damp cellar with a narrow passageway leading north, and a crawlway to the south. On the west is the bottom of a steep metal ramp which is unclimbable. A rickety wooden staircase leads up.",
+        "darkMessage": "It is pitch black. You are likely to be eaten by a grue.",
+        "actions": {
+            "go north": {
+                "requires": ["lampLit"],
+                "destination": "troll room"
+            },
+            "go south": {
+                "requires": ["lampLit"],
+                "destination": "east of chasm"
+            },
+            "go up": "living room"
+        }
+    },
+    "east of chasm": {
+        "description": "You are on the east edge of a chasm, the bottom of which cannot be seen. A narrow passage goes north, and the path you are on continues to the east.",
+        "actions": {
+            "go north": "gallery",
+            "go east": "round room",
+            "go west": {
+                "message": "The chasm is too wide to jump."
+            }
+        }
+    },
+    "gallery": {
+        "description": "This is an art gallery. Most of the paintings have been stolen by vandals with exceptional taste. The vandals left through either the north or south exits.",
+        "actions": {
+            "go north": "studio",
+            "go south": "east of chasm"
+        }
+    },
+    "studio": {
+        "description": "This appears to have been an artist's studio. The walls and floors are splattered with paints of 69 different colors. Strangely enough, nothing of value remains here. There are exits to the north and south.",
+        "actions": {
+            "go north": "temple",
+            "go south": "gallery"
+        }
+    },
+    "temple": {
+        "description": "This is the temple. The center of the room is occupied by a large altar which is covered with deep scratches. The temple entrance is to the south.",
+        "actions": {
+            "go south": "studio",
+            "examine altar": "The altar is covered with deep scratches. Dried blood stains the sides.",
+            "pray": {
+                "message": "A hollow voice says 'Fool.'",
+                "score": 1
+            }
+        },
+        "items": ["bell", "book", "candles"]
+    },
+    "egyptian room": {
+        "description": "This is a room which appears to have been the waiting room of a royal Egyptian tomb. Hieroglyphics cover the walls.",
+        "actions": {
+            "go west": "north-south passage",
+            "go east": "tomb",
+            "read hieroglyphics": "The hieroglyphics say 'Only the bravest dare face the Thief.'"
+        }
+    },
+    "tomb": {
+        "description": "This is the tomb of a great Egyptian monarch. A huge sarcophagus dominates the room.",
+        "actions": {
+            "go west": "egyptian room",
+            "open sarcophagus": {
+                "message": "The sarcophagus is too heavy to open.",
+                "requires": ["sceptre"]
+            }
+        },
+        "items": ["gold coffin"]
+    },
+    "round room": {
+        "description": "This is a circular stone room with passages in all directions. Several of them have unfortunately been blocked by cave-ins.",
+        "actions": {
+            "go north": "loud room",
+            "go south": "narrow room",
+            "go east": "engravings cave",
+            "go west": "east of chasm"
+        }
+    },
+    "loud room": {
+        "description": "This is a large room with a ceiling which cannot be detected from the ground. There is a narrow passage from east to west and a stone stairway leading upward.",
+        "actions": {
+            "go east": "damp cave",
+            "go west": "deep canyon",
+            "go up": "reservoir"
+        }
+    }
+} 

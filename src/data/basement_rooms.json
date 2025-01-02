@@ -1,0 +1,133 @@
+{
+    "cellar": {
+        "description": "You are in a dark and damp cellar with a narrow passageway leading north, and a crawlway to the south. On the west is the bottom of a steep metal ramp which is unclimbable.",
+        "darkDescription": "It is pitch black. You are likely to be eaten by a grue.",
+        "actions": {
+            "go north": {
+                "requires": ["lampLit"],
+                "destination": "troll room"
+            },
+            "go south": {
+                "requires": ["lampLit"],
+                "destination": "east of chasm"
+            },
+            "go up": "living room",
+            "north": {
+                "requires": ["lampLit"],
+                "destination": "troll room"
+            },
+            "south": {
+                "requires": ["lampLit"],
+                "destination": "east of chasm"
+            },
+            "up": "living room",
+            "examine ramp": "The ramp is made of smooth metal and is too steep to climb."
+        }
+    },
+    "wine cellar": {
+        "description": "This appears to be a wine cellar. Empty wine bottles line the walls. A narrow staircase leads up, and a passage leads north.",
+        "darkDescription": "It is pitch black. You are likely to be eaten by a grue.",
+        "actions": {
+            "go north": {
+                "requires": ["lampLit"],
+                "destination": "cellar"
+            },
+            "go up": "kitchen",
+            "north": {
+                "requires": ["lampLit"],
+                "destination": "cellar"
+            },
+            "up": "kitchen",
+            "examine bottles": "The bottles are covered in dust and appear very old.",
+            "take bottle": {
+                "message": "You find one unbroken bottle of rare vintage wine!",
+                "adds": ["wine bottle"],
+                "score": 2
+            }
+        },
+        "items": ["wine bottle"]
+    },
+    "coal bin": {
+        "description": "This is a small room which appears to be a coal bin. A chute enters from above and the room exits to the east.",
+        "darkDescription": "It is pitch black. You are likely to be eaten by a grue.",
+        "actions": {
+            "go east": {
+                "requires": ["lampLit"],
+                "destination": "cellar"
+            },
+            "east": {
+                "requires": ["lampLit"],
+                "destination": "cellar"
+            },
+            "examine coal": "There are a few lumps of coal here.",
+            "take coal": {
+                "message": "You pick up a lump of coal.",
+                "adds": ["coal"]
+            }
+        },
+        "items": ["coal"]
+    },
+    "tool room": {
+        "description": "This appears to be a storage room for tools. Rusty implements line the walls. A passage leads south.",
+        "darkDescription": "It is pitch black. You are likely to be eaten by a grue.",
+        "actions": {
+            "go south": {
+                "requires": ["lampLit"],
+                "destination": "cellar"
+            },
+            "south": {
+                "requires": ["lampLit"],
+                "destination": "cellar"
+            },
+            "examine tools": "Most of the tools are too rusty to be useful.",
+            "take wrench": {
+                "message": "You find a sturdy wrench that's still in good condition.",
+                "adds": ["wrench"]
+            }
+        },
+        "items": ["wrench"]
+    },
+    "old storage room": {
+        "description": "This appears to be an old storage room. Wooden crates and barrels fill the space. A passage leads west.",
+        "darkDescription": "It is pitch black. You are likely to be eaten by a grue.",
+        "actions": {
+            "go west": {
+                "requires": ["lampLit"],
+                "destination": "cellar"
+            },
+            "west": {
+                "requires": ["lampLit"],
+                "destination": "cellar"
+            },
+            "examine crates": "The crates are old and falling apart.",
+            "open barrel": {
+                "message": "Inside one barrel you find some old coins!",
+                "adds": ["silver coins"],
+                "score": 5
+            }
+        },
+        "items": ["silver coins"]
+    },
+    "secret passage": {
+        "description": "This is a narrow secret passage that connects parts of the cellar. Cobwebs hang from the ceiling.",
+        "darkDescription": "It is pitch black. You are likely to be eaten by a grue.",
+        "actions": {
+            "go north": {
+                "requires": ["lampLit"],
+                "destination": "wine cellar"
+            },
+            "go south": {
+                "requires": ["lampLit"],
+                "destination": "coal bin"
+            },
+            "north": {
+                "requires": ["lampLit"],
+                "destination": "wine cellar"
+            },
+            "south": {
+                "requires": ["lampLit"],
+                "destination": "coal bin"
+            }
+        }
+    }
+} 

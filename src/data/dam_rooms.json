@@ -1,0 +1,152 @@
+{
+    "dam base": {
+        "description": "You are at the base of Flood Control Dam #3, which looms above you and to the north. The river Frigid is flowing by here. Along the river are the White Cliffs which seem to form giant walls stretching from north to south along the shores of the river as it winds its way downstream.",
+        "actions": {
+            "go north": {
+                "destination": "dam",
+                "message": "You climb up the dam."
+            },
+            "go south": "river bank",
+            "go east": "white cliffs beach",
+            "go up": {
+                "destination": "dam",
+                "message": "You climb up the dam."
+            },
+            "north": {
+                "destination": "dam",
+                "message": "You climb up the dam."
+            },
+            "south": "river bank",
+            "east": "white cliffs beach",
+            "up": {
+                "destination": "dam",
+                "message": "You climb up the dam."
+            }
+        }
+    },
+    "dam": {
+        "description": "You are standing on the top of the Flood Control Dam #3, which was quite a tourist attraction in times far distant. There are paths to the north, south, and west, and a scramble down. The dam spans the river from north to south. The control center is to the west.",
+        "actions": {
+            "go north": "dam north",
+            "go south": "dam south",
+            "go west": "maintenance room",
+            "go down": "dam base",
+            "north": "dam north",
+            "south": "dam south",
+            "west": "maintenance room",
+            "down": "dam base"
+        }
+    },
+    "maintenance room": {
+        "description": "This is what appears to have been the maintenance room for Flood Control Dam #3. There are controls here for operating the dam's locks and gates. A metal door leads west.",
+        "actions": {
+            "go east": "dam",
+            "go west": {
+                "requires": ["wrench"],
+                "destination": "tube room",
+                "message": "The door opens with some effort."
+            },
+            "east": "dam",
+            "west": {
+                "requires": ["wrench"],
+                "destination": "tube room",
+                "message": "The door opens with some effort."
+            },
+            "turn bolt": {
+                "requires": ["wrench"],
+                "message": "The bolt turns with the wrench, and you hear a loud click.",
+                "sets": {
+                    "boltTurned": true
+                }
+            },
+            "push red button": {
+                "requires": ["boltTurned"],
+                "message": "The button depresses with a solid click!",
+                "sets": {
+                    "buttonPressed": true
+                }
+            },
+            "push yellow button": {
+                "requires": ["buttonPressed"],
+                "message": "The yellow button depresses with a click, and you hear a rumbling sound.",
+                "sets": {
+                    "damDrained": true
+                }
+            },
+            "examine controls": "There are colored buttons and a rusty bolt here."
+        },
+        "items": ["wrench"]
+    },
+    "tube room": {
+        "description": "This is a small room with a large tube protruding from the wall. The tube is about four feet in diameter and leads east-west. The room itself continues north.",
+        "actions": {
+            "go north": "reservoir south",
+            "go east": "maintenance room",
+            "enter tube": {
+                "requires": ["damDrained"],
+                "destination": "reservoir north",
+                "message": "You enter the tube and slide through!"
+            },
+            "north": "reservoir south",
+            "east": "maintenance room"
+        }
+    },
+    "reservoir south": {
+        "description": "You are in a long room on the south shore of a large reservoir. There are paths going south and east.",
+        "actions": {
+            "go south": "tube room",
+            "go east": "reservoir east",
+            "south": "tube room",
+            "east": "reservoir east",
+            "swim": {
+                "requires": ["damDrained", "not"],
+                "message": "The water is too cold and deep for swimming!"
+            }
+        }
+    },
+    "reservoir north": {
+        "description": "You are on the north shore of the reservoir. A rainbow spans the reservoir to the south.",
+        "actions": {
+            "go south": {
+                "requires": ["damDrained"],
+                "destination": "reservoir south",
+                "message": "You walk across the drained reservoir bed."
+            },
+            "go west": "atlantis room",
+            "south": {
+                "requires": ["damDrained"],
+                "destination": "reservoir south",
+                "message": "You walk across the drained reservoir bed."
+            },
+            "west": "atlantis room"
+        }
+    },
+    "atlantis room": {
+        "description": "This is an ancient room, long under water but now revealed. There are etchings on the wall which seem to depict an ancient undersea civilization.",
+        "actions": {
+            "go east": "reservoir north",
+            "east": "reservoir north",
+            "examine etchings": "The etchings show what appears to be an ancient city, now long submerged.",
+            "read etchings": "The writing is in an unfamiliar script."
+        },
+        "items": ["trident"]
+    },
+    "dam north": {
+        "description": "You are at the northern end of the dam. From here you can see the Reservoir extending north and east.",
+        "actions": {
+            "go north": "reservoir edge",
+            "go south": "dam",
+            "north": "reservoir edge",
+            "south": "dam"
+        }
+    },
+    "dam south": {
+        "description": "You are at the southern end of the dam. From here you can see the river valley extending far below.",
+        "actions": {
+            "go north": "dam",
+            "go south": "river bank",
+            "north": "dam",
+            "south": "river bank"
+        }
+    }
+} 

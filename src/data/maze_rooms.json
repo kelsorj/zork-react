@@ -1,0 +1,154 @@
+{
+    "maze1": {
+        "description": "This is part of a maze of twisty little passages, all alike.",
+        "actions": {
+            "go north": "maze2",
+            "go south": "maze3",
+            "go east": "maze4",
+            "go west": "troll room",
+            "north": "maze2",
+            "south": "maze3",
+            "east": "maze4",
+            "west": "troll room"
+        }
+    },
+    "maze2": {
+        "description": "This is part of a maze of twisty little passages, all alike.",
+        "actions": {
+            "go north": "maze5",
+            "go south": "maze1",
+            "go east": "maze3",
+            "go west": "maze4",
+            "north": "maze5",
+            "south": "maze1",
+            "east": "maze3",
+            "west": "maze4"
+        }
+    },
+    "maze3": {
+        "description": "This is part of a maze of twisty little passages, all alike.",
+        "actions": {
+            "go north": "maze1",
+            "go south": "maze4",
+            "go east": "dead end1",
+            "go west": "maze2",
+            "north": "maze1",
+            "south": "maze4",
+            "east": "dead end1",
+            "west": "maze2"
+        }
+    },
+    "maze4": {
+        "description": "This is part of a maze of twisty little passages, all alike.",
+        "actions": {
+            "go north": "maze2",
+            "go south": "maze5",
+            "go east": "maze1",
+            "go west": "dead end2",
+            "north": "maze2",
+            "south": "maze5",
+            "east": "maze1",
+            "west": "dead end2"
+        }
+    },
+    "maze5": {
+        "description": "This is part of a maze of twisty little passages, all alike.",
+        "actions": {
+            "go north": "maze4",
+            "go south": "maze2",
+            "go east": "maze6",
+            "go west": "grotto",
+            "north": "maze4",
+            "south": "maze2",
+            "east": "maze6",
+            "west": "grotto"
+        }
+    },
+    "maze6": {
+        "description": "This is part of a maze of twisty little passages, all alike.",
+        "actions": {
+            "go north": "maze7",
+            "go south": "maze5",
+            "go east": "maze8",
+            "go west": "maze9",
+            "north": "maze7",
+            "south": "maze5",
+            "east": "maze8",
+            "west": "maze9"
+        }
+    },
+    "maze7": {
+        "description": "This is part of a maze of twisty little passages, all alike.",
+        "actions": {
+            "go north": "maze10",
+            "go south": "maze6",
+            "go east": "maze11",
+            "go west": "cyclops room",
+            "north": "maze10",
+            "south": "maze6",
+            "east": "maze11",
+            "west": "cyclops room"
+        }
+    },
+    "dead end1": {
+        "description": "This is a dead end in the maze.",
+        "actions": {
+            "go west": "maze3",
+            "west": "maze3"
+        },
+        "items": ["skeleton", "rusty knife"]
+    },
+    "dead end2": {
+        "description": "This is a dead end in the maze.",
+        "actions": {
+            "go east": "maze4",
+            "east": "maze4"
+        }
+    },
+    "grotto": {
+        "description": "This is a grotto with intricate wall carvings. A passage exits to the east.",
+        "actions": {
+            "go east": "maze5",
+            "east": "maze5",
+            "examine carvings": "The carvings depict various scenes of underground life.",
+            "read carvings": "The carvings appear to be decorative rather than linguistic."
+        },
+        "items": ["jade figurine"]
+    },
+    "cyclops room": {
+        "description": "This is a room with an enormous cyclops.",
+        "initialDescription": "This is a room with an enormous cyclops. He looks hungry.",
+        "actions": {
+            "go east": {
+                "requires": ["cyclopsSleeping"],
+                "destination": "maze7"
+            },
+            "go up": {
+                "requires": ["cyclopsSleeping"],
+                "destination": "treasure room"
+            },
+            "odysseus": {
+                "message": "The cyclops appears to be getting tired.",
+                "sets": {
+                    "cyclopsSleeping": true
+                }
+            },
+            "give food": {
+                "requires": ["lunch"],
+                "message": "The cyclops accepts your offering and falls fast asleep.",
+                "sets": {
+                    "cyclopsSleeping": true
+                },
+                "removes": ["lunch"]
+            }
+        }
+    },
+    "treasure room": {
+        "description": "This is the cyclops's treasure room. The only exit is down.",
+        "actions": {
+            "go down": "cyclops room",
+            "down": "cyclops room"
+        },
+        "items": ["jeweled trident", "brass lantern"]
+    }
+} 
