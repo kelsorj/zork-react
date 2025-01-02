@@ -68,7 +68,7 @@ function GameInterface() {
     
     // Special handling for cellar when lamp is lit/unlit
     if (roomId === "cellar") {
-      const isLampLit = gameState.lampLit;  // Use global lamp state
+      const isLampLit = gameState.lampLit;
       return isLampLit ? room.litDescription : room.description;
     }
     
@@ -80,6 +80,14 @@ function GameInterface() {
       description = description.replace(
         "There is a small window here which is slightly ajar.",
         "There is a small window here which is open wide enough to allow entry."
+      );
+    }
+
+    // Modify description if troll is dead
+    if (roomId === "troll room" && roomStates.trollDead) {
+      description = description.replace(
+        "A menacing troll brandishing a bloody axe blocks all passages out of the room.",
+        "A dead troll lies on the ground near the passageways."
       );
     }
     
@@ -111,7 +119,7 @@ function GameInterface() {
     // Get the base description based on lamp state for cellar
     let description;
     if (roomId === "cellar") {
-      const isLampLit = gameState.lampLit;  // Use global lamp state
+      const isLampLit = gameState.lampLit;
       description = isLampLit ? room.litDescription : room.description;
     } else {
       description = room.description;
@@ -143,6 +151,14 @@ function GameInterface() {
       description += "\n\nThe basket contains: " + basketContents.join(", ") + ".";
     }
 
+    // Modify description if troll is dead
+    if (roomId === "troll room" && roomStates.trollDead) {
+      description = description.replace(
+        "A menacing troll brandishing a bloody axe blocks all passages out of the room.",
+        "A dead troll lies on the ground near the passageways."
+      );
+    }
+    
     return description;
   };
 
