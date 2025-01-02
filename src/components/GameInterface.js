@@ -134,20 +134,28 @@ function GameInterface() {
     
     // Get the base description based on lamp state for dark rooms
     let description;
-    if (room.litDescription) {
-      description = lampLit ? room.litDescription : room.description;
+    if (room.darkDescription && !lampLit) {
+      description = room.darkDescription;
+    } else if (room.litDescription && lampLit) {
+      description = room.litDescription;
     } else {
       description = room.description;
     }
 
-    // Get visible items in the room (only if lamp is lit or room is naturally lit)
-    const roomItems = Object.entries(gameState.itemsInWorld)
-      .filter(([item, location]) => {
-        if (location !== roomId) return false;
-        if (room.litDescription && !lampLit) return false; // Don't show items in dark rooms
-        return true;
-      })
+    // Get visible items in the room from itemsInWorld
+    const itemsFromWorld = Object.entries(gameState.itemsInWorld)
+      .filter(([item, location]) => location === roomId)
       .map(([item]) => item);
+
+    // Get items from room.items that haven't been taken (not in inventory and not in itemsInWorld)
+    const staticItems = (room.items || []).filter(item => {
+      const isInWorld = gameState.itemsInWorld.hasOwnProperty(item);
+      const isInInventory = gameState.inventory.includes(item);
+      return !isInWorld && !isInInventory;
+    });
+
+    // Combine both lists of items
+    const roomItems = [...new Set([...itemsFromWorld, ...staticItems])];
 
     // Add items to description if there are any
     if (roomItems.length > 0) {
@@ -1856,15 +1864,26 @@ function GameInterface() {
     }
   };
 
-  const handleTake = (item) => {
-    // Check if the item exists in the current room
-    const itemLocation = gameState.itemsInWorld[item];
+  const handleTake = (target) => {
+    // Debug logging
+    console.log("Taking item:", target);
+    console.log("Current room:", gameState.currentRoom);
+    console.log("Items in world:", gameState.itemsInWorld);
+    console.log("Room items:", gameData.rooms[gameState.currentRoom].items);
+    
+    // Check if the item exists in the current room's items array
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    const isInRoomItems = currentRoom.items && currentRoom.items.includes(target);
+    
+    // Check if the item exists in itemsInWorld
+    const itemLocation = gameState.itemsInWorld[target];
+    const isInItemsInWorld = itemLocation === gameState.currentRoom;
     
     // Check if item is in an open container in the room
     const coffin = gameState.roomStates?.coffin || {};
     const coffinContents = gameState.containerContents?.coffin || [];
     const isInOpenCoffin = coffin.isOpen && 
-                          coffinContents.includes(item) &&
+                          coffinContents.includes(target) &&
                           (gameState.itemsInWorld["coffin"] === gameState.currentRoom || 
                            gameState.inventory.includes("coffin"));
 
@@ -1872,56 +1891,57 @@ function GameInterface() {
     const sack = gameState.roomStates?.sack || {};
     const sackContents = gameState.containerContents?.sack || [];
     const isInOpenSack = sack.isOpen && 
-                        sackContents.includes(item) &&
+                        sackContents.includes(target) &&
                         (gameState.itemsInWorld["sack"] === gameState.currentRoom || 
                          gameState.inventory.includes("sack"));
 
-    if (itemLocation === gameState.currentRoom) {
+    // If the item is in either room.items or itemsInWorld, allow taking it
+    if (isInRoomItems || isInItemsInWorld) {
       // Add item to inventory and remove from room
       setGameState((prevState) => ({
         ...prevState,
-        inventory: [...prevState.inventory, item],
-        itemsInWorld: { ...prevState.itemsInWorld, [item]: null }
+        inventory: [...prevState.inventory, target],
+        itemsInWorld: { ...prevState.itemsInWorld, [target]: null }
       }));
       setGameLog((prevLog) => [
         ...prevLog,
-        `> take ${item}`,
+        `> take ${target}`,
         `Taken.`
       ]);
     } else if (isInOpenCoffin) {
       // Take item from coffin
       setGameState((prevState) => ({
         ...prevState,
-        inventory: [...prevState.inventory, item],
+        inventory: [...prevState.inventory, target],
         containerContents: {
           ...prevState.containerContents,
-          coffin: (prevState.containerContents?.coffin || []).filter(i => i !== item)
+          coffin: (prevState.containerContents?.coffin || []).filter(i => i !== target)
         }
       }));
       setGameLog((prevLog) => [
         ...prevLog,
-        `> take ${item}`,
+        `> take ${target}`,
         `Taken.`
       ]);
     } else if (isInOpenSack) {
       // Take item from sack
       setGameState((prevState) => ({
         ...prevState,
-        inventory: [...prevState.inventory, item],
+        inventory: [...prevState.inventory, target],
         containerContents: {
           ...prevState.containerContents,
-          sack: (prevState.containerContents?.sack || []).filter(i => i !== item)
+          sack: (prevState.containerContents?.sack || []).filter(i => i !== target)
         }
       }));
       setGameLog((prevLog) => [
         ...prevLog,
-        `> take ${item}`,
+        `> take ${target}`,
         `Taken.`
       ]);
     } else {
       setGameLog((prevLog) => [
         ...prevLog,
-        `> take ${item}`,
+        `> take ${target}`,
         `You don't see that here.`
       ]);
     }
