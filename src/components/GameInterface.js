@@ -999,7 +999,27 @@ function GameInterface() {
         handleHelp();
         break;
       case "restart":
-        handleRestart();
+        setGameState({
+          currentRoom: "west of house",
+          inventory: [],
+          itemsInWorld: gameData.state.itemsInWorld,
+          containerContents: gameData.state.containerContents,
+          roomStates: {},
+          trophyItems: gameData.state.trophyItems,
+          moves: 0  // Reset moves on restart
+        });
+        setGameSettings(prev => ({
+          ...prev,
+          score: 0,
+          lastCommand: ""
+        }));
+        setGameLog([
+          "ZORK I: The Great Underground Empire",
+          "Copyright (c) 1981, 1982, 1983 Infocom, Inc.",
+          "All rights reserved.",
+          "",
+          getBasicRoomDescription("west of house")
+        ]);
         break;
       case "save":
         handleSave();
@@ -1340,17 +1360,27 @@ function GameInterface() {
           .map(([item]) => item);
         
         const score = trophyItems.reduce((total, item) => 
-          total + (gameData.state.itemPoints[item] || 0), 0);
-        const maxScore = Object.values(gameData.state.itemPoints).reduce((a, b) => a + b, 0);
+          total + (gameData.state.treasurePoints[item]?.case || 0), 0);
+        
+        const maxScore = Object.values(gameData.state.treasurePoints)
+          .reduce((total, points) => total + points.case, 0);
+        
+        // Get move count from gameState
+        const moveCount = gameState.moves || 0;
         
         setGameLog((prevLog) => [
           ...prevLog,
           `> score`,
-          `Your score is ${score} (out of a possible ${maxScore}), in ${gameLog.length} moves.`,
+          `Your score is ${score} (out of a possible ${maxScore}), in ${moveCount} moves.`,
           `This gives you the rank of ${getPlayerRank(score)}.`
         ]);
         break;
       default:
+        // Increment move count for valid commands
+        setGameState(prevState => ({
+          ...prevState,
+          moves: (prevState.moves || 0) + 1
+        }));
         // Check for profanity
         if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
           setGameLog((prevLog) => [
@@ -1793,18 +1823,15 @@ function GameInterface() {
       itemsInWorld: gameData.state.itemsInWorld,
       containerContents: gameData.state.containerContents,
       roomStates: {},
-      trophyItems: gameData.state.trophyItems
+      trophyItems: gameData.state.trophyItems,
+      moves: 0  // Reset moves on restart
     });
     setGameSettings(prev => ({
       ...prev,
       score: 0,
       lastCommand: ""
     }));
-    setGameLog((prevLog) => [
-      ...prevLog,
-      "> restart",
-      "Game restarted.",
-      "",
+    setGameLog([
       "ZORK I: The Great Underground Empire",
       "Copyright (c) 1981, 1982, 1983 Infocom, Inc.",
       "All rights reserved.",
@@ -3193,7 +3220,7 @@ function GameInterface() {
     if (score < 100) return "Novice Adventurer";
     if (score < 150) return "Junior Adventurer";
     if (score < 200) return "Adventurer";
-    if (score < 250) return "Master Adventurer";
+    if (score < 210) return "Master Adventurer";
     return "Grand Master Adventurer";
   };
 
