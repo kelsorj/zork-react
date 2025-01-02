@@ -4,129 +4,36 @@
         "actions": {
             "go north": "forest3",
             "go south": "forest4",
-            "go east": "forest clearing",
-            "go west": "forest2",
-            "north": "forest3",
-            "south": "forest4",
-            "east": "forest clearing",
-            "west": "forest2",
-            "climb tree": "There are no branches low enough to climb."
+            "go east": "west of house",
+            "go west": "forest2"
         }
     },
     "forest2": {
-        "description": "This is a dimly lit forest, with large trees all around. One particularly large tree with some low branches stands at the edge of a clearing.",
+        "description": "This is a dimly lit forest, with large trees all around.",
         "actions": {
             "go east": "forest1",
-            "go west": "forest5",
-            "go up": "up a tree",
-            "east": "forest1",
-            "west": "forest5",
-            "up": "up a tree",
-            "climb tree": "up a tree"
+            "go west": "forest5"
         }
     },
     "forest3": {
-        "description": "This is a dimly lit forest, with large trees all around. To the east, there appears to be a clearing.",
+        "description": "This is a dimly lit forest, with large trees all around.",
         "actions": {
-            "go north": "forest6",
             "go south": "forest1",
-            "go east": "clearing",
-            "north": "forest6",
-            "south": "forest1",
-            "east": "clearing"
+            "go east": "north of house"
         }
     },
     "forest4": {
-        "description": "The forest thins out here, revealing a steep cliff. The ground slopes down to the east.",
+        "description": "This is a dimly lit forest, with large trees all around.",
         "actions": {
             "go north": "forest1",
-            "go east": "cliff base",
-            "north": "forest1",
-            "east": "cliff base",
-            "climb cliff": {
-                "requires": ["rope"],
-                "message": "Using the rope, you climb down the cliff.",
-                "destination": "cliff base"
-            }
+            "go south": "south of house"
         }
     },
     "forest5": {
-        "description": "This is a dark forest. The trees are very close together here.",
+        "description": "This is a dimly lit forest, with large trees all around.",
         "actions": {
             "go east": "forest2",
-            "go west": "dense forest",
-            "east": "forest2",
-            "west": "dense forest"
-        }
-    },
-    "forest6": {
-        "description": "This is a dark forest. A path leads south, and a narrow trail heads northeast.",
-        "actions": {
-            "go south": "forest3",
-            "go northeast": "clearing",
-            "south": "forest3",
-            "northeast": "clearing",
-            "ne": "clearing"
-        }
-    },
-    "dense forest": {
-        "description": "This is a very dense part of the forest. Twisted trees block most paths.",
-        "actions": {
-            "go east": "forest5",
-            "east": "forest5",
-            "examine trees": "The trees are ancient and gnarled."
-        },
-        "items": ["mushroom"]
-    },
-    "forest clearing": {
-        "description": "You are in a clearing, with forest surrounding you on all sides. A path leads south.",
-        "actions": {
-            "go south": "forest path",
-            "go west": "forest1",
-            "south": "forest path",
-            "west": "forest1"
-        },
-        "items": ["leaves"]
-    },
-    "up a tree": {
-        "description": "You are about 10 feet above the ground nestled among some large branches. The nearest branch above you is out of reach. Beside you on the branch is a small bird's nest.",
-        "actions": {
-            "go down": "forest2",
-            "down": "forest2",
-            "take nest": {
-                "message": "Taken.",
-                "adds": ["birds nest"]
-            },
-            "examine nest": "There is a large egg in the nest.",
-            "take egg": {
-                "requires": ["birds nest"],
-                "message": "Taken.",
-                "adds": ["jeweled egg"],
-                "score": 5
-            }
-        },
-        "items": ["birds nest", "jeweled egg"]
-    },
-    "cliff base": {
-        "description": "You are at the base of a steep cliff. A path leads north along the cliff, and another path heads east.",
-        "actions": {
-            "go north": "rocky ledge",
-            "go east": "canyon view",
-            "north": "rocky ledge",
-            "east": "canyon view",
-            "climb cliff": {
-                "requires": ["rope"],
-                "message": "Using the rope, you climb up the cliff.",
-                "destination": "forest4"
-            }
-        }
-    },
-    "rocky ledge": {
-        "description": "You are on a rocky ledge overlooking a deep canyon. A path leads south along the cliff.",
-        "actions": {
-            "go south": "cliff base",
-            "south": "cliff base",
-            "examine canyon": "The canyon is deep and treacherous."
+            "go west": "clearing"
         }
     }
 } 

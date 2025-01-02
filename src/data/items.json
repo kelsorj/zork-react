@@ -1,0 +1,35 @@
+{
+    "sword": {
+        "description": "An elvish sword of great antiquity",
+        "takeable": true,
+        "weapon": true
+    },
+    "lamp": {
+        "description": "A brass lantern",
+        "takeable": true,
+        "lightable": true
+    },
+    "rope": {
+        "description": "A length of rope",
+        "takeable": true
+    },
+    "knife": {
+        "description": "A nasty-looking knife",
+        "takeable": true,
+        "weapon": true
+    },
+    "bottle": {
+        "description": "A glass bottle",
+        "takeable": true,
+        "container": true
+    },
+    "brown sack": {
+        "description": "A brown sack",
+        "takeable": true,
+        "container": true
+    },
+    "skeleton": {
+        "description": "The skeleton of an adventurer",
+        "takeable": false
+    }
+} 
