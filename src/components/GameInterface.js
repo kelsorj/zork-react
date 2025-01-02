@@ -1541,8 +1541,8 @@ function GameInterface() {
       return;
     }
 
-    // Add coffin case
-    if (container === "coffin" && gameState.currentRoom === "egypt room") {
+    // Coffin case - no room restriction
+    if (container === "coffin") {
       if (item === "sceptre") {
         setGameState(prevState => ({
           ...prevState,
@@ -1562,6 +1562,33 @@ function GameInterface() {
           ...prevLog,
           `> take ${item} from ${container}`,
           `There is no ${item} in the coffin.`
+        ]);
+      }
+      return;
+    }
+
+    // Sack case - no room restriction
+    if (container === "sack") {
+      const sackContents = ["water", "garlic"];
+      if (sackContents.includes(item)) {
+        setGameState(prevState => ({
+          ...prevState,
+          inventory: [...prevState.inventory, item],
+          containerContents: {
+            ...prevState.containerContents,
+            sack: (prevState.containerContents.sack || sackContents).filter(i => i !== item)
+          }
+        }));
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> take ${item} from ${container}`,
+          `You take the ${item} from the sack.`
+        ]);
+      } else {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> take ${item} from ${container}`,
+          `There is no ${item} in the sack.`
         ]);
       }
       return;
