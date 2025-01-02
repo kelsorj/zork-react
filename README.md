@@ -1,5 +1,8 @@
 Used Cursor to build a react-app version of Zork I based on the map below. I think there are several things that aren't identical to the original version but it'd
 be great if other people could work on debugging and enhancing this version.
+![Zork-Map-Lebling-1978](https://github.com/user-attachments/assets/77e198dc-0e2f-42b5-be51-67216d6e9823)
+
+Right now I've got this version of the map working but it's very different forom the Lebling map above.
 
 ![zork-map-Infocom-1981](https://github.com/user-attachments/assets/83fca46c-7aa4-4a82-8848-8a0ba4f684be)
 
