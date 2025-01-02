@@ -3463,8 +3463,10 @@ function GameInterface() {
 
     // Special case for grating
     if (target === "grating" && gameState.currentRoom === "grating clearing") {
+      const gratingState = gameState.roomStates?.["grating clearing"] || {};
+      
       // Check if grating is revealed
-      if (!gameState.roomStates?.["grating clearing"]?.gratingRevealed) {
+      if (!gratingState.gratingRevealed) {
         setGameLog((prevLog) => [
           ...prevLog,
           `> open ${target}`,
@@ -3474,7 +3476,7 @@ function GameInterface() {
       }
 
       // Check if grating is unlocked
-      if (!gameState.roomStates?.["grating clearing"]?.gratingUnlocked) {
+      if (!gratingState.gratingUnlocked) {
         setGameLog((prevLog) => [
           ...prevLog,
           `> open ${target}`,
@@ -3483,13 +3485,13 @@ function GameInterface() {
         return;
       }
 
-      // Open the grating
+      // Open the grating and allow movement down
       setGameState(prevState => ({
         ...prevState,
         roomStates: {
           ...prevState.roomStates,
           "grating clearing": {
-            ...(prevState.roomStates?.["grating clearing"] || {}),
+            ...prevState.roomStates?.["grating clearing"],
             gratingOpen: true
           }
         }
@@ -3498,7 +3500,7 @@ function GameInterface() {
       setGameLog((prevLog) => [
         ...prevLog,
         `> open ${target}`,
-        "You open the grating."
+        "The grating opens to reveal a dark passage leading down into the earth."
       ]);
       return;
     }
