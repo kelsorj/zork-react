@@ -128,12 +128,20 @@
             "items": []
         },
         "house": {
-            "description": "You are at the white house. It's an old, weathered building with a boarded front door.",
+            "description": "You are at the white house. {if state.frontDoorOpen}The front door has been smashed open by the cyclops.{else}It's an old, weathered building with a boarded front door.{/if}",
             "actions": {
                 "go north": "north of house",
                 "go south": "south of house",
                 "go east": "east of house",
-                "go west": "west of house"
+                "go west": "west of house",
+                "enter": {
+                    "requires": ["frontDoorOpen"],
+                    "destination": "living room",
+                    "message": "You enter the house through the smashed front door."
+                }
+            },
+            "state": {
+                "frontDoorOpen": false
             },
             "items": []
         },
@@ -903,18 +911,32 @@
                 "go northwest": "maze15",
                 "go east": "strange passage",
                 "go up": "treasure room",
-                "ulysses": "At the sound of his ancient enemy's name, the cyclops flees in terror, smashing through the wall to the living room!",
-                "odysseus": "At the sound of his ancient enemy's name, the cyclops flees in terror, smashing through the wall to the living room!",
+                "ulysses": {
+                    "message": "At the sound of his ancient enemy's name, the cyclops flees in terror, smashing through the wall to the living room!",
+                    "sets": {
+                        "frontDoorOpen": true,
+                        "cyclopsFled": true
+                    }
+                },
+                "odysseus": {
+                    "message": "At the sound of his ancient enemy's name, the cyclops flees in terror, smashing through the wall to the living room!",
+                    "sets": {
+                        "frontDoorOpen": true,
+                        "cyclopsFled": true
+                    }
+                },
                 "give food": {
                     "requires": ["lunch", "water"],
-                    "message": "The cyclops accepts the food and water, then falls into a deep sleep."
+                    "message": "The cyclops accepts the food and water, then falls into a deep sleep.",
+                    "sets": {
+                        "cyclopsSleeping": true
+                    }
                 }
             },
             "state": {
                 "cyclopsFled": false,
                 "cyclopsSleeping": false
-            },
-            "items": []
+            }
         },
         "treasure room": {
             "description": "This is a large room filled with treasures. A suspicious-looking thief lurks in the shadows.",
