@@ -533,7 +533,34 @@ function GameInterface() {
         }
         break;
       case "rub":
-        handleRub(target);
+        if (target === "mirror" && gameState.currentRoom === "mirror room 2") {
+          const candlesOut = gameState.roomStates?.["mirror room 2"]?.candlesOut;
+          
+          if (!candlesOut) {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> rub mirror`,
+              "The light from the candles is too bright. You need to extinguish them first."
+            ]);
+            return;
+          }
+
+          setGameState(prevState => ({
+            ...prevState,
+            currentRoom: "mirror room 1"
+          }));
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> rub mirror`,
+            "As you rub the mirror in the darkness, your surroundings shimmer and shift. You find yourself in a different mirror room!"
+          ]);
+        } else {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> rub ${target}`,
+            "Rubbing that has no effect."
+          ]);
+        }
         break;
       case "unlock":
         handleUnlock(target);
@@ -623,6 +650,42 @@ function GameInterface() {
             ...prevLog,
             `> push ${target}`,
             "Nothing happens."
+          ]);
+        }
+        break;
+      case "extinguish":
+      case "douse":
+      case "put":
+        if ((target === "candles" || target === "out candles") && gameState.currentRoom === "mirror room 2") {
+          if (!gameState.inventory.includes("candles")) {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> ${action} ${target}`,
+              "You don't have the candles."
+            ]);
+            return;
+          }
+
+          setGameState(prevState => ({
+            ...prevState,
+            roomStates: {
+              ...prevState.roomStates,
+              "mirror room 2": {
+                ...prevState.roomStates?.["mirror room 2"],
+                candlesOut: true
+              }
+            }
+          }));
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> ${action} ${target}`,
+            "You extinguish the candles. The room becomes noticeably darker."
+          ]);
+        } else {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> ${action} ${target}`,
+            "You can't extinguish that."
           ]);
         }
         break;

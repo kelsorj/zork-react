@@ -475,7 +475,7 @@
             "items": []
         },
         "torch room": {
-            "description": "This is a large room with a prominent doorway leading to a down staircase. Above you is a large dome. A passage leads south.",
+            "description": "This is a large room with many torches leading down a staircase. Above you is a large dome.",
             "actions": {
                 "go up": "dome room",
                 "go down": "temple"
@@ -512,6 +512,7 @@
             "description": "This is a dark and damp cave. A stairway leads up to the temple, and another stairway leads down.",
             "actions": {
                 "go down": "entrance to hades",
+                "go north": "mirror room 2",
                 "go west": "winding passage"
             },
             "items": []
