@@ -25,6 +25,32 @@ function GameInterface() {
     lastCommand: ""
   });
 
+  // At the top with other state declarations
+  const [lampLit, setLampLit] = useState(false);
+
+  // Add this effect to handle lamp state changes
+  useEffect(() => {
+    console.log("useEffect triggered, lampLit:", lampLit);
+    if (lampLit) {
+      const newDescription = getRoomDescriptionWithItems(gameState.currentRoom);
+      console.log("New description from effect:", newDescription);
+      
+      setGameLog(prevLog => {
+        // Find the last command index
+        const lastCommandIndex = prevLog.findLastIndex(line => line.startsWith('>'));
+        if (lastCommandIndex !== -1) {
+          // Keep everything up to and including the "lamp is now on" message
+          return [
+            ...prevLog.slice(0, lastCommandIndex + 2),
+            "",  // Empty line
+            newDescription  // New room description
+          ];
+        }
+        return prevLog;
+      });
+    }
+  }, [lampLit, gameState.currentRoom]);
+
   // Constants for command validation
   const profanityList = ["damn", "hell", "shit", "fuck", "bastard", "ass"];
   const validCommands = [
@@ -61,21 +87,22 @@ function GameInterface() {
     "look", "push", "move", "attack", "kill", "show"
   ];
 
+  // Add this helper function near the top
+  const formatItemList = (items) => {
+    if (items.length === 0) return "";
+    if (items.length === 1) return `You see a ${items[0]} here.`;
+    
+    const lastItem = items.pop();
+    return `You see a ${items.join(", a ")} and a ${lastItem} here.`;
+  };
+
   // Add helper functions to get room descriptions
   const getBasicRoomDescription = (roomId) => {
     const room = gameData.rooms[roomId];
-    console.log("Room data:", room);
-    console.log("Current room:", roomId);
-    console.log("Lamp lit:", gameState.lampLit);
     
     // Special handling for dark rooms when lamp is lit/unlit
-    if (room.dark) {
-      console.log("Room is dark!");
-      const isLampLit = gameState.lampLit;
-      console.log("Is lamp lit?", isLampLit);
-      console.log("Lit description:", room.litDescription);
-      console.log("Dark description:", room.description);
-      return isLampLit ? room.litDescription : room.description;
+    if (room.litDescription) {  // If room has a lit description, it's a dark room
+      return lampLit ? room.litDescription : room.description;
     }
     
     // Get base description
@@ -102,75 +129,35 @@ function GameInterface() {
 
   const getRoomDescriptionWithItems = (roomId) => {
     const room = gameData.rooms[roomId];
-    console.log("Getting room description with items for:", roomId);
+    console.log("Getting items description for room:", roomId);
+    console.log("Lamp state:", lampLit);
     console.log("Room data:", room);
-    console.log("Lamp state:", gameState.lampLit);
+    console.log("Has lit description?", Boolean(room.litDescription));
     
-    // Filter items based on room conditions
+    // Get the base description based on lamp state for dark rooms
+    let description;
+    if (room.litDescription) {  // If room has a lit description, it's a dark room
+      console.log("Room has alternate description when lit");
+      console.log("Using lit description?", lampLit);
+      description = lampLit ? room.litDescription : room.description;
+    } else {
+      description = room.description;
+    }
+
+    // Get visible items in the room (only if lamp is lit or room is naturally lit)
     const roomItems = Object.entries(gameState.itemsInWorld)
       .filter(([item, location]) => {
         if (location !== roomId) return false;
-        
-        // Special case for pot of gold - only visible when rainbow is solid
-        if (item === "pot of gold" && roomId === "canyon bottom") {
-          return roomStates.rainbowSolid === true;
-        }
-        
+        if (room.litDescription && !lampLit) return false; // Don't show items in dark rooms
         return true;
       })
       .map(([item]) => item);
 
-    // Get items in basket if we're in shaft room
-    const basketContents = roomId === "shaft room" ? 
-      gameState.containerContents?.basket || [] : [];
-
-    // Get the base description based on lamp state for dark rooms
-    let description;
-    if (room.dark) {
-      console.log("Room is dark!");
-      const isLampLit = gameState.lampLit;
-      console.log("Is lamp lit?", isLampLit);
-      console.log("Lit description:", room.litDescription);
-      console.log("Dark description:", room.description);
-      description = isLampLit ? room.litDescription : room.description;
-    } else {
-      description = room.description;
-    }
-    
-    // Modify description based on rainbow state
-    if (roomId === "canyon bottom" && roomStates.rainbowSolid) {
-      description = description.replace(
-        "A rainbow arcs across the chasm, its colors shimmering in the sunlight.",
-        "A solid rainbow bridge spans the chasm, its colors shimmering in the sunlight."
-      );
-    }
-
-    // Modify description based on window state in east of house
-    if (roomId === "east of house" && roomStates.windowOpen) {
-      description = description.replace(
-        "There is a small window here which is slightly ajar.",
-        "There is a small window here which is open wide enough to allow entry."
-      );
-    }
-    
-    // Add room items
+    // Add items to description if there are any
     if (roomItems.length > 0) {
-      description += "\n\nYou can see: " + roomItems.join(", ") + " here.";
+      description += "\n\n" + formatItemList(roomItems);
     }
 
-    // Add basket contents if any
-    if (basketContents.length > 0) {
-      description += "\n\nThe basket contains: " + basketContents.join(", ") + ".";
-    }
-
-    // Modify description if troll is dead
-    if (roomId === "troll room" && roomStates.trollDead) {
-      description = description.replace(
-        "A menacing troll brandishing a bloody axe blocks all passages out of the room.",
-        "A dead troll lies on the ground near the passageways."
-      );
-    }
-    
     return description;
   };
 
@@ -599,23 +586,15 @@ function GameInterface() {
               return;
             }
 
-            setGameState(prevState => {
-              const newState = {
-                ...prevState,
-                lampLit: true
-              };
-              
-              // Update the log after state is definitely updated
-              setGameLog((prevLog) => [
-                ...prevLog,
-                `> turn on lamp`,
-                "The brass lamp is now on.",
-                "",
-                getRoomDescriptionWithItems(gameState.currentRoom)
-              ]);
-              
-              return newState;
-            });
+            console.log("About to set lampLit to true");
+            setLampLit(true);
+            
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> turn on lamp`,
+              "The brass lamp is now on."
+              // Don't add description here, let useEffect handle it
+            ]);
           } else {
             setGameLog((prevLog) => [
               ...prevLog,
@@ -626,25 +605,15 @@ function GameInterface() {
           break;
         case "light":
           if (target === "lamp" && gameState.inventory.includes("lamp")) {
-            console.log("Before lighting lamp:", gameState.lampLit);
+            console.log("About to set lampLit to true");
+            setLampLit(true);
             
-            setGameState(prevState => {
-              const newState = {
-                ...prevState,
-                lampLit: true
-              };
-              
-              // Update the log after state is definitely updated
-              setGameLog((prevLog) => [
-                ...prevLog,
-                `> light lamp`,
-                "The brass lamp is now on.",
-                "",
-                getRoomDescriptionWithItems(gameState.currentRoom)
-              ]);
-              
-              return newState;
-            });
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> light lamp`,
+              "The brass lamp is now on."
+              // Don't add description here, let useEffect handle it
+            ]);
           } else {
             setGameLog((prevLog) => [
               ...prevLog,
@@ -877,7 +846,29 @@ function GameInterface() {
           handleOut();
           break;
         case "move":
-          handleMove(target);
+          if (target === "rug" && gameState.currentRoom === "living room") {
+            setGameState(prevState => ({
+              ...prevState,
+              roomStates: {
+                ...prevState.roomStates,
+                "living room": {
+                  ...prevState.roomStates?.["living room"],
+                  trapdoorDiscovered: true
+                }
+              }
+            }));
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> move rug`,
+              "You discover a trapdoor under the rug leading to the cellar!"
+            ]);
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> move ${target}`,
+              "Nothing happens."
+            ]);
+          }
           break;
         case "put":
           if (target.includes(" in ")) {
@@ -1580,64 +1571,48 @@ function GameInterface() {
   };
 
   const handleGo = (direction) => {
-    const room = gameData.rooms[gameState.currentRoom];
-    const action = room.actions[`go ${direction}`] || room.actions[direction];
-
-    if (!action) {
+    const currentRoom = gameData.rooms[gameState.currentRoom];
+    const roomState = gameState.roomStates?.[gameState.currentRoom] || {};
+    const exits = currentRoom.actions?.go || {};
+    
+    // Special case for cellar access
+    if (direction === "down" && 
+        gameState.currentRoom === "living room" && 
+        roomState.trapdoorDiscovered && 
+        roomState.trapdoorOpen) {
+      setGameState(prevState => ({
+        ...prevState,
+        currentRoom: "cellar"
+      }));
       setGameLog((prevLog) => [
         ...prevLog,
-        `> go ${direction}`,
-        "You can't go that way."
+        `> ${direction}`,
+        "You descend the rickety staircase into the cellar.",
+        "",
+        getRoomDescriptionWithItems("cellar")
       ]);
       return;
     }
-
-    // Handle action objects with requirements
-    if (typeof action === 'object') {
-      // Check if all required items/states are met
-      if (action.requires) {
-        const requirements = Array.isArray(action.requires) ? action.requires : [action.requires];
-        const meetsRequirements = requirements.every(req => {
-          if (gameState.inventory.includes(req)) return true;
-          if (gameState.roomStates?.[gameState.currentRoom]?.[req]) return true;
-          return false;
-        });
-
-        if (!meetsRequirements) {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> go ${direction}`,
-            action.failMessage || "You can't go that way."
-          ]);
-          return;
-        }
-
-        // If requirements met, handle destination and message
-        setGameState(prevState => ({
-          ...prevState,
-          currentRoom: action.destination
-        }));
-        setGameLog((prevLog) => [
-          ...prevLog,
-          `> go ${direction}`,
-          action.message || `You move ${direction}.`,
-          getBasicRoomDescription(action.destination)
-        ]);
-        return;
-      }
+    
+    if (exits[direction]) {
+      const newRoom = exits[direction];
+      setGameState(prevState => ({
+        ...prevState,
+        currentRoom: newRoom
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> ${direction}`,
+        "",
+        getRoomDescriptionWithItems(newRoom)
+      ]);
+    } else {
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> ${direction}`,
+        "You can't go that way."
+      ]);
     }
-
-    // Handle simple string destinations
-    setGameState(prevState => ({
-      ...prevState,
-      currentRoom: typeof action === 'string' ? action : action.destination
-    }));
-    setGameLog((prevLog) => [
-      ...prevLog,
-      `> go ${direction}`,
-      `You move ${direction}.`,
-      getBasicRoomDescription(typeof action === 'string' ? action : action.destination)
-    ]);
   };
 
   const handleClimb = (direction) => {
