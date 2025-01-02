@@ -147,61 +147,72 @@ function GameInterface() {
   };
 
   const processCommand = (command) => {
-    // Handle empty command
-    if (!command) {
+    // Check for profanity first
+    if (profanityList.some(word => command.includes(word))) {
       setGameLog((prevLog) => [
         ...prevLog,
-        ">",
-        "I beg your pardon?"
+        `> ${command}`,
+        "Such language in a high-class establishment like this!"
       ]);
       return;
     }
 
-    // Secret cheat command
-    if (command.toLowerCase() === "show me the money") {
-      const allItems = Object.keys(gameData.state.itemsInWorld);
-      setGameState(prevState => ({
-        ...prevState,
-        inventory: allItems
-      }));
+    // Try to process the command
+    const [action, ...targetWords] = command.split(" ");
+    const target = targetWords.join(" ");
+
+    // If we don't understand the command
+    if (!validCommands.includes(action)) {
       setGameLog((prevLog) => [
         ...prevLog,
-        "> show me the money",
-        "Cheat activated! All items added to inventory.",
-        "You are now carrying: " + allItems.join(", ")
+        `> ${command}`,
+        "I don't understand that command."
       ]);
       return;
     }
 
-    // Split the command into words
-    const words = command.toLowerCase().split(" ");
-    const action = words[0];
-    const target = words.slice(1).join(" ");
-
-    // Handle directional shortcuts
-    const directionMap = {
-      'n': 'north',
-      's': 'south',
-      'e': 'east',
-      'w': 'west',
-      'ne': 'northeast',
-      'nw': 'northwest',
-      'se': 'southeast',
-      'sw': 'southwest',
-      'u': 'up',
-      'd': 'down'
-    };
-
-    // Handle movement commands
-    if (Object.keys(directionMap).includes(action) || 
-        Object.values(directionMap).includes(action)) {
-      const direction = directionMap[action] || action;
-      handleGo(direction);
-      return;
-    }
-
-    // Handle special commands
+    // Process the command based on the action
     switch (action) {
+      case "n":
+      case "north":
+        handleGo("north");
+        break;
+      case "s":
+      case "south":
+        handleGo("south");
+        break;
+      case "e":
+      case "east":
+        handleGo("east");
+        break;
+      case "w":
+      case "west":
+        handleGo("west");
+        break;
+      case "ne":
+      case "northeast":
+        handleGo("northeast");
+        break;
+      case "nw":
+      case "northwest":
+        handleGo("northwest");
+        break;
+      case "se":
+      case "southeast":
+        handleGo("southeast");
+        break;
+      case "sw":
+      case "southwest":
+        handleGo("southwest");
+        break;
+      case "u":
+      case "up":
+        handleGo("up");
+        break;
+      case "d":
+      case "down":
+        handleGo("down");
+        break;
       case "go":
         handleGo(target);
         break;
@@ -1365,36 +1376,22 @@ function GameInterface() {
         const maxScore = Object.values(gameData.state.treasurePoints)
           .reduce((total, points) => total + points.case, 0);
         
-        // Get move count from gameState
-        const moveCount = gameState.moves || 0;
-        
         setGameLog((prevLog) => [
           ...prevLog,
           `> score`,
-          `Your score is ${score} (out of a possible ${maxScore}), in ${moveCount} moves.`,
+          `Your score is ${score} (out of a possible ${maxScore}), in ${gameState.moves || 0} moves.`,
           `This gives you the rank of ${getPlayerRank(score)}.`
         ]);
         break;
       default:
-        // Increment move count for valid commands
+        // Increment moves counter first
         setGameState(prevState => ({
           ...prevState,
-          moves: (prevState.moves || 0) + 1
+          moves: ((prevState.moves || 0) + 1)
         }));
-        // Check for profanity
-        if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> ${command}`,
-            "Such language in a high-class establishment like this!"
-          ]);
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> ${command}`,
-            "I don't understand that command."
-          ]);
-        }
+        // Then process the command
+        const command = input.toLowerCase();
+        processCommand(command);
         break;
     }
   };
