@@ -1089,7 +1089,7 @@ function GameInterface() {
               }
               
               // Random chance to kill troll
-              if (Math.random() < 0.5) {
+              if (Math.random() < 0.9) {
                 console.log("Killing troll...");
                 
                 // Create new state with dead troll
