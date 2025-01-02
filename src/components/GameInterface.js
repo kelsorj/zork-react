@@ -863,6 +863,10 @@ function GameInterface() {
           handleOut();
           break;
         case "move":
+          const currentRoomData = gameData.rooms[gameState.currentRoom];
+          const moveAction = currentRoomData?.actions?.[`move ${target}`];
+          
+          // Special case for rug in living room
           if (target === "rug" && gameState.currentRoom === "living room") {
             setGameState(prevState => ({
               ...prevState,
@@ -879,11 +883,52 @@ function GameInterface() {
               `> move rug`,
               "You discover a trapdoor under the rug leading to the cellar!"
             ]);
+          }
+          // Special case for leaves in grating clearing
+          else if (target === "leaves" && gameState.currentRoom === "grating clearing") {
+            setGameState(prevState => ({
+              ...prevState,
+              roomStates: {
+                ...prevState.roomStates,
+                "grating clearing": {
+                  ...prevState.roomStates?.["grating clearing"],
+                  gratingRevealed: true
+                }
+              }
+            }));
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> move leaves`,
+              "Moving aside the thick pile of leaves reveals a metal grating embedded in the ground!"
+            ]);
+          }
+          // Handle general move actions from game data
+          else if (moveAction) {
+            // Update room state if the action sets any state
+            if (moveAction.sets) {
+              setGameState(prevState => ({
+                ...prevState,
+                roomStates: {
+                  ...prevState.roomStates,
+                  [gameState.currentRoom]: {
+                    ...prevState.roomStates?.[gameState.currentRoom],
+                    ...moveAction.sets
+                  }
+                }
+              }));
+            }
+            
+            // Display the action message
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> move ${target}`,
+              moveAction.message
+            ]);
           } else {
             setGameLog((prevLog) => [
               ...prevLog,
               `> move ${target}`,
-              "Nothing happens."
+              "You can't move that."
             ]);
           }
           break;
