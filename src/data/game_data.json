@@ -512,13 +512,15 @@
             },
             "items": ["crystal skull"]
         },
-        "mirror room south": {
+        "mirror room 2": {
             "description": "You are in a large square room with tall ceilings. Huge mirrors line the walls, making it difficult to tell which are doors and which are mirrors.",
             "actions": {
-                "go south": "cave",
+                "go east": "cave",
+                "go south": "winding passage",
+                "go north": "narrow passage",
                 "rub mirror": {
                     "message": "As you rub the mirror, your surroundings shimmer and shift. You find yourself in a different mirror room!",
-                    "destination": "mirror room north",
+                    "destination": "mirror room 1",
                     "requires": ["candlesOut"]
                 },
                 "put out candles": {
@@ -534,11 +536,12 @@
             },
             "items": []
         },
-        "mirror room north": {
+        "mirror room 1": {
             "description": "This mirror room looks almost identical to the one you were just in, but something feels different.",
             "actions": {
                 "go north": "bat room",
-                "go west": "squeaky room"
+                "go west": "twisting passage",
+                "go east": "small cave"
             },
             "items": []
         },
@@ -552,9 +555,8 @@
         "bat room": {
             "description": "This room is filled with sleeping bats hanging from the ceiling. You'd better not wake them!",
             "actions": {
-                "go west": "squeaky room",
-                "go east": "shaft room",
-                "go south": "mirror room north"
+                "go south": "squeaky room",
+                "go east": "shaft room"
             },
             "items": []
         },
@@ -722,9 +724,26 @@
         "atlantis room": {
             "description": "This appears to be the ruins of the legendary city of Atlantis. Ancient columns rise from the water.",
             "actions": {
-                "go south": "reservoir north"
+                "go south": "reservoir north",
+                "go up": "small cave"
             },
             "items": ["crystal trident"]
+        },
+        "small cave": {
+            "description": "This is a small cave with a large stalactite hanging from the ceiling.",
+            "actions": {
+                "go down": "atlantis room",
+                "go west": "twisting passage"
+            },
+            "items": []
+        },
+        "twisting passage": {
+            "description": "This is a twisting room with passages leading north and east.",
+            "actions": {
+                "go north": "mirror room 1",
+                "go east": "small cave"
+            },
+            "items": []
         },
         "in boat": {
             "description": "You are sitting in a rubber boat on the river. The current is strong here.",
