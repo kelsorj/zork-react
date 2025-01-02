@@ -593,6 +593,35 @@ function GameInterface() {
             `> open lid`,
             "The machine's lid creaks open."
           ]);
+        } else if (target === "buoy") {
+          if (!gameState.inventory.includes("buoy")) {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> open buoy`,
+              "You don't have the buoy."
+            ]);
+            return;
+          }
+
+          setGameState(prevState => ({
+            ...prevState,
+            containerContents: {
+              ...prevState.containerContents,
+              buoy: ["emerald"]
+            },
+            roomStates: {
+              ...prevState.roomStates,
+              buoy: {
+                ...prevState.roomStates?.buoy,
+                isOpen: true
+              }
+            }
+          }));
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> open buoy`,
+            "The buoy opens, revealing an emerald inside!"
+          ]);
         } else {
           setGameLog((prevLog) => [
             ...prevLog,
@@ -762,7 +791,82 @@ function GameInterface() {
         handleWait();
         break;
       case "dig":
-        handleDig();
+        if (gameState.currentRoom === "sandy cave") {
+          if (!gameState.inventory.includes("shovel")) {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> dig`,
+              "You need a shovel to dig here."
+            ]);
+            return;
+          }
+
+          const currentDigCount = gameState.roomStates?.["sandy cave"]?.digCount || 0;
+          
+          if (currentDigCount < 2) {
+            setGameState(prevState => ({
+              ...prevState,
+              roomStates: {
+                ...prevState.roomStates,
+                "sandy cave": {
+                  ...prevState.roomStates?.["sandy cave"],
+                  digCount: currentDigCount + 1
+                }
+              }
+            }));
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> dig`,
+              "You dig deeper in the sand..."
+            ]);
+          } else if (!gameState.roomStates?.["sandy cave"]?.scarabRevealed) {
+            setGameState(prevState => ({
+              ...prevState,
+              roomStates: {
+                ...prevState.roomStates,
+                "sandy cave": {
+                  ...prevState.roomStates?.["sandy cave"],
+                  scarabRevealed: true
+                }
+              },
+              itemsInWorld: {
+                ...prevState.itemsInWorld,
+                "scarab": "sandy cave"
+              }
+            }));
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> dig`,
+              "Your shovel hits something! You've uncovered an ancient scarab!"
+            ]);
+          } else {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> dig`,
+              "You find nothing else of interest here."
+            ]);
+          }
+        } else if (target === "sand" || target === "ground") {
+          if (!gameState.inventory.includes("shovel")) {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> dig ${target}`,
+              "You need a shovel to dig here."
+            ]);
+            return;
+          }
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> dig ${target}`,
+            "You find nothing of interest."
+          ]);
+        } else {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> dig`,
+            "The ground is too hard to dig here."
+          ]);
+        }
         break;
       case "cross":
         handleCross(target);
@@ -1820,7 +1924,7 @@ function GameInterface() {
       }));
       setGameLog((prevLog) => [
         ...prevLog,
-        `> close ${target}`,
+        `> close lid`,
         "You close the machine's lid."
       ]);
       return;
@@ -2617,39 +2721,69 @@ function GameInterface() {
         return;
       }
 
-      const digCount = (gameState.roomStates?.["sandy cave"]?.digCount || 0) + 1;
+      const currentDigCount = gameState.roomStates?.["sandy cave"]?.digCount || 0;
       
-      setGameState(prevState => ({
-        ...prevState,
-        roomStates: {
-          ...prevState.roomStates,
-          "sandy cave": { 
-            digCount,
-            scarabRevealed: digCount >= 3
+      if (currentDigCount < 2) {
+        setGameState(prevState => ({
+          ...prevState,
+          roomStates: {
+            ...prevState.roomStates,
+            "sandy cave": {
+              ...prevState.roomStates?.["sandy cave"],
+              digCount: currentDigCount + 1
+            }
           }
-        },
-        itemsInWorld: digCount >= 3 ? {
-          ...prevState.itemsInWorld,
-          scarab: "sandy cave"
-        } : prevState.itemsInWorld
-      }));
-
-      let message = "You dig in the sand...";
-      if (digCount === 3) {
-        message += "\nYou uncover an ancient scarab!";
-      } else if (digCount > 3) {
-        message += "\nYou find nothing else of interest.";
+        }));
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> dig`,
+          "You dig deeper in the sand..."
+        ]);
+      } else if (!gameState.roomStates?.["sandy cave"]?.scarabRevealed) {
+        setGameState(prevState => ({
+          ...prevState,
+          roomStates: {
+            ...prevState.roomStates,
+            "sandy cave": {
+              ...prevState.roomStates?.["sandy cave"],
+              scarabRevealed: true
+            }
+          },
+          itemsInWorld: {
+            ...prevState.itemsInWorld,
+            "scarab": "sandy cave"
+          }
+        }));
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> dig`,
+          "Your shovel hits something! You've uncovered an ancient scarab!"
+        ]);
+      } else {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> dig`,
+          "You find nothing else of interest here."
+        ]);
       }
-
+    } else if (target === "sand" || target === "ground") {
+      if (!gameState.inventory.includes("shovel")) {
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> dig ${target}`,
+          "You need a shovel to dig here."
+        ]);
+        return;
+      }
       setGameLog((prevLog) => [
         ...prevLog,
-        "> dig",
-        message
+        `> dig ${target}`,
+        "You find nothing of interest."
       ]);
     } else {
       setGameLog((prevLog) => [
         ...prevLog,
-        "> dig",
+        `> dig`,
         "The ground is too hard to dig here."
       ]);
     }
