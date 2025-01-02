@@ -99,9 +99,10 @@ function GameInterface() {
   // Add helper functions to get room descriptions
   const getBasicRoomDescription = (roomId) => {
     const room = gameData.rooms[roomId];
+    const roomState = gameState.roomStates?.[roomId] || {};
     
     // Special handling for dark rooms when lamp is lit/unlit
-    if (room.litDescription) {  // If room has a lit description, it's a dark room
+    if (room.litDescription) {
       return lampLit ? room.litDescription : room.description;
     }
     
@@ -109,7 +110,7 @@ function GameInterface() {
     let description = room.description;
 
     // Modify description based on window state in east of house
-    if (roomId === "east of house" && roomStates.windowOpen) {
+    if (roomId === "east of house" && roomState.windowOpen) {
       description = description.replace(
         "There is a small window here which is slightly ajar.",
         "There is a small window here which is open wide enough to allow entry."
@@ -117,7 +118,7 @@ function GameInterface() {
     }
 
     // Modify description if troll is dead
-    if (roomId === "troll room" && roomStates.trollDead) {
+    if (roomId === "troll room" && roomState.trollDead) {
       description = description.replace(
         "A menacing troll brandishing a bloody axe blocks all passages out of the room.",
         "A dead troll lies on the ground near the passageways."
@@ -129,16 +130,11 @@ function GameInterface() {
 
   const getRoomDescriptionWithItems = (roomId) => {
     const room = gameData.rooms[roomId];
-    console.log("Getting items description for room:", roomId);
-    console.log("Lamp state:", lampLit);
-    console.log("Room data:", room);
-    console.log("Has lit description?", Boolean(room.litDescription));
+    const roomState = gameState.roomStates?.[roomId] || {};
     
     // Get the base description based on lamp state for dark rooms
     let description;
-    if (room.litDescription) {  // If room has a lit description, it's a dark room
-      console.log("Room has alternate description when lit");
-      console.log("Using lit description?", lampLit);
+    if (room.litDescription) {
       description = lampLit ? room.litDescription : room.description;
     } else {
       description = room.description;
@@ -1573,9 +1569,14 @@ function GameInterface() {
   const handleGo = (direction) => {
     const currentRoom = gameData.rooms[gameState.currentRoom];
     const roomState = gameState.roomStates?.[gameState.currentRoom] || {};
-    const exits = currentRoom.actions?.go || {};
     
-    // Special case for cellar access
+    console.log("Movement Debug:");
+    console.log("Current room ID:", gameState.currentRoom);
+    console.log("Room data:", currentRoom);
+    console.log("Trying to go:", direction);
+    console.log("Room actions:", currentRoom?.actions);
+    
+    // Special case for cellar/living room connection
     if (direction === "down" && 
         gameState.currentRoom === "living room" && 
         roomState.trapdoorDiscovered && 
@@ -1593,20 +1594,48 @@ function GameInterface() {
       ]);
       return;
     }
-    
-    if (exits[direction]) {
-      const newRoom = exits[direction];
+
+    // Special case for going up from cellar
+    if (direction === "up" && gameState.currentRoom === "cellar") {
       setGameState(prevState => ({
         ...prevState,
-        currentRoom: newRoom
+        currentRoom: "living room"
       }));
       setGameLog((prevLog) => [
         ...prevLog,
         `> ${direction}`,
+        "You climb up the rickety stairs.",
         "",
-        getRoomDescriptionWithItems(newRoom)
+        getRoomDescriptionWithItems("living room")
+      ]);
+      return;
+    }
+    
+    // Get available exits from the room actions
+    const actions = currentRoom?.actions || {};
+    const exitKey = `go ${direction}`;
+    const destination = actions[exitKey];
+    
+    console.log("Looking for exit:", exitKey);
+    console.log("Found destination:", destination);
+    
+    // Check if we have a valid destination
+    if (destination && typeof destination === 'string') {
+      console.log("Moving to:", destination);
+      
+      setGameState(prevState => ({
+        ...prevState,
+        currentRoom: destination
+      }));
+      
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> ${direction}`,
+        "",
+        getRoomDescriptionWithItems(destination)
       ]);
     } else {
+      console.log("No valid exit found for direction:", direction);
       setGameLog((prevLog) => [
         ...prevLog,
         `> ${direction}`,
