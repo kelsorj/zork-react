@@ -28,25 +28,33 @@ function GameInterface() {
   // Add helper functions to get room descriptions
   const getBasicRoomDescription = (roomId) => {
     const room = gameData.rooms[roomId];
+    const roomStates = gameState.roomStates?.[roomId] || {};
+    
+    // Special handling for cellar when lamp is lit/unlit
+    if (roomId === "cellar") {
+      const isLampLit = roomStates.lampLit;
+      console.log('Lamp state:', isLampLit); // Debug log
+      return isLampLit ? room.litDescription : room.description;
+    }
+    
     return room.description;
   };
 
   const getRoomDescriptionWithItems = (roomId) => {
     const room = gameData.rooms[roomId];
+    const roomStates = gameState.roomStates?.[roomId] || {};
     const roomItems = Object.entries(gameState.itemsInWorld)
       .filter(([item, location]) => location === roomId)
       .map(([item]) => item);
 
-    let description = room.description;
-    
-    // If in living room and rug is moved, update description
-    if (roomId === "living room" && gameState.rugMoved) {
-      description = description.replace("A beautiful oriental rug lies in the center.", "A trapdoor is visible in the floor.");
-    }
-    
-    // If in forest clearing and leaves are moved, update description
-    if (roomId === "forest clearing" && gameState.roomStates?.["forest clearing"]?.gratingRevealed) {
-      description = "You are in a forest clearing. A metal grating is embedded in the ground here.";
+    // Get the base description based on lamp state for cellar
+    let description;
+    if (roomId === "cellar") {
+      const isLampLit = roomStates.lampLit;
+      console.log('Lamp state in items:', isLampLit); // Debug log
+      description = isLampLit ? room.litDescription : room.description;
+    } else {
+      description = room.description;
     }
     
     if (roomItems.length > 0) {
@@ -177,6 +185,38 @@ function GameInterface() {
         break;
       case "read":
         handleRead(target);
+        break;
+      case "light":
+        if (target === "lamp" && gameState.inventory.includes("lamp")) {
+          console.log('Setting lamp state to true'); // Debug log
+          setGameState(prevState => {
+            const newState = {
+              ...prevState,
+              roomStates: {
+                ...prevState.roomStates,
+                [gameState.currentRoom]: {
+                  ...prevState.roomStates?.[gameState.currentRoom],
+                  lampLit: true
+                }
+              }
+            };
+            console.log('New state:', newState); // Debug log
+            return newState;
+          });
+          
+          setGameLog(prevLog => [
+            ...prevLog,
+            `> light lamp`,
+            "The brass lamp is now on, illuminating the cellar.",
+            getRoomDescriptionWithItems(gameState.currentRoom)
+          ]);
+        } else {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> light ${target}`,
+            "You can't light that."
+          ]);
+        }
         break;
       case "climb":
         const currentRoom = gameData.rooms[gameState.currentRoom];
@@ -469,31 +509,6 @@ function GameInterface() {
         break;
       case "unlock":
         handleUnlock(target);
-        break;
-      case "light":
-        if (target === "lamp" && gameState.inventory.includes("lamp")) {
-          setGameState(prevState => ({
-            ...prevState,
-            roomStates: {
-              ...prevState.roomStates,
-              [gameState.currentRoom]: {
-                ...prevState.roomStates?.[gameState.currentRoom],
-                lampLit: true
-              }
-            }
-          }));
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> light lamp`,
-            "The brass lamp is now on, illuminating the cellar."
-          ]);
-        } else {
-          setGameLog((prevLog) => [
-            ...prevLog,
-            `> light ${target}`,
-            "You can't light that."
-          ]);
-        }
         break;
       default:
         // Check for profanity
