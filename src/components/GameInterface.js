@@ -1334,6 +1334,21 @@ function GameInterface() {
           ]);
         }
         break;
+      case "score":
+        const trophyItems = Object.entries(gameState.itemsInWorld)
+          .filter(([item, location]) => location === "trophy case")
+          .map(([item]) => item);
+        
+        const score = trophyItems.length * 10; // 10 points per trophy
+        const maxScore = gameData.state.trophyItems.length * 10;
+        
+        setGameLog((prevLog) => [
+          ...prevLog,
+          `> score`,
+          `Your score is ${score} (out of a possible ${maxScore}), in ${gameLog.length} moves.`,
+          `This gives you the rank of ${getPlayerRank(score)}.`
+        ]);
+        break;
       default:
         // Check for profanity
         if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
@@ -3169,6 +3184,16 @@ function GameInterface() {
         "You can't open that."
       ]);
     }
+  };
+
+  const getPlayerRank = (score) => {
+    if (score === 0) return "Beginner";
+    if (score < 50) return "Amateur Adventurer";
+    if (score < 100) return "Novice Adventurer";
+    if (score < 150) return "Junior Adventurer";
+    if (score < 200) return "Adventurer";
+    if (score < 250) return "Master Adventurer";
+    return "Grand Master Adventurer";
   };
 
   return (
