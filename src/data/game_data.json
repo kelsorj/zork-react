@@ -128,7 +128,7 @@
             "items": []
         },
         "house": {
-            "description": "You are at the white house. {if state.frontDoorOpen}The front door has been smashed open by the cyclops.{else}It's an old, weathered building with a boarded front door.{/if}",
+            "description": "You are at the white house. It's an old, weathered building with a boarded front door.",
             "actions": {
                 "go north": "north of house",
                 "go south": "south of house",
@@ -193,7 +193,7 @@
             "items": []
         },
         "west of house": {
-            "description": "You are at the west side of the white house. There is a small mailbox here. {if state.platinumBarInCase}A mysterious stone barrow has appeared to the southwest.{/if}",
+            "description": "You are at the west side of the white house. There is a small mailbox here.",
             "actions": {
                 "go north": "north of house",
                 "go south": "south of house",
@@ -203,6 +203,9 @@
                     "message": "You enter the ancient stone barrow...\n\n            *    *    *\n     .  *  .  *  .  *  .\n   *   CONGRATULATIONS   *\n     .  *  .  *  .  *  .\n            *    *    *\n\nYou have completed ZORK I: The Great Underground Empire!"
                 },
                 "open mailbox": "Opening the mailbox reveals a leaflet."
+            },
+            "state": {
+                "barrowVisible": false
             },
             "items": ["leaflet"]
         },
