@@ -599,22 +599,23 @@ function GameInterface() {
               return;
             }
 
-            setGameState(prevState => ({
-              ...prevState,
-              lampLit: true  // Set global lamp state
-            }));
-
-            // Wait briefly for state to update before getting new description
-            setTimeout(() => {
-              const newDescription = getRoomDescriptionWithItems(gameState.currentRoom);
+            setGameState(prevState => {
+              const newState = {
+                ...prevState,
+                lampLit: true
+              };
+              
+              // Update the log after state is definitely updated
               setGameLog((prevLog) => [
                 ...prevLog,
                 `> turn on lamp`,
                 "The brass lamp is now on.",
                 "",
-                newDescription
+                getRoomDescriptionWithItems(gameState.currentRoom)
               ]);
-            }, 0);
+              
+              return newState;
+            });
           } else {
             setGameLog((prevLog) => [
               ...prevLog,
@@ -628,26 +629,22 @@ function GameInterface() {
             console.log("Before lighting lamp:", gameState.lampLit);
             
             setGameState(prevState => {
-              console.log("Setting lamp state to true");
-              return {
+              const newState = {
                 ...prevState,
-                lampLit: true  // Set global lamp state
+                lampLit: true
               };
-            });
-
-            // Wait briefly for state to update before getting new description
-            setTimeout(() => {
-              const newDescription = getRoomDescriptionWithItems(gameState.currentRoom);
-              console.log("New description with lit lamp:", newDescription);
               
+              // Update the log after state is definitely updated
               setGameLog((prevLog) => [
                 ...prevLog,
                 `> light lamp`,
                 "The brass lamp is now on.",
                 "",
-                newDescription
+                getRoomDescriptionWithItems(gameState.currentRoom)
               ]);
-            }, 0);
+              
+              return newState;
+            });
           } else {
             setGameLog((prevLog) => [
               ...prevLog,
