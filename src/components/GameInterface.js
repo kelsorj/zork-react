@@ -2126,25 +2126,37 @@ function GameInterface() {
 
   const handleMove = (item) => {
     const currentRoom = gameData.rooms[gameState.currentRoom];
-    const moveAction = currentRoom.actions[`move ${item}`];
     
+    if (item === "leaves" && gameState.currentRoom === "forest clearing") {
+      setGameState(prevState => ({
+        ...prevState,
+        roomStates: {
+          ...prevState.roomStates,
+          "forest clearing": {
+            ...prevState.roomStates?.["forest clearing"],
+            gratingRevealed: true
+          }
+        }
+      }));
+      setGameLog((prevLog) => [
+        ...prevLog,
+        `> move ${item}`,
+        "Moving the leaves reveals a grating secured to the ground!"
+      ]);
+      return;
+    }
+    
+    const moveAction = currentRoom.actions[`move ${item}`];
     if (moveAction) {
       // If it's the rug, update the room description to show the trapdoor
       if (item === "rug" && gameState.currentRoom === "living room") {
         setGameState(prevState => ({
           ...prevState,
-          rugMoved: true
-        }));
-      }
-      // If it's the leaves, update the room state to show the grating
-      else if (item === "leaves" && gameState.currentRoom === "grating clearing") {
-        setGameState(prevState => ({
-          ...prevState,
           roomStates: {
             ...prevState.roomStates,
-            "grating clearing": {
-              ...prevState.roomStates?.["grating clearing"],
-              gratingRevealed: true
+            "living room": {
+              ...prevState.roomStates?.["living room"],
+              trapdoorDiscovered: true
             }
           }
         }));
@@ -2159,7 +2171,7 @@ function GameInterface() {
       setGameLog((prevLog) => [
         ...prevLog,
         `> move ${item}`,
-        `You can't move that.`
+        `Nothing happens.`
       ]);
     }
   };
