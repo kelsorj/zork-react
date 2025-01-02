@@ -49,7 +49,7 @@ Gallery
 Take the Painting and go North to the Studio.
 
 Studio
- You can only fit up the chimney with the lamp and one other item. (I.E. two items)
+You can only fit up the chimney with the lamp and one other item. (I.E. two items)
 Go Up the Chimney.
 
 Kitchen
@@ -100,7 +100,7 @@ Take the Coffin (Sarcophagus)
 Go West and then South to the Altar.
 
 Altar
- There's no way you're going to get down that hole with the coffin, and even the program will tell
+There's no way you're going to get down that hole with the coffin, and even the program will tell
 you that you haven't got a prayer. That's a hint, folks.
 "Pray" at the altar, and you'll be above ground, in the forest.
 
@@ -441,7 +441,6 @@ Now, return to the starting point of the game, West of the house, near the Mailb
 West of House
 There is now a Stone Barrow open near here.
 Enter the Stone Barrow and Prepare yourself for Zork II.
-
 
 You didn't really think it would end there, did you? Not when there's still Zork II and Zork III waiting for you up ahead! Ah, but it's too late; you can't turn back now! You'll just have to grit your teeth and follow through to the end (with a little help, of course...) 
 See you in Zork II!
