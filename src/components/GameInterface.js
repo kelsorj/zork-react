@@ -785,6 +785,47 @@ function GameInterface() {
           ]);
         }
         break;
+      case "lower":
+      case "send":
+        if ((target === "basket" || target === "basket down") && gameState.currentRoom === "shaft room") {
+          // Check if basket has contents
+          const basketContents = gameState.containerContents?.basket || [];
+          if (basketContents.length === 0) {
+            setGameLog((prevLog) => [
+              ...prevLog,
+              `> ${action} basket`,
+              "You lower the empty basket down the shaft."
+            ]);
+            return;
+          }
+
+          // Move basket contents to drafty room
+          setGameState((prevState) => ({
+            ...prevState,
+            itemsInWorld: {
+              ...prevState.itemsInWorld,
+              ...Object.fromEntries(basketContents.map(item => [item, "drafty room"]))
+            },
+            containerContents: {
+              ...prevState.containerContents,
+              basket: [] // Empty the basket
+            }
+          }));
+
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> ${action} basket`,
+            "The basket is lowered down into the darkness.",
+            `You hear the contents of the basket being removed at the bottom of the shaft.`
+          ]);
+        } else {
+          setGameLog((prevLog) => [
+            ...prevLog,
+            `> ${action} ${target}`,
+            "You can't lower that."
+          ]);
+        }
+        break;
       default:
         // Check for profanity
         if (/^(damn|shit|fuck|crap|hell)$/i.test(action)) {
